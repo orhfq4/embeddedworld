@@ -10,4 +10,8 @@ void GPIO_output_init() {
 
     }
 }
+
+void GPIO_output_set_value () {
+    
+}
 */

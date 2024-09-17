@@ -13,12 +13,12 @@
 /* GPIO */
 typedef struct GPIO
 {
-	volatile uint8_t GPIO_PIN;
-	volatile uint8_t GPIO_DDR;
-	volatile uint8_t GPIO_PORT;
+	volatile uint8_t GPIO_PIN; // 0
+	volatile uint8_t GPIO_DDR; // 1
+	volatile uint8_t GPIO_PORT; // 2
 } GPIO_t;
 
-#define PA ((volatile GPIO_t *)(&PINA))
+#define PA ((volatile GPIO_t *)(&PINA)) // 0x20
 #define PB ((volatile GPIO_t *)(&PINB))
 #define PC ((volatile GPIO_t *)(&PINC))
 #define PD ((volatile GPIO_t *)(&PIND))
