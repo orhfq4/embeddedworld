@@ -10,7 +10,8 @@
 // Microcontroller: ATMEGA324PB
 #ifndef BOARD_H_
 #define BOARD_H_
-
+#include "gpio_3.h"
+#include "led_3.h"
 #include "peripherals.h" // included to define pins and ports
 
 #define F_CPU (16000000UL) // sets CPU frequency
@@ -28,6 +29,7 @@
 #define LED3_PORT (PA)
 #define LED3_PIN (1<<7)
 
-
+// LED3 Instance
+extern LED_t LED3;
 
 #endif /* BOARD_H_ */

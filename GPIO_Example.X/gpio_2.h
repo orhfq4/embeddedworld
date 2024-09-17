@@ -1,3 +1,12 @@
+/* 
+ * File:   gpio_2.h
+ * Author: owenhancock
+ *
+ * Created on September 17, 2024, 11:02 AM
+ */
+
+// This file is used to solve question 4
+
 #ifndef GPIO_2_H
 #define GPIO_2_H
 #include "peripherals.h"

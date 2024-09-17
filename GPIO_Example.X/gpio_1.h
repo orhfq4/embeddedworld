@@ -1,3 +1,12 @@
+/* 
+ * File:   gpio_1.h
+ * Author: owenhancock
+ *
+ * Created on September 17, 2024, 11:02 AM
+ */
+
+// This file is used to solve question 3
+
 #ifndef GPIO_1_H
 #define GPIO_1_H
 #include "peripherals.h" // included to utilize GPIO_t

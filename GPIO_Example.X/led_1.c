@@ -1,3 +1,12 @@
+/* 
+ * File:   led_1.c
+ * Author: owenhancock
+ *
+ * Created on September 17, 2024, 11:02 AM
+ */
+
+// This file is used to complete question 3
+
 #include "led_1.h"
 
 // Function implementation to initialize the LED by calling the GPIO initialize function

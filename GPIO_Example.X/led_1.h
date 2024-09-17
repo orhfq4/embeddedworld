@@ -1,3 +1,12 @@
+/* 
+ * File:   led_1.h
+ * Author: owenhancock
+ *
+ * Created on September 17, 2024, 11:02 AM
+ */
+
+// This file is used to complete question 3
+
 #ifndef LED_1_H_
 #define LED_1_H_
 #include "board.h"

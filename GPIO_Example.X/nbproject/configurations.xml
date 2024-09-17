@@ -11,6 +11,7 @@
       <itemPath>gpio_3.h</itemPath>
       <itemPath>led_1.h</itemPath>
       <itemPath>led_2.h</itemPath>
+      <itemPath>led_3.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -30,6 +31,8 @@
       <itemPath>gpio_3.c</itemPath>
       <itemPath>led_1.c</itemPath>
       <itemPath>led_2.c</itemPath>
+      <itemPath>led_3.c</itemPath>
+      <itemPath>board.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

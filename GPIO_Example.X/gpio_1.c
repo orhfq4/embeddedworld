@@ -1,3 +1,12 @@
+/* 
+ * File:   gpio_1.c
+ * Author: owenhancock
+ *
+ * Created on September 17, 2024, 11:02 AM
+ */
+
+// This file is used to solve question 3
+
 #include "gpio_1.h"
 
 // Function implementation to initialize a GPIO pin as an output

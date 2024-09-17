@@ -6,14 +6,17 @@
      */ 
 
     /******************************************************************************
-    *   This application blinks the LEDs (LED0, LED1, LED2, and LED3) on and then
-    *   off to demonstrate the execution time of various methods of GPIO control.
-    *
+    *   This file invokes all the functions defined in the different source and header files
+    *   It is used to show outputs flashed to the atmega324PB for each problem
     *******************************************************************************/
 
     #include "peripherals.h" // needed for gpio and pin definitions
     #include "board.h" // needed for port, ddr, and pin definitions
     #include <util/delay.h> // needed to implement default delay functions
+    #include "gpio_3.h"
+    #include "led_1.h"
+    #include "led_2.h"
+    #include "led_3.h"
 
 
     int main(void)
@@ -72,6 +75,13 @@
     *   
     * 
     *******************************************************************************/
+        
+        // unsure about this init. Need to call multiple LED objects?
+        
+        LED_t LED3; // Declare an instance for LED3
+        
+        // Initialize LED3 (connected to Port A, Pin 7, active low)
+        LED_init_3(&LED3, PA, LED3_PIN, 0, 1);  // 1 for Active low
         
         
         
@@ -190,6 +200,16 @@
             *   
             * 
             *******************************************************************************/
+            
+            // Unsure if these need to be flip-flopped or not
+            
+            // Turn LED3 on
+            LED_set_value_3(&LED3, 0); // 0 for off (active low)
+            _delay_ms(1000);
+
+            // Turn LED3 off
+            LED_set_value_3(&LED3, 1); // 1 for on (active low)
+            _delay_ms(1000);
         }
     }
 

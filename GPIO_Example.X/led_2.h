@@ -1,3 +1,12 @@
+/* 
+ * File:   led_2.h
+ * Author: owenhancock
+ *
+ * Created on September 17, 2024, 11:02 AM
+ */
+
+// This file is used to complete question 4
+
 #ifndef LED_2_H_
 #define LED_2_H_
 #include "gpio_2.h" // include inline gpio functions
