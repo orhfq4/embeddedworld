@@ -1,19 +1,19 @@
 /*
  * board.h
  *
- * Created: 9/4/2020 11:57:19 AM
- *  Author: youngerr
+ * Created: September 17th, 2024
+ *  Author: Owen Hancock
  */ 
 
-
+// This file was completed for question 1
 
 // Microcontroller: ATMEGA324PB
 #ifndef BOARD_H_
 #define BOARD_H_
 
-#include "peripherals.h"
+#include "peripherals.h" // included to define pins and ports
 
-#define F_CPU (16000000UL)
+#define F_CPU (16000000UL) // sets CPU frequency
 #define F_DIV (1)
 
 

@@ -1,16 +1,11 @@
-/*
-
-#include "gpio_1.h"
 #include "led_1.h"
-#include "board.h"
-#include "peripherals.h"
-#include <avr/io.h>
 
-void LED_init() {
-    GPIO_output_init(addr, pinmask, value);
+// Function implementation to initialize the LED by calling the GPIO initialize function
+void LED_init(volatile GPIO_t * addr, uint8_t pinmask) {
+    GPIO_output_init(addr, pinmask); // Call GPIO function to initalize LEDs as output
 }
 
-void LED_set_value(addr, pinmask, value) {
-    
+// Function implementation to set the value of the LED (on or off)
+void LED_set_value(volatile GPIO_t * addr, uint8_t pinmask, uint8_t value) {
+    GPIO_output_set_value(addr, pinmask, value); // Call GPIO function to set value of the pin
 }
-*/

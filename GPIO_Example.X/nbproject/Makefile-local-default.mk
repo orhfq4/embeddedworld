@@ -33,3 +33,4 @@ MP_CC_DIR="/Applications/microchip/xc8/v2.46/bin"
 MP_AS_DIR="/Applications/microchip/xc8/v2.46/bin"
 MP_LD_DIR="/Applications/microchip/xc8/v2.46/bin"
 MP_AR_DIR="/Applications/microchip/xc8/v2.46/bin"
+DFP_DIR=/Users/owenhancock/.mchp_packs/Microchip/ATmega_DFP/3.2.269

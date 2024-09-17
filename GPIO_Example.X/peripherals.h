@@ -1,13 +1,14 @@
 /* 
  * File:   peripherals.h
- * Author: Younger
+ * Author: Owen Hancock
  *
- * Created on September 10, 2024, 4:58 PM
+ * Created on September 17th, 2024
  */
+
+// This file was completed for question 1
 
 #ifndef PERIPHERALS_H
 #define	PERIPHERALS_H
-
 #include <avr/io.h>
 
 /* GPIO */

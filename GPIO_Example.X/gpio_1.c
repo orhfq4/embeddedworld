@@ -1,17 +1,20 @@
-/*
-
 #include "gpio_1.h"
 
-void GPIO_output_init() {
-    if (0 == value) {
-        addr -> GPIO_PORT &= ~pinmask;
+// Function implementation to initialize a GPIO pin as an output
+void GPIO_output_init(volatile GPIO_t * addr, uint8_t pinmask) {
+    // Set the pin value to high (off for LEDs) by default
+    addr -> GPIO_PORT |= pinmask;
+    // Set the pin direction as output by setting the corresponding bit in the DDR
+    addr -> GPIO_DDR |= pinmask;
+}
+
+void GPIO_output_set_value (volatile GPIO_t * addr, uint8_t pinmask, uint8_t value) {
+    if (value) {
+        // Set the pin to high
+        addr -> GPIO_PORT |= pinmask;
     }
     else {
-
+        // Set the pin to low
+        addr -> GPIO_PORT &= ~pinmask;
     }
 }
-
-void GPIO_output_set_value () {
-    
-}
-*/
