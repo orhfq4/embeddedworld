@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c gpio_1.c gpio_3.c led_1.c led_2.c led_3.c board.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c gpio_1.c gpio_3.c led_1.c led_3.c board.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/gpio_1.o ${OBJECTDIR}/gpio_3.o ${OBJECTDIR}/led_1.o ${OBJECTDIR}/led_2.o ${OBJECTDIR}/led_3.o ${OBJECTDIR}/board.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/gpio_1.o.d ${OBJECTDIR}/gpio_3.o.d ${OBJECTDIR}/led_1.o.d ${OBJECTDIR}/led_2.o.d ${OBJECTDIR}/led_3.o.d ${OBJECTDIR}/board.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/gpio_1.o ${OBJECTDIR}/gpio_3.o ${OBJECTDIR}/led_1.o ${OBJECTDIR}/led_3.o ${OBJECTDIR}/board.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/gpio_1.o.d ${OBJECTDIR}/gpio_3.o.d ${OBJECTDIR}/led_1.o.d ${OBJECTDIR}/led_3.o.d ${OBJECTDIR}/board.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/gpio_1.o ${OBJECTDIR}/gpio_3.o ${OBJECTDIR}/led_1.o ${OBJECTDIR}/led_2.o ${OBJECTDIR}/led_3.o ${OBJECTDIR}/board.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/gpio_1.o ${OBJECTDIR}/gpio_3.o ${OBJECTDIR}/led_1.o ${OBJECTDIR}/led_3.o ${OBJECTDIR}/board.o
 
 # Source Files
-SOURCEFILES=main.c gpio_1.c gpio_3.c led_1.c led_2.c led_3.c board.c
+SOURCEFILES=main.c gpio_1.c gpio_3.c led_1.c led_3.c board.c
 
 
 
@@ -112,12 +112,6 @@ ${OBJECTDIR}/led_1.o: led_1.c  .generated_files/flags/default/cdbba65c35d72bfc13
 	@${RM} ${OBJECTDIR}/led_1.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/led_1.o.d" -MT "${OBJECTDIR}/led_1.o.d" -MT ${OBJECTDIR}/led_1.o -o ${OBJECTDIR}/led_1.o led_1.c 
 	
-${OBJECTDIR}/led_2.o: led_2.c  .generated_files/flags/default/a4e56510bc28a23f4a597574205253962e92f0df .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/led_2.o.d 
-	@${RM} ${OBJECTDIR}/led_2.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/led_2.o.d" -MT "${OBJECTDIR}/led_2.o.d" -MT ${OBJECTDIR}/led_2.o -o ${OBJECTDIR}/led_2.o led_2.c 
-	
 ${OBJECTDIR}/led_3.o: led_3.c  .generated_files/flags/default/17df7924cc017b45fdd580c1365f6b9414a830f2 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/led_3.o.d 
@@ -154,12 +148,6 @@ ${OBJECTDIR}/led_1.o: led_1.c  .generated_files/flags/default/8555bbab10a1b37b38
 	@${RM} ${OBJECTDIR}/led_1.o.d 
 	@${RM} ${OBJECTDIR}/led_1.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/led_1.o.d" -MT "${OBJECTDIR}/led_1.o.d" -MT ${OBJECTDIR}/led_1.o -o ${OBJECTDIR}/led_1.o led_1.c 
-	
-${OBJECTDIR}/led_2.o: led_2.c  .generated_files/flags/default/4fc39d6eb7ff7ffbc7d0d4568229499ad30b5cdb .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/led_2.o.d 
-	@${RM} ${OBJECTDIR}/led_2.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/led_2.o.d" -MT "${OBJECTDIR}/led_2.o.d" -MT ${OBJECTDIR}/led_2.o -o ${OBJECTDIR}/led_2.o led_2.c 
 	
 ${OBJECTDIR}/led_3.o: led_3.c  .generated_files/flags/default/23026dca488abe9cec6bc2c2165ff9c5b964de4d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 

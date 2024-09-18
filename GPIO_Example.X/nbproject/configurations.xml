@@ -30,7 +30,6 @@
       <itemPath>gpio_1.c</itemPath>
       <itemPath>gpio_3.c</itemPath>
       <itemPath>led_1.c</itemPath>
-      <itemPath>led_2.c</itemPath>
       <itemPath>led_3.c</itemPath>
       <itemPath>board.c</itemPath>
     </logicalFolder>
