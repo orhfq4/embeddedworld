@@ -9,7 +9,7 @@
 
 #include "gpio_3.h"
 
-void gpio_output_ctor(gpio_init_t * const me, volatile GPIO_t * _port, uint8_t _pinmask, uint8_t _value) {
+void GPIO_output_ctor(GPIO_init_t * const me, volatile GPIO_t * _port, uint8_t _pinmask, uint8_t _value) {
     me -> port_addr = _port;
     me -> pinmask = _pinmask;
     me -> port_addr -> GPIO_DDR |= _pinmask; // initialize the pin as output
@@ -23,7 +23,7 @@ void gpio_output_ctor(gpio_init_t * const me, volatile GPIO_t * _port, uint8_t _
     }
 }
 
-void GPIO_output_set_value_3(gpio_init_t * const me, uint8_t _value) {
+void GPIO_output_set_value_3(GPIO_init_t * const me, uint8_t _value) {
     if (_value) {
         me -> port_addr -> GPIO_PORT |= (me -> pinmask); // set the pin high
     }

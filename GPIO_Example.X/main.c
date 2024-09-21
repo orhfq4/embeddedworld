@@ -26,6 +26,8 @@
     * 
     *******************************************************************************/
         
+        // Works
+        
         // initialize PC7 as an output set to '1' (LED0) (off)
         PORTC|=LED0_PIN;
         DDRC|=LED0_PIN;
@@ -36,6 +38,8 @@
     * 
     *******************************************************************************/
         
+        // Works
+        
         // Initialize LED1 on Port B, Pin 3
         LED_init(LED1_PORT, LED1_PIN); // Call LED initialization
         
@@ -44,6 +48,8 @@
     *   
     * 
     *******************************************************************************/
+        
+        // Works
         
         // Initialize LED2 (connected to Port E, Pin 4)
         LED_init_2(LED2_PORT, LED2_PIN);  // Call LED2 initialization
@@ -54,14 +60,12 @@
     * 
     *******************************************************************************/
         
-        // unsure about this init. Need to call multiple LED objects?
+        // Works
         
         LED_t LED3; // Declare an instance for LED3
         
         // Initialize LED3 (connected to Port A, Pin 7, active low)
-        LED_init_3(&LED3, PA, LED3_PIN, 0, 1);  // 1 for Active low
-        
-        
+        LED_init_3(&LED3, LED3_PORT, LED3_PIN, 1, 0);  // 1 for Active low
         
         while (1) 
         {
@@ -69,58 +73,65 @@
             /******************************************************************************
             *   Method 1 LED on/off using direct addressing 
             *   
-            * 
+            *   Execution time for problem 7:
             *******************************************************************************/
+            
+            // Works
             
             // Blink LED0
             PORTC&=(~LED0_PIN);
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
             PORTC|=LED0_PIN;
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
             
             /******************************************************************************
             *   Method 2 LED on/off using Device Driver Layer (GPIO)
             *   & Hardware Abstraction Layer (LED)
-            * 
+            *   Execution time for problem 7:
             *******************************************************************************/
+            
+            // Works
             
             // Turn LED1 on
             LED_set_value(LED1_PORT, LED1_PIN, 0); // Turn on LED1
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
 
             // Turn LED1 off
             LED_set_value(LED1_PORT, LED1_PIN, 1); // Turn off LED1
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
             
             /******************************************************************************
             *   Method 3 LED using static inline functions
             *   
-            * 
+            *   Execution time for problem 7:
             *******************************************************************************/
+            
+            // Works
             
             // Turn LED2 on
             LED_set_value_2(LED2_PORT, LED2_PIN, 0); // Turn on LED2
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
 
             // Turn LED2 off
             LED_set_value_2(LED2_PORT, LED2_PIN, 1); // Turn off LED2
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
             
             /******************************************************************************
             *   Method 4 LED using object oriented programming
             *   
-            * 
+            *   Execution time for problem 7:
             *******************************************************************************/
             
-            // Unsure if these need to be flip-flopped or not
+            // Works
             
             // Turn LED3 on
             LED_set_value_3(&LED3, 0); // 0 for off (active low)
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
 
             // Turn LED3 off
             LED_set_value_3(&LED3, 1); // 1 for on (active low)
-            _delay_ms(1000);
+            // _delay_ms(1000); // remove for problem 7
+            
         }
     }
 

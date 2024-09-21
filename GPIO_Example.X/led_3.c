@@ -5,10 +5,10 @@
  * Created on September 17, 2024, 11:02 AM
  */
 
-// Unsure about this file. We haven't learned this yet
 // This file is used to solve question 5
 
 #include "led_3.h"
+#include "gpio_3.h"
 
 // Initialize LED
 void LED_init_3(LED_t * const led, volatile GPIO_t *port, uint8_t pinmask, uint8_t initial_state, uint8_t active_low) {

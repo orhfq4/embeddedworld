@@ -14,6 +14,7 @@
 // Inline function to initalize a GPIO pin as an output
 static inline void GPIO_output_init_2(volatile GPIO_t * addr, uint8_t pinmask) {
     addr -> GPIO_DDR |= pinmask; // set pin direction as output
+    addr -> GPIO_PORT |= pinmask; // set PORT to OFF as default
 }
 
 // Inline function to set the output value of a GPIO pin

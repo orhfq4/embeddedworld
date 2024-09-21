@@ -16,7 +16,7 @@
 
 // LED Object
 typedef struct {
-    gpio_init_t super;   // Inherit GPIO_Pin_t
+    GPIO_init_t super;   // Inherit GPIO_init_t
     uint8_t active_low; // Indicates if the LED is active low
 } LED_t;
 
