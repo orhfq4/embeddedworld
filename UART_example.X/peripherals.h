@@ -25,6 +25,8 @@ typedef struct GPIO
 #define PE ((volatile GPIO_t *)(&PINE))
 
 
+// Pretty sure that this code covers Question 1
+
 /***** UARTS ******/
 typedef struct UART
 {

@@ -7,18 +7,28 @@
 
 #include <avr/io.h>
 #include "board.h"
+#include "UART_Print.h"
 #include "UART.h"
 #include <avr/pgmspace.h>
 
-/****** Defines a 80 character buffer to use with UART_trasnsmit_string or copy_string_to_buffer ****/
+/* pretty sure that question 8 is to be completed here (below)
+
+    // const char string_name[15] PROGMEM = {?Hello World!\n\r\0?};
+
+ */
+
+/****** Defines a 80 character buffer to use with UART_transmit_string or copy_string_to_buffer ****/
 static char print_buffer[80];
 
 /***** This function just provides a pointer to the print_buffer for access from other source files ****/
 /***** Use: Declare a local char pointer;  char *buffer;
 ******      Execute the function and place the return value in the local pointer;  buffer=export_print_buffer();
 ******      Use the pointer to store/read strings of values in print_buffer;  sprintf(buffer,"Hello");
-******                                                                        UART_trnasmit_string(UART1,buffer,0);
+******                                                                        UART_transmit_string(UART1,buffer,0);
 ******/    
+
+// need to complete this function for question 7
+
 char * export_print_buffer(void)
 {
 	
