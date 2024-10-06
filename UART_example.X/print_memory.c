@@ -44,10 +44,10 @@ void print_16bytes(uint8_t * array_in, uint16_t offset)
    { 
       dat=*(input+index);
       if (dat<32 || dat>127) dat=46;
-      UART_transmit(print_port,dat);
+      UART_Transmit(print_port,dat);
    }
-   UART_transmit(print_port,CR);
-   UART_transmit(print_port,LF);
+   UART_Transmit(print_port,CR);
+   UART_Transmit(print_port,LF);
 }
 
 

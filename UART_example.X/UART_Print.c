@@ -102,7 +102,7 @@ void UART_transmit_string(volatile UART_t * UART_addr, char string_name[], uint8
                 index=0;
 		while (temp8!=0)
 		{
-			UART_transmit(UART_addr, temp8);
+			UART_Transmit(UART_addr, temp8);
 			index++;
 			temp8=string_name[index];
 		}
@@ -111,7 +111,7 @@ void UART_transmit_string(volatile UART_t * UART_addr, char string_name[], uint8
 	{
 		for(index=0;index<num_bytes;index++)
 		{
-			UART_transmit(UART_addr, string_name[index]);
+			UART_Transmit(UART_addr, string_name[index]);
 		}
 	}
 }
