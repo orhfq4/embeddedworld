@@ -20,14 +20,13 @@
 
 #ifdef	__cplusplus
 extern "C" {
-#endif
+
+void UART_Init(volatile UART_t *UART_addr, uint16_t baud_rate);
+uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send);
+uint8_t UART_Receive(volatile UART_t *UART_addr);
 
 
-
-
-#ifdef	__cplusplus
 }
-#endif
 
 #endif	/* UART_H */
 
