@@ -25,9 +25,9 @@
 #include "board.h"
 #include <util/delay.h>
 #include "LEDS.h"
-//#include "UART.h"
-//#include "UART_Print.h"
-//#include "print_memory.h"
+#include "UART.h"
+#include "UART_Print.h"
+#include "print_memory.h"
 #include <avr/pgmspace.h>
 #include <stdio.h>
 
