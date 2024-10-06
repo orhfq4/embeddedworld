@@ -5,8 +5,6 @@
  *  Author: youngerr
  */ 
 
-
-
 // Microcontroller: ATMEGA324PB
 #ifndef BOARD_H_
 #define BOARD_H_
@@ -17,7 +15,7 @@
 #define F_CPU (16000000UL)
 #define F_DIV (1)
 
-/***** UARTS ******/ // Uhhhhh I think this is right
+/***** UARTS ******/
 #define UART0  ((volatile UART_t *) (&UCSR0A))  //0xC0U 
 #define UART1  ((volatile UART_t *) (&UCSR1A))  //0xC8U 
 #define UART2  ((volatile UART_t *) (&UCSR2A))  //0xD0U
@@ -33,8 +31,6 @@
 #define LED3_PORT (PA)
 #define LED3_PIN (1<<7)
 
-
 extern led_inst_t led0, led1, led2, led3;
-
 
 #endif /* BOARD_H_ */

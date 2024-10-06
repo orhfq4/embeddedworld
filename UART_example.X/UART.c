@@ -35,7 +35,7 @@
  */
 
 // QUESTION 2: UART_Init implementation
-// function implementation for the UART_Init. # Need to resolve this.
+// function implementation for the UART_Init.
 void UART_Init(volatile UART_t *UART_addr, uint32_t baud_rate){
     // disable transmitter & receiver of the UART (safety)
     UART_addr->UCSRB &= ~((1<<TXEN)|(1<<RXEN));
@@ -69,7 +69,7 @@ void UART_Init(volatile UART_t *UART_addr, uint32_t baud_rate){
 }
 
 // QUESTION 3: UART_Transmit Implementation
-// function implementation for UART_transmit. # Need to resolve this
+// function implementation for UART_transmit
 uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value){
     uint8_t status;
     do{
@@ -88,7 +88,7 @@ uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value){
 // QUESTION 4: Verify UART_transmit function works using a debugger
 
 // QUESTION 5: UART_Receive function implementation
-// function implementation for UART_receive. # Need to resolve this.
+// function implementation for UART_receive
 uint8_t UART_Receive(volatile UART_t *UART_addr){ //not sure about this one chief -Josh
     while(UART_addr->RXC == 0){
         //blink LED0

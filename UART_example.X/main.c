@@ -31,13 +31,10 @@
 #include <avr/pgmspace.h>
 #include <stdio.h>
 
-
 int main(void)
 {
-    
 	// Initialize the LED outputs
     LED_ctor(&led0, LED0_PORT, LED0_PIN, LED_OFF, ACTIVE_LOW);
-    
     
     while (1) 
     {
@@ -49,9 +46,3 @@ int main(void)
 	
     }
 }
-
-
-
-
-
-
