@@ -39,24 +39,24 @@ typedef struct UART
 	volatile uint8_t UDR;
 } UART_t;
 
+// not sure if it's this default implementation
 #define UART0 ((volatile UART_t *) 0xC0)
 #define UART1 ((volatile UART_t *) 0xC8)
 #define UART2 ((volatile UART_t *) 0xD0)
 
+// or if it's this one defined in the slides using SFRs
+#define UART0 (&(_SFR_MEM8(0xC0U)))   // or (&UCSRA0) 
+#define UART1 (&(_SFR_MEM8(0xC8U)))   // or (&UCSRA1) 
+#define UART2 (&(_SFR_MEM8(0xD0U)))   // or (&UCSRA2)
 
-
-
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef	__cplusplus
-}
-#endif
+// not sure if we need these either yet
+#define UCSRA (0) 
+#define UCSRB (1) 
+#define UCSRC (2) 
+#define UCSRD (3) 
+#define UBRRL (4) 
+#define UBRRH (5) 
+#define UDR   (6)
 
 #endif	/* PERIPHERALS_H */
 
