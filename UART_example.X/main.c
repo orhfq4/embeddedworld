@@ -33,10 +33,6 @@
 
 const char string_name[15] PROGMEM = "Hello World!\n\r"; // uses copy_string_to_buffer to translate Flash to SRAM
 const char members[] = "Alice, Bob, Charlie, David, Eve"; // 32 characters including commas and spaces to test print_memory function
-void copy_string_to_buffer(const char *flash_string, char *buffer) {
-    // Copy the string from Flash to SRAM
-    strcpy_P(buffer, flash_string);
-}
 
 int main(void)
 {
@@ -44,7 +40,7 @@ int main(void)
     LED_ctor(&led0, LED0_PORT, LED0_PIN, LED_OFF, ACTIVE_LOW);
     
     // Initialize the UART
-    UART_Init(&UART1, 9600);
+    UART_Init(UART1, 9600);
     
     // Import the print buffer
     char *print_buffer;
@@ -52,12 +48,12 @@ int main(void)
     
     // transmitting string using sprintf
     sprintf(print_buffer, "Hello UART World!");
-    UART_transmit_string((uint8_t *)print_buffer);
+    UART_transmit_string(UART1, print_buffer, sizeof(print_buffer) - 1);
     
     // transmitting string using copy_string_to_buffer
     // Copy string from Flash to SRAM and print
-    copy_string_to_buffer(string_name, print_buffer); // to ensure that the string is copied from FLASH to SRAM
-    UART_transmit_string((uint8_t *)print_buffer);
+    copy_string_to_buffer(string_name, print_buffer, 15); // to ensure that the string is copied from FLASH to SRAM
+    UART_transmit_string(UART1, print_buffer, sizeof(print_buffer) - 1);
     
     // Call print_memory to print the string (length is 32)
     print_memory((uint8_t *)members, sizeof(members));  // Cast to uint8_t pointer and pass size
@@ -71,7 +67,7 @@ int main(void)
 		_delay_ms(450);
         
         // Transmit the character 'U'
-        UART_Transmit(&UART1, 0x55);  // ASCII character 'U' (0x55)
+        UART_Transmit(UART1, 0x55);  // ASCII character 'U' (0x55)
 
         // Add a delay of 0.5 to 1 second
         _delay_ms(500);  // Adjust the delay as needed

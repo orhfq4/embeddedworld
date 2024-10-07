@@ -11,12 +11,6 @@
 #include "UART.h"
 #include <avr/pgmspace.h>
 
-/* pretty sure that question 8 is to be completed here (below)
-
-    // const char string_name[15] PROGMEM = {?Hello World!\n\r\0?};
-
- */
-
 /****** Defines a 80 character buffer to use with UART_transmit_string or copy_string_to_buffer ****/
 static char print_buffer[80];
 

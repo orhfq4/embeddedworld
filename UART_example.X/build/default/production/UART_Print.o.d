@@ -1,6 +1,6 @@
-build/default/production/GPIO_Outputs.o.d \
- build/default/production/GPIO_Outputs.o: GPIO_Outputs.c board.h \
- peripherals.h /Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h \
+build/default/production/UART_Print.o.d \
+ build/default/production/UART_Print.o: UART_Print.c \
+ /Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/sfr_defs.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/inttypes.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/features.h \
@@ -12,12 +12,10 @@ build/default/production/GPIO_Outputs.o.d \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/portpins.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/common.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/fuse.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h LEDS.h \
- GPIO_Outputs.h
-
-board.h:
-
-peripherals.h:
+ /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h board.h \
+ peripherals.h LEDS.h GPIO_Outputs.h UART_Print.h UART.h \
+ /Applications/microchip/xc8/v2.46/avr/avr/include/avr/pgmspace.h \
+ /Applications/microchip/xc8/v2.46/avr/lib/gcc/avr/5.4.0/include/stddef.h
 
 /Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h:
 
@@ -45,6 +43,18 @@ peripherals.h:
 
 /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h:
 
+board.h:
+
+peripherals.h:
+
 LEDS.h:
 
 GPIO_Outputs.h:
+
+UART_Print.h:
+
+UART.h:
+
+/Applications/microchip/xc8/v2.46/avr/avr/include/avr/pgmspace.h:
+
+/Applications/microchip/xc8/v2.46/avr/lib/gcc/avr/5.4.0/include/stddef.h:

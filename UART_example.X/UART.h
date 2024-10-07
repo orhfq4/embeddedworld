@@ -7,6 +7,9 @@
 
 // Need to complete for question 2
 
+#include "peripherals.h"
+#include "board.h"
+
 #ifndef UART_H
 #define	UART_H
 

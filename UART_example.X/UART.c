@@ -1,6 +1,9 @@
 #include "UART.h"
 #include "board.h"
 #include "LEDS.h"
+#include "peripherals.h"
+#include <util/delay.h>
+#include <avr/io.h>
 
 // Need to define the function implementations here
 // This is for questions 3-6
@@ -21,6 +24,7 @@
 #define One_Stop_Bit  (0<<3) 
 #define Two_Stop_Bits (1<<3)
 
+/*
 // Define the type of data being outputted (pick one) all are defined though
 #define 5_Bit_Data     (0<<1) 
 #define 6_Bit_Data     (1<<1) 
@@ -28,6 +32,7 @@
 #define 8_Bit_Data     (3<<1) 
 #define 9_Bit_Data     (3<<1)  //UCSZ2 must be set in UCSRB 
 #define 9_Bit_UCSZ2    (1<<2)  //UCSZ2 must be set in UCSRB
+*/
 
 /*
     Not sure about the actual values for each UCSR_ register - Josh
@@ -38,19 +43,19 @@
 // function implementation for the UART_Init.
 void UART_Init(volatile UART_t *UART_addr, uint32_t baud_rate){
     // disable transmitter & receiver of the UART (safety)
-    UART_addr->UCSRB &= ~((1<<TXEN)|(1<<RXEN));
+    UART_addr->UART_UCSRB &= ~((1<<TXEN)|(1<<RXEN));
     
     // Disable UART interrupts
-    UART_addr->UCSRB &= ~((1 << RXCIE) | (1 << TXCIE) | (1 << UDRIE));
+    UART_addr->UART_UCSRB &= ~((1 << RXCIE) | (1 << TXCIE) | (1 << UDRIE));
     
     // Calculate UBRR value based on U2X setting
     uint16_t UBRR_value;
     if (U2X) {
         UBRR_value = (F_CPU / (8UL * baud_rate)) - 1;
-        UART_addr->UCSRA |= (1<<U2X);  // Enable double speed
+        UART_addr->UART_UCSRA |= (1<<U2X);  // Enable double speed
     } else {
         UBRR_value = (F_CPU / (16UL * baud_rate)) - 1;
-        UART_addr->UCSRA &= ~(1<<U2X); // Normal speed
+        UART_addr->UART_UCSRA &= ~(1<<U2X); // Normal speed
     }
     
     // maybe incorporate the line below in the if else function for better rounding accuracy?
@@ -58,14 +63,14 @@ void UART_Init(volatile UART_t *UART_addr, uint32_t baud_rate){
     
     // Set the baud rate in the upper and lower registers
     // Struct_Address -> Struct_Element
-    UART_addr->UBRRH =UBRR_value/256; // Calculates upper 8 bits
-    UART_addr->UBRRL =UBRR_value%256; // Calculates lower 8 bits
+    UART_addr->UART_UBBRH =UBRR_value/256; // Calculates upper 8 bits
+    UART_addr->UART_UBBRL =UBRR_value%256; // Calculates lower 8 bits
 
     // Set frame format (Async Mode, no parity, 1 stop bit)
-    UART_addr->UCSRC = (Async_Mode|No_Parity|One_Stop_Bit); // I think this is the format we need?
+    UART_addr->UART_UCSRC = (Async_Mode|No_Parity|One_Stop_Bit); // I think this is the format we need?
 
     // Enable transmitter & receiver of the UART
-    UART_addr->UCSRB = (1<<TXEN) | (1<<RXEN);
+    UART_addr->UART_UCSRB = (1<<TXEN) | (1<<RXEN);
 }
 
 // QUESTION 3: UART_Transmit Implementation
@@ -74,7 +79,7 @@ uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value){
     uint8_t status;
     do{
         // UDRE is a bit value defined in <avr/io.h>
-        status = UART_addr->UCSRA; // Read the status bits in UCSRA
+        status = UART_addr->UART_UCSRA; // Read the status bits in UCSRA
         //blink LED0
         LED_set_value(&led0, LED_ON);
         _delay_ms(500); // 0.5s delay
@@ -82,7 +87,7 @@ uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value){
         _delay_ms(500);
     }while((status&(1<<UDRE))!=(1<<UDRE));
     // Place the send_value into the USART data register
-    UART_addr->UDR = send_value; // optional step
+    UART_addr->UART_UDR = send_value; // optional step
     return 0; // could return send_value if you want
 }
 // QUESTION 4: Verify UART_transmit function works using a debugger
@@ -90,7 +95,7 @@ uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value){
 // QUESTION 5: UART_Receive function implementation
 // function implementation for UART_receive
 uint8_t UART_Receive(volatile UART_t *UART_addr){ //not sure about this one chief -Josh
-    while(UART_addr->RXC == 0){
+    while(!(UART_addr->UART_UCSRA & (1 << RXC))){ // UART_addr -> RXC == 0
         //blink LED0
         LED_set_value(&led0, LED_ON);
         _delay_ms(500); // 0.5s delay
@@ -99,7 +104,7 @@ uint8_t UART_Receive(volatile UART_t *UART_addr){ //not sure about this one chie
         // value = UART_receive(UART1); // need to resolve identifier
         // UART_transmit(UART1, value);
     }
-    uint8_t received_value = UART_addr->UDR; // I think?
+    uint8_t received_value = UART_addr->UART_UDR; // I think?
     // UART_addr->RXC = 0; // I think RXC is reset automagically?
     return received_value;
 }

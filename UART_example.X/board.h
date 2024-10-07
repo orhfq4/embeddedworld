@@ -15,11 +15,6 @@
 #define F_CPU (16000000UL)
 #define F_DIV (1)
 
-/***** UARTS ******/
-#define UART0  ((volatile UART_t *) (&UCSR0A))  //0xC0U 
-#define UART1  ((volatile UART_t *) (&UCSR1A))  //0xC8U 
-#define UART2  ((volatile UART_t *) (&UCSR2A))  //0xD0U
-
 /* LEDS */
 #define LED0_PORT (PC)
 #define LED0_PIN (1<<7)

@@ -1,6 +1,6 @@
-build/default/production/GPIO_Outputs.o.d \
- build/default/production/GPIO_Outputs.o: GPIO_Outputs.c board.h \
- peripherals.h /Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h \
+build/default/production/UART.o.d build/default/production/UART.o: UART.c \
+ UART.h peripherals.h \
+ /Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/sfr_defs.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/inttypes.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/features.h \
@@ -12,10 +12,13 @@ build/default/production/GPIO_Outputs.o.d \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/portpins.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/common.h \
  /Applications/microchip/xc8/v2.46/avr/avr/include/avr/fuse.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h LEDS.h \
- GPIO_Outputs.h
+ /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h board.h \
+ LEDS.h GPIO_Outputs.h \
+ /Applications/microchip/xc8/v2.46/avr/avr/include/util/delay.h \
+ /Applications/microchip/xc8/v2.46/avr/avr/include/util/delay_basic.h \
+ /Applications/microchip/xc8/v2.46/avr/avr/include/math.h
 
-board.h:
+UART.h:
 
 peripherals.h:
 
@@ -45,6 +48,14 @@ peripherals.h:
 
 /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h:
 
+board.h:
+
 LEDS.h:
 
 GPIO_Outputs.h:
+
+/Applications/microchip/xc8/v2.46/avr/avr/include/util/delay.h:
+
+/Applications/microchip/xc8/v2.46/avr/avr/include/util/delay_basic.h:
+
+/Applications/microchip/xc8/v2.46/avr/avr/include/math.h:
