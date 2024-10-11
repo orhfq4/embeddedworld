@@ -32,6 +32,16 @@ typedef struct
 ***************************************************************/
 void GPIO_output_ctor(gpio_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, GPIO_PIN_STATE_t _state);
 
+/**************************************************************
+*   GPIO_output_set_value
+*   Inputs: pointer to a GPIO Instance Object,
+*           GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function
+*   Output: None
+**************************************************************
+*   Function: Sets the value of the GPIO PORT register.
+*
+*   Caution: 
+***************************************************************/
 static inline void GPIO_output_set_value(gpio_inst_t * const me, GPIO_PIN_STATE_t _state)
 {
     if(GPIO_CLEAR==_state)

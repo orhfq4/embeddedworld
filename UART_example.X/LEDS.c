@@ -31,14 +31,12 @@ void LED_ctor(led_inst_t * const me, volatile GPIO_t * _port_addr,
 }
 
 /**************************************************************
-*   GPIO_output_ctor
-*   Inputs: pointer to a GPIO port struct,
-            pointer to a GPIO Instance Object,
-*           pin_mask to select GPIO pin(s)
-            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
+*   LED_set_value
+*   Inputs: LED instance object,
+            led_state_t variable that orginates from the LED_get_value function which reads the PIN register of the LED
 *   Output: None
 **************************************************************
-*   Function: GPIO instance object constructor, builds a GPIO object.
+*   Function: Sets the value of the LED PORT register
 *
 *   Caution: 
 ***************************************************************/
@@ -48,14 +46,11 @@ void LED_set_value(led_inst_t * const me, led_state_t _state)
 }
 
 /**************************************************************
-*   GPIO_output_ctor
-*   Inputs: pointer to a GPIO port struct,
-            pointer to a GPIO Instance Object,
-*           pin_mask to select GPIO pin(s)
-            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
-*   Output: None
+*   LED_get_value
+*   Inputs: LED instance object
+*   Output: Outputs the PIN register value of the LED object
 **************************************************************
-*   Function: GPIO instance object constructor, builds a GPIO object.
+*   Function: Gets the value of the PIN register of the LED object
 *
 *   Caution: 
 ***************************************************************/
@@ -74,13 +69,10 @@ led_state_t LED_get_value(led_inst_t * const me)
 
 /**************************************************************
 *   GPIO_output_ctor
-*   Inputs: pointer to a GPIO port struct,
-            pointer to a GPIO Instance Object,
-*           pin_mask to select GPIO pin(s)
-            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
+*   Inputs: LED instance object
 *   Output: None
 **************************************************************
-*   Function: GPIO instance object constructor, builds a GPIO object.
+*   Function: Toggles the value of the LED instance object from off to on or on to off.
 *
 *   Caution: 
 ***************************************************************/

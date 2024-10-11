@@ -13,14 +13,40 @@
 #ifndef UART_H
 #define	UART_H
 
-// function prototype for UART_Init function
+/**************************************************************
+*   UART_Init
+*   Inputs: UART object from the UART struct,
+            a 32-bit number for the baud rate
+*   Output: None
+**************************************************************
+*   Function: Initiatlizes the UART.
+*
+*   Caution: 
+***************************************************************/
 void UART_Init(volatile UART_t * UART_addr, uint32_t baud_rate);
 // can be called using UART_Init(UART1, 9600);
 
-// function prototype for UART_Transmit function (Blocking)
+/**************************************************************
+*   UART_Transmit
+*   Inputs: UART object from the UART struct,
+            an 8-bit value to send to the UART and transmit out
+*   Output: Outpus the send value to the UDR.
+**************************************************************
+*   Function: Transmits a value to the UART's UDR
+*
+*   Caution: 
+***************************************************************/
 uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value);
 
-// function prototype for UART_Receive function
+/**************************************************************
+*   LED_ctor
+*   Inputs: UART object from the UART struct
+*   Output: The value received from the UDR
+**************************************************************
+*   Function: Reads a value from the UART's UDR.
+*
+*   Caution: 
+***************************************************************/
 uint8_t UART_Receive(volatile UART_t *UART_addr);
 
 #endif	/* UART_H */

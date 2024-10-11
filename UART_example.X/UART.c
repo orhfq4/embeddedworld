@@ -94,7 +94,7 @@ uint8_t UART_Transmit(volatile UART_t *UART_addr, uint8_t send_value){
 
 // QUESTION 5: UART_Receive function implementation
 // function implementation for UART_receive
-uint8_t UART_Receive(volatile UART_t *UART_addr){ //not sure about this one chief -Josh
+uint8_t UART_Receive(volatile UART_t *UART_addr){ 
     while(!(UART_addr->UART_UCSRA & (1 << RXC))){ // UART_addr -> RXC == 0
         //blink LED0
         LED_set_value(&led0, LED_ON);
@@ -104,7 +104,7 @@ uint8_t UART_Receive(volatile UART_t *UART_addr){ //not sure about this one chie
         // value = UART_receive(UART1); // need to resolve identifier
         // UART_transmit(UART1, value);
     }
-    uint8_t received_value = UART_addr->UART_UDR; // I think?
+    uint8_t received_value = UART_addr->UART_UDR; 
     // UART_addr->RXC = 0; // I think RXC is reset automagically?
     return received_value;
 }
