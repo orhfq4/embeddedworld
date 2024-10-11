@@ -10,19 +10,17 @@
 
 
 /**************************************************************
-*   GPIO_output_init
+*   GPIO_output_ctor
 *   Inputs: pointer to a GPIO port struct,
+            pointer to a GPIO Instance Object,
 *           pin_mask to select GPIO pin(s)
+            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
 *   Output: None
 **************************************************************
-*   Function: Pin set to be an output by setting that bit in the DDR
+*   Function: GPIO instance object constructor, builds a GPIO object.
 *
-*   Caution: Does not set the pins to a default value
+*   Caution: 
 ***************************************************************/
-
-
-
-
 void GPIO_output_ctor(gpio_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, GPIO_PIN_STATE_t _state)
 {
     me->port_addr=_port_addr;

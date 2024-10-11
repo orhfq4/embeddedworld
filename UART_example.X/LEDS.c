@@ -10,56 +10,18 @@
 #include "LEDS.h"
 
 /**************************************************************
-*   LEDS_init
-*   Inputs: pointer to a GPIO port struct,
-*           pin_mask to select GPIO pin(s)
-*           active selects when LED is on(active), ACTIVE_HIGH or ACTIVE_LOW
+*   LED_ctor
+*   Inputs: LED instance object from the LED struct,
+            GPIO Object from the GPIO struct,
+            pin mask to set the value of the pin mask of the GPIO object,
+            led_state_t variable that orginates from the LED_get_value function which reads the PIN register of the LED,
+            Polarity variable to determine either active high or active low for the LED
 *   Output: None
 **************************************************************
-*   Function: Switches the LED off (inactive)
-*             Enables the GPIO pin(s) as output(s)
-*   Caution: Must use the defined constants: ACTIVE_HIGH or ACTIVE_LOW
-***************************************************************/
-
-
-
-/*******************************************************************************
-*    This section uses conditional execution to select the correct function
-*    based on the defined constants ACTIVE_LOW or ACTIVE_HIGH
-********************************************************************************/
-
-/******* Comment out the other definitions of LEDS_on and LEDS_off to use these ****/
-
-/**************************************************************
-*   LEDS_on
-*   Inputs: pointer to a GPIO port struct,
-*           pin_mask to select GPIO pin(s)
-*           active selects when LED is on(active), ACTIVE_HIGH or ACTIVE_LOW
-*   Output: None
-**************************************************************
-*   Function: Switches the selected LEDs on (active)
-*          
-*   Caution: Must use the defined constants: ACTIVE_HIGH or ACTIVE_LOW
-*            Alternative version below eliminates the if for faster execution
-***************************************************************/
-
-
-
-/**************************************************************
-*   LEDS_off
-*   Inputs: pointer to a GPIO port struct,
-*           pin_mask to select GPIO pin(s)
-*           active selects when LED is on(active), ACTIVE_HIGH or ACTIVE_LOW
-*   Output: None
-**************************************************************
-*   Function: Switches the selected LEDs off (inactive)
+*   Function: LED instance object constructor, builds a LED object.
 *
-*   Caution: Must use the defined constants: ACTIVE_HIGH or ACTIVE_LOW
-*            Alternative version below eliminates the if for faster execution
+*   Caution: Make sure your inputting the correct value for the polarity value.
 ***************************************************************/
-
-
-
 void LED_ctor(led_inst_t * const me, volatile GPIO_t * _port_addr, 
                                   uint8_t _pin_mask, led_state_t _state,
                                   led_polarity_t _polarity)
@@ -68,11 +30,35 @@ void LED_ctor(led_inst_t * const me, volatile GPIO_t * _port_addr,
     me->led_polarity=_polarity;
 }
 
+/**************************************************************
+*   GPIO_output_ctor
+*   Inputs: pointer to a GPIO port struct,
+            pointer to a GPIO Instance Object,
+*           pin_mask to select GPIO pin(s)
+            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
+*   Output: None
+**************************************************************
+*   Function: GPIO instance object constructor, builds a GPIO object.
+*
+*   Caution: 
+***************************************************************/
 void LED_set_value(led_inst_t * const me, led_state_t _state)
 {
         GPIO_output_set_value(&me->super,((_state)^(me->led_polarity)));
 }
 
+/**************************************************************
+*   GPIO_output_ctor
+*   Inputs: pointer to a GPIO port struct,
+            pointer to a GPIO Instance Object,
+*           pin_mask to select GPIO pin(s)
+            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
+*   Output: None
+**************************************************************
+*   Function: GPIO instance object constructor, builds a GPIO object.
+*
+*   Caution: 
+***************************************************************/
 led_state_t LED_get_value(led_inst_t * const me)
 {
     uint8_t temp8;
@@ -86,60 +72,21 @@ led_state_t LED_get_value(led_inst_t * const me)
     return return_val;
 }
 
+/**************************************************************
+*   GPIO_output_ctor
+*   Inputs: pointer to a GPIO port struct,
+            pointer to a GPIO Instance Object,
+*           pin_mask to select GPIO pin(s)
+            GPIO_PIN_STATE variable indicating the state of the constructor - GPIO_PIN_STATE-t originates from an output of another function.
+*   Output: None
+**************************************************************
+*   Function: GPIO instance object constructor, builds a GPIO object.
+*
+*   Caution: 
+***************************************************************/
 void LED_toggle_value(led_inst_t * const me)
 {
     GPIO_output_toggle_value(&me->super);
 }
 
-/*******************************************************************************
-*    This section uses conditional compilation to select the correct function 
-*    based on the defined constant LED_ACTIVE_LOW or LED_ACTIVE_HIGH          
-********************************************************************************/
 
-/******* Comment out the previous definitions of LEDS_on and LEDS_off to use these ****/
-
-//#define LED_ACTIVE_LOW     // uncomment the correct LED ACTIVE STATE 
-  ////#define LED_ACTIVE_HIGH   
-///**************************************************************
-//*   LEDS_on
-//*   Inputs: pointer to a GPIO port struct,
-//*           pin_mask to select GPIO pin(s)
-//*           active selects when LED is on(active), ACTIVE_HIGH or ACTIVE_LOW
-//*   Output: None
-//**************************************************************
-//*   Function: Switches the selected LEDs on (active)
-//*
-//*   Caution: Must use the defined constants: ACTIVE_HIGH or ACTIVE_LOW
-//*            Alternative version below eliminates the if for faster execution
-//***************************************************************/
-//
-//void LEDS_on(volatile GPIO_t * port_addr, uint8_t pin_mask, uint8_t active)
-//{
-//#ifdef LED_ACTIVE_LOW
-		//GPIO_output_clear(port_addr,pin_mask);
-//#else // LED_ACTIVE_HIGH
-		//GPIO_output_set(port_addr,pin_mask);
-//#endif
-//}
-//
-///**************************************************************
-//*   LEDS_off
-//*   Inputs: pointer to a GPIO port struct,
-//*           pin_mask to select GPIO pin(s)
-//*           active selects when LED is on(active), ACTIVE_HIGH or ACTIVE_LOW
-//*   Output: None
-//**************************************************************
-//*   Function: Switches the selected LEDs off (inactive)
-//*
-//*   Caution: Must use the defined constants: ACTIVE_HIGH or ACTIVE_LOW
-//*            Alternative version below eliminates the if for faster execution
-//***************************************************************/
-//
-//void LEDS_off(volatile GPIO_t * port_addr, uint8_t pin_mask, uint8_t active)
-//{
-//#ifdef LED_ACTIVE_LOW
-     //GPIO_output_set(port_addr,pin_mask);
-//#else // LED_ACTIVE_HIGH
-     //GPIO_output_clear(port_addr,pin_mask);
-//#endif
-//}
