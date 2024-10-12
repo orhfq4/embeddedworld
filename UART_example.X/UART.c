@@ -24,20 +24,7 @@
 #define One_Stop_Bit  (0<<3) 
 #define Two_Stop_Bits (1<<3)
 
-/*
-// Define the type of data being outputted (pick one) all are defined though
-#define 5_Bit_Data     (0<<1) 
-#define 6_Bit_Data     (1<<1) 
-#define 7_Bit_Data     (2<<1) 
-#define 8_Bit_Data     (3<<1) 
-#define 9_Bit_Data     (3<<1)  //UCSZ2 must be set in UCSRB 
-#define 9_Bit_UCSZ2    (1<<2)  //UCSZ2 must be set in UCSRB
-*/
-
-/*
-    Not sure about the actual values for each UCSR_ register - Josh
-    might be goo to look at slide 24 of chaper 7? Has info making the options constants - Josh
- */
+// *******Function Comments are in UART.H********
 
 // QUESTION 2: UART_Init implementation
 // function implementation for the UART_Init.
@@ -58,8 +45,6 @@ void UART_Init(volatile UART_t *UART_addr, uint32_t baud_rate){
         UART_addr->UART_UCSRA &= ~(1<<U2X); // Normal speed
     }
     
-    // maybe incorporate the line below in the if else function for better rounding accuracy?
-    // uint16_t UBRR_value=(uint16_t)((((F_CPU/F_DIV)+(4UL*(2-U2X)*baud_rate))/(8UL*(2-U2X)*baud_rate))-1);
     
     // Set the baud rate in the upper and lower registers
     // Struct_Address -> Struct_Element
@@ -101,11 +86,8 @@ uint8_t UART_Receive(volatile UART_t *UART_addr){
         _delay_ms(500); // 0.5s delay
         LED_set_value(&led0, LED_OFF);
         _delay_ms(500);
-        // value = UART_receive(UART1); // need to resolve identifier
-        // UART_transmit(UART1, value);
     }
     uint8_t received_value = UART_addr->UART_UDR; 
-    // UART_addr->RXC = 0; // I think RXC is reset automagically?
     return received_value;
 }
 // QUESTION 6: Verify UART_receive function works using data visualizer
