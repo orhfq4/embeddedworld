@@ -883,225 +883,225 @@ progmem.data.string_name
                 0x0000000000000ed4       0x6a build/default/production/UART_Print.o
                 0x0000000000000ed4                UART_transmit_string
 
+.text.UART_Init
+                0x0000000000000f3e       0x5e
+ .text.UART_Init
+                0x0000000000000f3e       0x5e build/default/production/UART.o
+                0x0000000000000f3e                UART_Init
+
 .text.UART_Transmit
-                0x0000000000000f3e       0x5c
+                0x0000000000000f9c       0x5c
  .text.UART_Transmit
-                0x0000000000000f3e       0x5c build/default/production/UART.o
-                0x0000000000000f3e                UART_Transmit
+                0x0000000000000f9c       0x5c build/default/production/UART.o
+                0x0000000000000f9c                UART_Transmit
 
 .text.read_prec_or_width
-                0x0000000000000f9a       0x5c
+                0x0000000000000ff8       0x5c
  .text.read_prec_or_width
-                0x0000000000000f9a       0x5c /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
+                0x0000000000000ff8       0x5c /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
 
-.text.UART_Init
-                0x0000000000000ff6       0x58
- .text.UART_Init
-                0x0000000000000ff6       0x58 build/default/production/UART.o
-                0x0000000000000ff6                UART_Init
-
-.text.__fmt_s   0x000000000000104e       0x54
- .text.__fmt_s  0x000000000000104e       0x54 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__fmt_s.o)
-                0x000000000000104e                __fmt_s_needed
-                0x000000000000104e                __fmt_s
-                0x000000000000104e                __fmt_0_needed
+.text.__fmt_s   0x0000000000001054       0x54
+ .text.__fmt_s  0x0000000000001054       0x54 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__fmt_s.o)
+                0x0000000000001054                __fmt_s_needed
+                0x0000000000001054                __fmt_s
+                0x0000000000001054                __fmt_0_needed
 
 .text.print_memory
-                0x00000000000010a2       0x50
+                0x00000000000010a8       0x50
  .text.print_memory
-                0x00000000000010a2       0x50 build/default/production/print_memory.o
-                0x00000000000010a2                print_memory
+                0x00000000000010a8       0x50 build/default/production/print_memory.o
+                0x00000000000010a8                print_memory
 
 .text.libgcc.div
-                0x00000000000010f2       0x44
+                0x00000000000010f8       0x44
  .text.libgcc.div
-                0x00000000000010f2       0x44 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/avr5/libgcc.a(_udivmodsi4.o)
-                0x00000000000010f2                __udivmodsi4
+                0x00000000000010f8       0x44 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/avr5/libgcc.a(_udivmodsi4.o)
+                0x00000000000010f8                __udivmodsi4
 
 .text.copy_string_to_buffer
-                0x0000000000001136       0x40
+                0x000000000000113c       0x40
  .text.copy_string_to_buffer
-                0x0000000000001136       0x40 build/default/production/UART_Print.o
-                0x0000000000001136                copy_string_to_buffer
+                0x000000000000113c       0x40 build/default/production/UART_Print.o
+                0x000000000000113c                copy_string_to_buffer
 
 .text.__fmt_state
-                0x0000000000001176       0x40
+                0x000000000000117c       0x40
  .text.__fmt_state
-                0x0000000000001176       0x40 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
-                0x0000000000001176                __fmt_state
+                0x000000000000117c       0x40 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
+                0x000000000000117c                __fmt_state
 
 .text.GPIO_output_ctor
-                0x00000000000011b6       0x3c
+                0x00000000000011bc       0x3c
  .text.GPIO_output_ctor
-                0x00000000000011b6       0x3c build/default/production/GPIO_Outputs.o
-                0x00000000000011b6                GPIO_output_ctor
+                0x00000000000011bc       0x3c build/default/production/GPIO_Outputs.o
+                0x00000000000011bc                GPIO_output_ctor
 
-.text.__out     0x00000000000011f2       0x3a
- .text.__out    0x00000000000011f2       0x3a /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
-                0x00000000000011f2                __out
-
-.text.libgcc.prologue
-                0x000000000000122c       0x38
- .text.libgcc.prologue
-                0x000000000000122c       0x38 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/avr5/libgcc.a(_prologue.o)
-                0x000000000000122c                __prologue_saves__
+.text.__out     0x00000000000011f8       0x3a
+ .text.__out    0x00000000000011f8       0x3a /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
+                0x00000000000011f8                __out
 
 .text.libgcc.prologue
-                0x0000000000001264       0x36
+                0x0000000000001232       0x38
  .text.libgcc.prologue
-                0x0000000000001264       0x36 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/avr5/libgcc.a(_epilogue.o)
-                0x0000000000001264                __epilogue_restores__
+                0x0000000000001232       0x38 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/avr5/libgcc.a(_prologue.o)
+                0x0000000000001232                __prologue_saves__
+
+.text.libgcc.prologue
+                0x000000000000126a       0x36
+ .text.libgcc.prologue
+                0x000000000000126a       0x36 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/avr5/libgcc.a(_epilogue.o)
+                0x000000000000126a                __epilogue_restores__
 
 .text.LED_set_value
-                0x000000000000129a       0x32
+                0x00000000000012a0       0x32
  .text.LED_set_value
-                0x000000000000129a       0x32 build/default/production/LEDS.o
-                0x000000000000129a                LED_set_value
+                0x00000000000012a0       0x32 build/default/production/LEDS.o
+                0x00000000000012a0                LED_set_value
 
 .text.__vfprintf
-                0x00000000000012cc       0x30
+                0x00000000000012d2       0x30
  .text.__vfprintf
-                0x00000000000012cc       0x30 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__int_vfprintf.o)
-                0x00000000000012cc                __vfprintf
+                0x00000000000012d2       0x30 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__int_vfprintf.o)
+                0x00000000000012d2                __vfprintf
 
 .text.__wrap_sprintf
-                0x00000000000012fc       0x24
+                0x0000000000001302       0x24
  .text.__wrap_sprintf
-                0x00000000000012fc       0x24 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__sio_sprintf_doux.o)
-                0x00000000000012fc                _sprintf_cdopuxX
+                0x0000000000001302       0x24 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__sio_sprintf_doux.o)
+                0x0000000000001302                _sprintf_cdopuxX
 
-.text.strlen    0x0000000000001320       0x1c
- .text.strlen   0x0000000000001320       0x1c /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(strlen.o)
-                0x0000000000001320                strlen
+.text.strlen    0x0000000000001326       0x1c
+ .text.strlen   0x0000000000001326       0x1c /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(strlen.o)
+                0x0000000000001326                strlen
 
-.text.LED_ctor  0x000000000000133c       0x18
+.text.LED_ctor  0x0000000000001342       0x18
  .text.LED_ctor
-                0x000000000000133c       0x18 build/default/production/LEDS.o
-                0x000000000000133c                LED_ctor
+                0x0000000000001342       0x18 build/default/production/LEDS.o
+                0x0000000000001342                LED_ctor
 
-.text.exit      0x0000000000001354       0x16
- .text.exit     0x0000000000001354       0x16 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
-                0x0000000000001354                exit
+.text.exit      0x000000000000135a       0x16
+ .text.exit     0x000000000000135a       0x16 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
+                0x000000000000135a                exit
 
-.text.toupper   0x000000000000136a       0x12
- .text.toupper  0x000000000000136a       0x12 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(toupper.o)
-                0x000000000000136a                toupper
+.text.toupper   0x0000000000001370       0x12
+ .text.toupper  0x0000000000001370       0x12 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(toupper.o)
+                0x0000000000001370                toupper
 
-.text.tolower   0x000000000000137c       0x10
- .text.tolower  0x000000000000137c       0x10 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(tolower.o)
-                0x000000000000137c                tolower
+.text.tolower   0x0000000000001382       0x10
+ .text.tolower  0x0000000000001382       0x10 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(tolower.o)
+                0x0000000000001382                tolower
 
 .text.__vsprintf
-                0x000000000000138c        0xe
+                0x0000000000001392        0xe
  .text.__vsprintf
-                0x000000000000138c        0xe /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__int_vsprintf.o)
-                0x000000000000138c                __vsprintf
+                0x0000000000001392        0xe /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__int_vsprintf.o)
+                0x0000000000001392                __vsprintf
 
 .text.export_print_buffer
-                0x000000000000139a        0x6
+                0x00000000000013a0        0x6
  .text.export_print_buffer
-                0x000000000000139a        0x6 build/default/production/UART_Print.o
-                0x000000000000139a                export_print_buffer
+                0x00000000000013a0        0x6 build/default/production/UART_Print.o
+                0x00000000000013a0                export_print_buffer
 
-.text           0x00000000000013a0        0x4
- .text          0x00000000000013a0        0x4 /Users/owenhancock/.mchp_packs/Microchip/ATmega_DFP/3.2.269/xc8/avr/lib/avr5/crtatmega324pb.o
-                0x00000000000013a0                __vector_42
-                0x00000000000013a0                __vector_22
-                0x00000000000013a0                __vector_28
-                0x00000000000013a0                __vector_1
-                0x00000000000013a0                __vector_32
-                0x00000000000013a0                __vector_34
-                0x00000000000013a0                __vector_24
-                0x00000000000013a0                __vector_12
-                0x00000000000013a0                __vector_46
-                0x00000000000013a0                __bad_interrupt
-                0x00000000000013a0                __vector_6
-                0x00000000000013a0                __vector_31
-                0x00000000000013a0                __vector_35
-                0x00000000000013a0                __vector_39
-                0x00000000000013a0                __vector_3
-                0x00000000000013a0                __vector_23
-                0x00000000000013a0                __vector_30
-                0x00000000000013a0                __vector_45
-                0x00000000000013a0                __vector_25
-                0x00000000000013a0                __vector_11
-                0x00000000000013a0                __vector_13
-                0x00000000000013a0                __vector_17
-                0x00000000000013a0                __vector_19
-                0x00000000000013a0                __vector_7
-                0x00000000000013a0                __vector_49
-                0x00000000000013a0                __vector_41
-                0x00000000000013a0                __vector_43
-                0x00000000000013a0                __vector_27
-                0x00000000000013a0                __vector_5
-                0x00000000000013a0                __vector_33
-                0x00000000000013a0                __vector_47
-                0x00000000000013a0                __vector_37
-                0x00000000000013a0                __vector_4
-                0x00000000000013a0                __vector_44
-                0x00000000000013a0                __vector_9
-                0x00000000000013a0                __vector_2
-                0x00000000000013a0                __vector_21
-                0x00000000000013a0                __vector_15
-                0x00000000000013a0                __vector_36
-                0x00000000000013a0                __vector_29
-                0x00000000000013a0                __vector_40
-                0x00000000000013a0                __vector_8
-                0x00000000000013a0                __vector_26
-                0x00000000000013a0                __vector_48
-                0x00000000000013a0                __vector_14
-                0x00000000000013a0                __vector_10
-                0x00000000000013a0                __vector_50
-                0x00000000000013a0                __vector_16
-                0x00000000000013a0                __vector_18
-                0x00000000000013a0                __vector_20
-                0x00000000000013a0                __vector_38
+.text           0x00000000000013a6        0x4
+ .text          0x00000000000013a6        0x4 /Users/owenhancock/.mchp_packs/Microchip/ATmega_DFP/3.2.269/xc8/avr/lib/avr5/crtatmega324pb.o
+                0x00000000000013a6                __vector_42
+                0x00000000000013a6                __vector_22
+                0x00000000000013a6                __vector_28
+                0x00000000000013a6                __vector_1
+                0x00000000000013a6                __vector_32
+                0x00000000000013a6                __vector_34
+                0x00000000000013a6                __vector_24
+                0x00000000000013a6                __vector_12
+                0x00000000000013a6                __vector_46
+                0x00000000000013a6                __bad_interrupt
+                0x00000000000013a6                __vector_6
+                0x00000000000013a6                __vector_31
+                0x00000000000013a6                __vector_35
+                0x00000000000013a6                __vector_39
+                0x00000000000013a6                __vector_3
+                0x00000000000013a6                __vector_23
+                0x00000000000013a6                __vector_30
+                0x00000000000013a6                __vector_45
+                0x00000000000013a6                __vector_25
+                0x00000000000013a6                __vector_11
+                0x00000000000013a6                __vector_13
+                0x00000000000013a6                __vector_17
+                0x00000000000013a6                __vector_19
+                0x00000000000013a6                __vector_7
+                0x00000000000013a6                __vector_49
+                0x00000000000013a6                __vector_41
+                0x00000000000013a6                __vector_43
+                0x00000000000013a6                __vector_27
+                0x00000000000013a6                __vector_5
+                0x00000000000013a6                __vector_33
+                0x00000000000013a6                __vector_47
+                0x00000000000013a6                __vector_37
+                0x00000000000013a6                __vector_4
+                0x00000000000013a6                __vector_44
+                0x00000000000013a6                __vector_9
+                0x00000000000013a6                __vector_2
+                0x00000000000013a6                __vector_21
+                0x00000000000013a6                __vector_15
+                0x00000000000013a6                __vector_36
+                0x00000000000013a6                __vector_29
+                0x00000000000013a6                __vector_40
+                0x00000000000013a6                __vector_8
+                0x00000000000013a6                __vector_26
+                0x00000000000013a6                __vector_48
+                0x00000000000013a6                __vector_14
+                0x00000000000013a6                __vector_10
+                0x00000000000013a6                __vector_50
+                0x00000000000013a6                __vector_16
+                0x00000000000013a6                __vector_18
+                0x00000000000013a6                __vector_20
+                0x00000000000013a6                __vector_38
 
-.text._Exit     0x00000000000013a4        0x4
- .text._Exit    0x00000000000013a4        0x4 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(_Exit.o)
-                0x00000000000013a4                _Exit
+.text._Exit     0x00000000000013aa        0x4
+ .text._Exit    0x00000000000013aa        0x4 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(_Exit.o)
+                0x00000000000013aa                _Exit
 
 .text.__dummy_fini
-                0x00000000000013a8        0x2
+                0x00000000000013ae        0x2
  .text.__dummy_fini
-                0x00000000000013a8        0x2 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
-                0x00000000000013a8                _fini
+                0x00000000000013ae        0x2 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
+                0x00000000000013ae                _fini
 
 .text.__dummy_funcs_on_exit
-                0x00000000000013aa        0x2
+                0x00000000000013b0        0x2
  .text.__dummy_funcs_on_exit
-                0x00000000000013aa        0x2 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
-                0x00000000000013aa                __funcs_on_exit
+                0x00000000000013b0        0x2 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
+                0x00000000000013b0                __funcs_on_exit
 
 .text.__dummy_simulator_exit
-                0x00000000000013ac        0x2
+                0x00000000000013b2        0x2
  .text.__dummy_simulator_exit
-                0x00000000000013ac        0x2 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
-                0x00000000000013ac                __simulator_exit
+                0x00000000000013b2        0x2 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(exit.o)
+                0x00000000000013b2                __simulator_exit
 
 .rodata.members
-                0x0000000000800152       0x20 load address 0x00000000000013ae
+                0x0000000000800152       0x20 load address 0x00000000000013b4
  .rodata.members
                 0x0000000000800152       0x20 build/default/production/main.o
                 0x0000000000800152                members
 
 .rodata.state_table
-                0x0000000000800172       0x16 load address 0x00000000000013ce
+                0x0000000000800172       0x16 load address 0x00000000000013d4
  .rodata.state_table
                 0x0000000000800172       0x16 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
 
-.rodata         0x0000000000800188       0x15 load address 0x00000000000013e4
+.rodata         0x0000000000800188       0x15 load address 0x00000000000013ea
  .rodata        0x0000000000800188       0x15 build/default/production/print_memory.o
 
-.rodata         0x000000000080019d       0x12 load address 0x00000000000013f9
+.rodata         0x000000000080019d       0x12 load address 0x00000000000013ff
  .rodata        0x000000000080019d       0x12 build/default/production/main.o
 
 .rodata.nuls.2781
-                0x00000000008001af        0x7 load address 0x000000000000140b
+                0x00000000008001af        0x7 load address 0x0000000000001411
  .rodata.nuls.2781
                 0x00000000008001af        0x7 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__fmt_s.o)
 
 .rodata.nilstr.2962
-                0x00000000008001b6        0x6 load address 0x0000000000001412
+                0x00000000008001b6        0x6 load address 0x0000000000001418
  .rodata.nilstr.2962
                 0x00000000008001b6        0x6 /Applications/microchip/xc8/v2.46/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5/libc.a(__printf_core.o)
