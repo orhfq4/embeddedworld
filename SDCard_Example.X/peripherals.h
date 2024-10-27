@@ -43,7 +43,8 @@ typedef struct _UART
 
 /***** SPI PORTS ******/
 // Define the SPI register struct for memory-mapped access
-typedef struct {
+typedef struct SPI
+{
     volatile uint8_t SPCR; // SPI Control Register
     volatile uint8_t SPSR; // SPI Status Register
     volatile uint8_t SPDR; // SPI Data Register
