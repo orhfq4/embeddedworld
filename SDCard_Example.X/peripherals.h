@@ -48,11 +48,11 @@ typedef struct SPI
     volatile uint8_t SPCR; // SPI Control Register
     volatile uint8_t SPSR; // SPI Status Register
     volatile uint8_t SPDR; // SPI Data Register
-} SPI_Registers;
+} SPI_t;
 
 // Define pointers to SPI0 and SPI1 with specific memory addresses
-#define SPI0 ((SPI_Registers *)0x004C) // Starting address for SPI0
-#define SPI1 ((SPI_Registers *)0x00AC) // Starting address for SPI1
+#define SPI0 ((SPI_t *)0x004C) // Starting address for SPI0
+#define SPI1 ((SPI_t *)0x00AC) // Starting address for SPI1
 
 #endif	/* PERIPHERALS_H */
 
