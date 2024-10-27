@@ -1,12 +1,15 @@
+// SDCard.c
 #include <avr/io.h>
 #include <stdint.h>
 #include "peripherals.h"
+#include "SDCard.h"
 #include "SPI.h"
 
-#define CMD0_CHECKSUM 0x95  // Pre-calculated checksums for CMD0 and CMD8
-#define CMD8_CHECKSUM 0x87
+#define CMD0_CHECKSUM (0x95)  // Pre-calculated checksums for CMD0 and CMD8
+#define CMD8_CHECKSUM (0x87)
 #define CMD0 (0)
 #define CMD8 (8)
+#define SD_CMD_TIMEOUT (1000) // Timeout value to avoid infinite loops
 
 uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argument) {
     uint8_t error_status = 0;  // Assume no error initially
@@ -50,4 +53,46 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     if (rcvd_value > 0) return error_status = 3;
     
     return error_status;  // Return final error status
+}
+
+uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t rec_array[ ]) {
+    uint16_t timeout = 0;
+    uint8_t error_status = 0; // assume no initial errors
+    uint8_t rcvd_value;
+    
+    // (1) Wait for the R1 response by repeatedly sending 0xFF
+    do {
+        rcvd_value = SPI_receive(SPI_addr, 0xFF);
+        timeout_counter++;
+        
+        // Check for timeout
+        if (timeout_counter >= SD_CMD_TIMEOUT) {
+            return 1;  // Timeout error
+        }
+        
+    } while ((rcvd_value == 0xFF)&&(timeout != 0));
+    
+    // Store the R1 response in the array
+    rec_array[0] = rcvd_value;
+    
+    // (2) Read additional bytes if specified
+    if(timeout == 0) {
+        return error_status = 1;
+    } else if((rcvd_value&0xFE) != 0x00) { // 0x00 and 0x01 are good
+        *rec_array=rcvd_value; // return the value to see the array
+        return error_status = 2;
+    } else {
+        *rec_array=rcvd_value; // first received value  (R1 resp.)
+        if(num_bytes>1) {
+            for(int8_t index=1;index<num_bytes;index++) {
+                rcvd_value=SPI_receive(SPI_addr, 0xFF);
+                *(rec_array+index)=rcvd_value;
+            }
+        }
+    }
+
+    // (3) Send a final 0xFF after receiving the response
+    rcvd_value = SPI_transfer(SPI_addr, 0xFF);
+
+    return 0;  // Success
 }
