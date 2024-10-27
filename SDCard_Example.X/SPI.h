@@ -19,5 +19,17 @@
 // Function prototype for SPI initialization
 uint8_t SPI_Master_Init(volatile uint8_t *SPI_addr, uint32_t clock_freq);
 
+/**** No Error Checking, return value is received value
+void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value);
+uint8_t SPI_receive(volatile SPI_t *SPI_addr, (uint8_t send_value)#);
+uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value);
+
+//**** With Error Checking, return value is error value
+uint8_t SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value);
+uint8_t SPI_receive(volatile SPI_t *SPI_addr, (uint8_t send_value,)# uint8_t *rec_value);
+uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value, uint8_t *rec_value);
+//**** # Indicates an optional value: (uint8_t send_value,)
+
+
 #endif	/* SPI_H */
 
