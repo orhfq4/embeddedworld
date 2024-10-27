@@ -62,7 +62,7 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
     
     // (1) Wait for the R1 response by repeatedly sending 0xFF
     do {
-        rcvd_value = SPI_receive(SPI_addr, 0xFF);
+        rcvd_value = SPI_receive(SPI_addr);
         timeout++;
         
         // Check for timeout
@@ -85,7 +85,7 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
         *rec_array=rcvd_value; // first received value  (R1 resp.)
         if(num_bytes>1) {
             for(int8_t index=1;index<num_bytes;index++) {
-                rcvd_value=SPI_receive(SPI_addr, 0xFF);
+                rcvd_value=SPI_receive(SPI_addr);
                 *(rec_array+index)=rcvd_value;
             }
         }
