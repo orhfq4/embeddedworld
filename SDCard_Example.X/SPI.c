@@ -6,25 +6,32 @@
 #define SPI_ENABLE (1 << 6)       // SPE bit in SPCR
 #define SPI_MASTER_MODE (1 << 4)  // MSTR bit in SPCR
 #define clock_rate_error (1)      // Define clock rate error
+#define MOSI_PORT_SPI0 (PB)
+#define SCK_PORT_SPI0 (PB)
+#define MOSI_PORT_SPI1 (PE)
+#define SCK_PORT_SPI1 (PD)
+#define MOSI_PIN_SPI0 (1<<5)
+#define SCK_PIN_SPI0 (1<<7)
+#define MOSI_PIN_SPI1 (1<<3)
+#define SCK_PIN_SPI1 (1<<7)
 
 uint8_t SPI_Master_Init(volatile SPI_t *SPI_addr, uint32_t clock_freq){
     
     /***********************************************************************/
-    
+    gpio_inst_t MOSI_pin, SCK_pin;
     // Set MOSI and SCK as outputs with initial values. MISO is setup automatically
     if(SPI_addr == SPI0) {
         // MOSI (PB5) setup
-        GPIO_output_set_value(PB5, 1); // Set initial value high (1)
-        
+        GPIO_output_ctor(&MOSI_pin, MOSI_PORT_SPI0, MOSI_PIN_SPI0, 1); // PB5 is MOSI pin for SPI0, set to an initial value of 1
         // SCK (PB7) setup
-        GPIO_output_set_value(PB7, CPOL_bit); // Set to CPOL bit
+        GPIO_output_ctor(&SCK_pin, SCK_PORT_SPI0, SCK_PIN_SPI0, 0); // PB7 is SCK pin for SPI0, set to an initial value of 0
     }
     else if (SPI_addr == SPI1) {
         // MOSI (PE3) setup
-        GPIO_output_set_value(PE3, 1); // Set initial value high (1)
+        GPIO_output_ctor(&MOSI_pin, MOSI_PORT_SPI1, MOSI_PIN_SPI1, 1); // PB5 is MOSI pin for SPI1, set to an initial value of 1
         
         // SCK (PD7) setup
-        GPIO_output_set_value(PD7, CPOL_bit); // Set to CPOL bit
+        GPIO_output_ctor(&MOSI_pin, SCK_PORT_SPI1, SCK_PIN_SPI1, 0); // PD7 is MOSI pin for SPI1, set to an initial value of 0
     } else {
         return 1; // Invalid SPI address
     }
