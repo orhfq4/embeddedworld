@@ -96,3 +96,29 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
 
     return 0;  // Success
 }
+
+uint8_t sd_card_init(volatile SPI_t *SPIaddr){
+    uint16_t timeout = 0;
+    uint8_t error_status = 0; 
+    uint8_t rcvd_value = 0;
+    
+    //Set /CS = 1
+    gpio_output_set(PB, (1<<4));
+
+    //TODO: Send 74 clock cycles on SCK
+
+    //check for errors
+    if(error_status == 0){
+        //Clear the /CS bit (PB4) to start the communication
+        GPIO_output_clear(PB,(1<<4));
+
+        //Send CMD0
+        //TODO: update the argument
+        uint32_t argument = 0x00000000;
+        send_command(SPI_addr, 0x00, argument);
+
+        //Set the /CS bit (PB4) to stop communication
+        gpio_output_set(PB, (1<<4));
+
+    }
+}
