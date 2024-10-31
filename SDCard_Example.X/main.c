@@ -20,10 +20,12 @@
 #include "UART_Print.h"
 #include "print_memory.h"
 #include "Long_Serial_In.h"
-//#include "SPI.h"
-//#include "SDCard.h"
+#include "SPI.h"
+#include "SDCard.h"
 #include <avr/pgmspace.h>
 #include <stdio.h>
+
+#define SPI_CLOCK_FREQ (400000)
 
 const char SD_Header[28] PROGMEM = {"SD Initialization Program\n\r\0"};
 const char LSI_Prompt[16] PROGMEM = {"Enter block #: "};
@@ -57,7 +59,11 @@ int main(void)
     
     
 	//*** SPI initialization for SD Card initialization (400KHz max)
-	
+    if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ) != 0) {
+        UART_transmit_string(UART1, "SPI Init Error\n\r", 0);
+        return 9;  // Stop if SPI initialization fails
+    }
+    
     //*** SD Card initialization
 	
     //*** SPI initialization for SD Card communication (25MHHz max)
