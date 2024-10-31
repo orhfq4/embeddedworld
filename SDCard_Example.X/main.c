@@ -77,9 +77,6 @@ int main(void)
 		sprintf(buffer," %lu \n\r",temp32);
 		UART_transmit_string(print_port,buffer,0);
 		
-        
-        
-	
     }
 }
 

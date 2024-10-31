@@ -79,7 +79,7 @@ uint8_t SPI_Master_Init(volatile SPI_t *SPI_addr, uint32_t clock_freq){
     return 0;  // Successful initialization
 }
 
-uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value) {
+uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value) { // returns the received value
     (SPI_addr->SPDR)=send_value; // First, start a transfer by writing send_value to SPDR
     uint8_t status;
     do { // Next, wait in a loop until SPIF is set
@@ -89,7 +89,7 @@ uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value) {
     return (SPI_addr->SPDR); // Then, return the value from the SPDR
 }
 
-void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value) {
+void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value) { // doesn't return a value (we don't care)
     (SPI_addr->SPDR)=send_value; // First, start a transfer by writing send_value to SPDR
     uint8_t status;
     do { // Next, wait in a loop until SPIF is set
