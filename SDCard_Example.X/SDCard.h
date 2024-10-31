@@ -19,5 +19,11 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes,uint8_t re
 // Desc:
 uint8_t sd_card_init(volatile SPI_t *SPIaddr);
 
+// Function prototype for setting the SD_CS to active
+void SD_CS_active(volatile uint8_t *port, uint8_t pin);
+
+// Function prototype for setting the SD_CS to inactive
+void SD_CS_inactive(volatile uint8_t *port, uint8_t pin);
+
 #endif	/* SDCARD_H */
 

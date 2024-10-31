@@ -8,8 +8,10 @@
 #define CMD0_CHECKSUM (0x95)  // Pre-calculated checksums for CMD0 and CMD8
 #define CMD8_CHECKSUM (0x87)
 #define CMD0 (0)
-#define CMD8 (8)
+#define CMD8 (8)    
 #define SD_CMD_TIMEOUT (1000) // Timeout value to avoid infinite loops
+#define SD_CS_PORT (PB)       // (&PINB)
+#define SD_CS_PIN (1<<4)      
 
 uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argument) {
     uint8_t error_status = 0;  // Assume no error initially
@@ -97,28 +99,109 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
     return 0;  // Success
 }
 
-uint8_t sd_card_init(volatile SPI_t *SPIaddr){
+void SD_CS_active(volatile uint8_t *port, uint8_t pin) { // maybe this is right?
+    gpio_inst_t CS_PIN;
+    GPIO_output_ctor(&CS_PIN, port, pin, 1);
+}
+
+void SD_CS_inactive(volatile uint8_t *port, uint8_t pin) { // maybe this is right?
+    gpio_inst_t CS_PIN;
+    GPIO_output_ctor(&CS_PIN, port, pin, 0);
+}
+
+uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint16_t timeout = 0;
     uint8_t error_status = 0; 
     uint8_t rcvd_value = 0;
+    uint32_t argument = 0x00000000;
+    uint8_t rec_array[0];
+    uint8_t num_bytes = 0;
+    
+    //************************************************************************
+    
+    // CMD0:
     
     //Set /CS = 1
-    gpio_output_set(PB, (1<<4));
+    SD_CS_active(SD_CS_PORT, SD_CS_PIN);
 
     //TODO: Send 74 clock cycles on SCK
 
+    //************************************************************************
+    
+    // CMD8:
     //check for errors
     if(error_status == 0){
-        //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_clear(PB,(1<<4));
+        //Set /CS = 1
+        SD_CS_active(SD_CS_PORT, SD_CS_PIN);
+        // Send CMD0
+        argument = 0x000001AA; // argument for CMD8
+        error_status = send_command(SPI_addr, CMD8, argument);
+        // RxC Response
+        if(error_status == 0) {
+            num_bytes = 5; // RxC response 3 Bytes R1 + 0x000001AA, 0x01
+            error_status = receive_response(SPI_addr, num_bytes, rec_array);
+        }
+        //Set /CS = 0
+        SD_CS_inactive(SD_CS_PORT, SD_CS_PIN);
+        // Check the response (could print the response if necessary)
+        if ((rec_array[0]==0x01)&&(error_status==0)) {
+            if(rec_array[3]==0x01&&(error_status==0)) {
+                if(rec_array[3]==0x01&&(rec_array[4]==0xAA)) {
+                    argument = 0x40000000; //High Capacity support ACMD41 Argument
+                }
+                else {
+                    error_status = 1; // incompatible voltage
+                }
+            }
+            else if (rec_array[0]==0x05) {
+                error_status = 0; // if supporting older cards
+                argument = 0x00000000; // No High Capacity Support
+                // SD_Card_Type_g = Standard_Capacity;
+            }
+            else {
+                error_status = 2; // Flag if received response is neither for HCS or /HCS
+            }
+        }
+    
+    /* Steps to Initialization function:
+     * CMD0 command: (Power on the SD card and wait for completion)
+     * CMD0 w/ CS = 0
+     * CS Active
+     * Send Command
+     * RxC Response
+     * CS inactive
+     * Analyze Response
+     * 
+     * CMD8 Command: (Check for v1 compatibility or v2 compatibility then analyze appropriately)
+     * if(error_status == no_errors){
+     * CS active
+     * send command (8,0x000001AA, 0x87)
+     * RxC response 3 Bytes R1 + 0x000001AA, 0x01
+     * CS inactive
+     * Analyze:
+     * if (R1==0x05){
+     * Assume standard capacity card
+     * if (R1==0x01){
+     * if(voltage==0x01, check_byte==0xAA){
+     * error_status = no_errors
+     * else{
+     * error_status = error
 
-        //Send CMD0
-        //TODO: update the argument
-        uint32_t argument = 0x00000000;
-        send_command(SPI_addr, 0x00, argument);
-
-        //Set the /CS bit (PB4) to stop communication
-        gpio_output_set(PB, (1<<4));
-
+     * CMD58 (For handling v1 cards)
+     * if (error_status == no_errors){
+     * CS Active
+     * Send Command (58, 0x00000000, 0x01)
+     * RxC Response 5 Bytes R1 + OCR (4 Bytes) 0x01 (check voltage)
+     * CS Inactive
+     * Analyze:
+     * if(R1==0x01){
+     * if(OCR Voltage OK){
+     * error_status == no_errors
+     * else{
+     * error_status = error
+     * 
+     * ACMD41 (Application specific command to check for SDHC or SDXC
+     */
+    
     }
 }
