@@ -231,7 +231,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     
         /*******************************ACMD41***************************/
     if (error_status == normal) {
-    do{
+    do{  
         //Clear the /CS bit (PB4) to start the communication
         GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
         //TODO: Check send command 55
@@ -253,12 +253,12 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     }while((R1 != normal) && timeout != 0);
 
 
-    if(R1 == 0x00){
-        send_command (SPI_addr, 58, argument_0); // Send command 58
-        receive_response (SPI_addr,R1_bytes,rec_array); // Check R1
-        R1 = rec_array[0]; 
+        if(R1 == 0x00){
+            send_command (SPI_addr, 58, argument_0); // Send command 58
+            receive_response (SPI_addr,R1_bytes,rec_array); // Check R1
+            R1 = rec_array[0]; 
+        }
     }
-     }
     
     return error_status;
     
