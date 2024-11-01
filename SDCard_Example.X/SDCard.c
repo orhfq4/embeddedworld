@@ -20,14 +20,16 @@
 #define CMD8_error (8) // arb chosen 
 #define illegal_command (9)
 #define CMD58_error (10)
+#define normal (0x00)
 
 uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argument) {
     uint8_t error_status = 0;  // Assume no error initially
 
     // (a) Check if the command is a 6-bit value
-    if (CMD_value > 63) {
-        error_status = 1;  // Set error flag for illegal command
-        return error_status;
+    if (error_status==normal) {
+        if (CMD_value > 63) {
+            error_status = 1;  // Set error flag for illegal command
+        }
     }
 
     // (b) OR the command with 0x40 to add start and transmission bits
@@ -36,16 +38,22 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     // (c) Send the command byte
     uint8_t rcvd_value = SPI_transfer(SPI_addr, send_value); // The received value is not used in this function
     
-    // Not entirely sure if this if statement is right
-    if (rcvd_value > 0) return error_status = 2; // Set an error if SPI error occurs and exit early
+    if (error_status==normal) {
+        if (rcvd_value > 0) {
+            error_status = 2; // Set an error if SPI error occurs and exit early
+        }
+    }
 
     // (d) Send the 32-bit argument, MSB first
     for (int8_t index = 0; index < 4; index++) {
         send_value = (uint8_t)(argument>>(24-(index*8)));
         rcvd_value = SPI_transfer(SPI_addr,send_value);
         
-        // Not entirely sure if this if statement is right
-        if (rcvd_value > 0) return error_status = 3;
+        if (error_status==normal) {
+            if (rcvd_value > 0) {
+                error_status = 3;
+            }
+        }
     }
 
     // (e) Send the checksum byte or default end bit value
@@ -59,8 +67,11 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     }
 
     rcvd_value = SPI_transfer(SPI_addr, checksum);  // Send checksum byte
-    // Not entirely sure if this if statement is right
-    if (rcvd_value > 0) return error_status = 3;
+    if (error_status==normal) {
+        if (rcvd_value > 0){
+            error_status = 3;
+        }
+    }
     
     return error_status;  // Return final error status
 }
@@ -76,8 +87,10 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
         timeout++;
         
         // Check for timeout
-        if (timeout >= SD_CMD_TIMEOUT) {
-            return error_status = 1;  // Timeout error
+        if (error_status==normal) {
+            if (timeout >= SD_CMD_TIMEOUT) {
+                error_status = 1;  // Timeout error
+            }
         }
         
     } while ((rcvd_value == 0xFF)&&(timeout != 0));
@@ -86,11 +99,13 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
     rec_array[0] = rcvd_value;
     
     // (2) Read additional bytes if specified
-    if(timeout == 0) {
-        return error_status = 2;
-    } else if((rcvd_value&0xFE) != 0x00) { // 0x00 and 0x01 are good
+    if (error_status==normal){
+        if(timeout == 0) {
+            error_status = 2;
+        }
+        else if((rcvd_value&0xFE) != 0x00) { // 0x00 and 0x01 are good
         *rec_array=rcvd_value; // return the value to see the array
-        return error_status = 3;
+        error_status = 3;
     } else {
         *rec_array=rcvd_value; // first received value  (R1 resp.)
         if(num_bytes>1) {
@@ -100,21 +115,20 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
             }
         }
     }
+    }
 
     // (3) Send a final 0xFF after receiving the response
     rcvd_value = SPI_transfer(SPI_addr, 0xFF);
 
-    return 0;  // Success
+    return error_status;  // Success
 }
 
 uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint16_t timeout = 0;
-    uint8_t error_status = 0; 
+    uint8_t error_status = normal; 
     uint8_t rcvd_value = 0;
-    uint8_t normal = 0x00;
     uint8_t R1_bytes = 1;
     uint8_t OCR_bytes = 5;
-    gpio_inst_t MOSI_pin, SCK_pin;
     uint8_t ACMD41_arg = 0x40000000;
 
     uint8_t R1;
@@ -125,9 +139,9 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint8_t rec_array[5];
     
     UART_transmit_string(UART1, "Entering SD_CARD INIT \n\r", 0);
-    GPIO_output_ctor(&MOSI_pin, SD_CS_port, SD_CS_pin, 1); // Creates PB4 for the /CS, initial value set to 1
+    GPIO_output_init_2(SD_CS_port, SD_CS_pin); // Creates PB4 for the /CS, initial value set to 1
 
-    GPIO_output_ctor(&SCK_pin, SCK_PORT_SD, SCK_PIN_SD, 0); //Creates PB7 which acts as the SCK. Initial value of 0.
+    GPIO_output_init_2(SCK_PORT_SD, SCK_PIN_SD); //Creates PB7 which acts as the SCK. Initial value of 0.
 
     //10 SPI_transfers of 0xFF
     for(uint8_t i = 0; i<10; i++){
@@ -140,14 +154,14 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if(error_status==normal){
         UART_transmit_string(UART1, "Sending CMD0 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
         // Send CMD0 with argument 0x00;
         send_command(SPI_addr, 0x00, argument_0);
         //Receive response and check R1
         receive_response (SPI_addr, R1_bytes, rec_array);
         R1 = rec_array[0];
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
         if(R1!=0x01)
             error_status = CMD0_error;
     }
@@ -155,6 +169,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     
     /****************************CMD8*********************************/
     if(error_status==normal){
+        UART_transmit_string(UART1, "Sending CMD8 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
         GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
         // Send CMD8 with argument 0x000001AA;
@@ -175,12 +190,13 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         if(host_supply_v != 0x01) //check to see if supply is correct
             error_status = CMD8_error;
         if(rec_array[4]!= 0xAA) // Dont know what this does
-            error_status = CMD8_error;            
+            error_status = CMD8_error;
     }
     /*****************************************************************/
 
     /****************************CMD58*********************************/
     if(error_status==normal){
+        UART_transmit_string(UART1, "Sending CMD58 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
         GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
         // Send CMD58 with argument 0x00;
@@ -200,8 +216,10 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
             error_status = CMD58_error;
     }
     
+    return error_status;
         /*******************************ACMD41***************************/
     /*
+     if (error_status == normal) {
     do{
         //Clear the /CS bit (PB4) to start the communication
         GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
@@ -229,6 +247,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         receive_response (SPI_addr,R1_bytes,rec_array); // Check R1
         R1 = rec_array[0]; 
     }
+     }
      * /
     
     //**********************************************************************
