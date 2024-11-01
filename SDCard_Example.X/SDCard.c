@@ -162,10 +162,10 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         R1 = rec_array[0];
         //Set /CS = 1, stop transmission
         GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
-        if(R1!=0x01)
+        if(R1!=0x01){
             error_status = CMD0_error;
-            UART_transmit_string(UART1, error_status, 0);
             UART_transmit_string(UART1, "CMD0: R1 is not equal to 0x01 \n\r", 0);
+        }
     }
     /*****************************************************************/
     
@@ -183,19 +183,22 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         //Set /CS = 1, stop transmission
         GPIO_output_set_value(SD_CS_port, SD_CS_pin);
         
-        if(R1!=0x01)
+        if(R1!=0x01){
             error_status = CMD8_error;
             UART_transmit_string(UART1, "CMD8: R1 is not equal to 0x01 \n\r", 0);
+        }
         if(R1 == 0x05){
             error_status = illegal_command; // Checks for illigal command
             ACMD41_arg = 0x00;
         }
-        if(host_supply_v != 0x01) //check to see if supply is correct
+        if(host_supply_v != 0x01){ //check to see if supply is correct
             error_status = CMD8_error;
             UART_transmit_string(UART1, "CMD8: Host Supply Voltage is not equal to 0x01 \n\r", 0);
-        if(rec_array[4]!= 0xAA) // Dont know what this does
+        }
+        if(rec_array[4]!= 0xAA){ // Dont know what this does
             error_status = CMD8_error;
             UART_transmit_string(UART1, "CMD8: Received Array is not equal to 0xAA \n\r", 0);
+        }
     }
     /*****************************************************************/
 
@@ -213,15 +216,18 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         //Set /CS = 1, stop transmission
         GPIO_output_set_value(SD_CS_port, SD_CS_pin);
         
-        if(R1!=0x01)
+        if(R1!=0x01){
             error_status = CMD58_error;
             UART_transmit_string(UART1, "CMD58: R1 is not equal to 0x01 \n\r", 0);
-        if(operating_v != 0xFF)
+        }
+        if(operating_v != 0xFF){
             error_status = CMD58_error;
             UART_transmit_string(UART1, "CMD58: Operating Voltage is not equal to 0xFF \n\r", 0);
-        if (rec_array[3] != 0x80)
+        }
+        if (rec_array[3] != 0x80){
             error_status = CMD58_error;
             UART_transmit_string(UART1, "CMD58: Received Array is not equal to 0x80 \n\r", 0);
+        }
     }
     
     return error_status;
