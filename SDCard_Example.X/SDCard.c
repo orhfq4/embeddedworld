@@ -156,7 +156,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         //Clear the /CS bit (PB4) to start the communication
         GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
         // Send CMD0 with argument 0x00;
-        send_command(SPI_addr, 0x00, argument_0);
+        send_command(SPI_addr, 0, argument_0);
         //Receive response and check R1
         receive_response (SPI_addr, R1_bytes, rec_array);
         R1 = rec_array[0];
@@ -173,16 +173,15 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if(error_status==normal){
         UART_transmit_string(UART1, "Sending CMD8 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
         // Send CMD8 with argument 0x000001AA;
-        send_command(SPI_addr, 0x08, argument_8);
+        send_command(SPI_addr, 8, argument_8);
         //Receive response and check R1
         receive_response (SPI_addr, OCR_bytes, rec_array);
         R1 = rec_array[0];
         host_supply_v = rec_array[3]; // Read host supply voltage
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
-        
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
         if(R1!=0x01){
             error_status = CMD8_error;
             UART_transmit_string(UART1, "CMD8: R1 is not equal to 0x01 \n\r", 0);
@@ -206,15 +205,15 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if(error_status==normal){
         UART_transmit_string(UART1, "Sending CMD58 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
         // Send CMD58 with argument 0x00;
-        send_command(SPI_addr, 0x00, argument_0);
+        send_command(SPI_addr, 58, argument_0);
         //Receive response and check R1
         receive_response (SPI_addr, OCR_bytes, rec_array);
         R1 = rec_array[0];
-        operating_v = rec_array[2];
+        operating_v = rec_array[2];        
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
         
         if(R1!=0x01){
             error_status = CMD58_error;
@@ -230,25 +229,23 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         }
     }
     
-    return error_status;
         /*******************************ACMD41***************************/
-    /*
-     if (error_status == normal) {
+    if (error_status == normal) {
     do{
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
         //TODO: Check send command 55
-        send_command (SPI_addr, 0x55, argument_0); //Sends command 55 with arg = 0
+        send_command (SPI_addr, 55, argument_0); //Sends command 55 with arg = 0
         //Check the R1 Response
         receive_response (SPI_addr, R1_bytes, rec_array); //Recieve one byte of data (R1 response), stored in the 0th element of rec_array
         R1 = rec_array[0];
         //Send command 41
-        send_command(SPI_addr, 0x41, ACMD41_arg); // Arg by default is 0x40000000
+        send_command(SPI_addr, 41, ACMD41_arg); // Arg by default is 0x40000000
         // Check the R1 response
         receive_response (SPI_addr, R1_bytes, rec_array); //Recieve one byte of data (R1 response), stored in the 0th element of rec_array
         R1 = rec_array[0];
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
         //store the r1 response
         R1 = rec_array[0];
         timeout++;
@@ -257,12 +254,13 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
 
 
     if(R1 == 0x00){
-        send_command (SPI_addr, 0x58, argument_0); // Send command 58
+        send_command (SPI_addr, 58, argument_0); // Send command 58
         receive_response (SPI_addr,R1_bytes,rec_array); // Check R1
         R1 = rec_array[0]; 
     }
      }
-     * /
+    
+    return error_status;
     
     //**********************************************************************
         /*CMDO
