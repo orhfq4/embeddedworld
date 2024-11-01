@@ -61,21 +61,34 @@ int main(void)
 	//*** SPI initialization for SD Card initialization (400KHz max)
     if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ) != 0) {
         UART_transmit_string(UART1, "SPI Init Error\n\r", 0);
-        return 9;  // Stop if SPI initialization fails
+    }
+    else {
+        UART_transmit_string(UART1, "SPI Init Success!\n\r", 0);
     }
     
     //*** SD Card initialization
-	
+	sd_card_init(SPI0);
+    
+    
     //*** SPI initialization for SD Card communication (25MHHz max)
 	
-    
+    uint8_t test_data = 0xAA;   // Example byte to test SPI transfer
+    uint8_t received_data;
     while (1) 
     {
-		copy_string_to_buffer(LSI_Prompt,buffer,0);
-		UART_transmit_string(print_port,buffer,0);
-		temp32=long_serial_input(print_port);
-		sprintf(buffer," %lu \n\r",temp32);
-		UART_transmit_string(print_port,buffer,0);
+	UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
+
+    
+    
+    received_data = SPI_receive(SPI0);
+    
+    // Format and transmit the sent and received data to UART
+    sprintf(buffer, "Sent: 0x%02X, Received: 0x%02X\n\r", test_data, received_data);
+    UART_transmit_string(UART1, buffer, 0); 
+    
+    _delay_ms(500); // Delay to observe output
+        
+    test_data++;
 		
     }
 }

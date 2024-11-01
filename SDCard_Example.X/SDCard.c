@@ -4,14 +4,22 @@
 #include "peripherals.h"
 #include "SDCard.h"
 #include "SPI.h"
+#include "UART_Print.h"
 
+#define SD_CS_port (PB)
+#define SD_CS_pin (1<<4)
+#define SD_CS_pin_clear (0<<4)
+#define SCK_PORT_SD (PB)
+#define SCK_PIN_SD (1<<7)
 #define CMD0_CHECKSUM (0x95)  // Pre-calculated checksums for CMD0 and CMD8
 #define CMD8_CHECKSUM (0x87)
 #define CMD0 (0)
-#define CMD8 (8)    
+#define CMD8 (8)
 #define SD_CMD_TIMEOUT (1000) // Timeout value to avoid infinite loops
-#define SD_CS_PORT (PB)       // (&PINB)
-#define SD_CS_PIN (1<<4)      
+#define CMD0_error (7) //arbitrarily chosen
+#define CMD8_error (8) // arb chosen 
+#define illegal_command (9)
+#define CMD58_error (10)
 
 uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argument) {
     uint8_t error_status = 0;  // Assume no error initially
@@ -57,7 +65,7 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     return error_status;  // Return final error status
 }
 
-uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t rec_array[ ]) {
+uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t rec_array[]) {
     uint16_t timeout = 0;
     uint8_t error_status = 0; // assume no initial errors
     uint8_t rcvd_value = 0;
@@ -99,109 +107,169 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
     return 0;  // Success
 }
 
-void SD_CS_active(volatile uint8_t *port, uint8_t pin) { // maybe this is right?
-    gpio_inst_t CS_PIN;
-    GPIO_output_ctor(&CS_PIN, port, pin, 1);
-}
-
-void SD_CS_inactive(volatile uint8_t *port, uint8_t pin) { // maybe this is right?
-    gpio_inst_t CS_PIN;
-    GPIO_output_ctor(&CS_PIN, port, pin, 0);
-}
-
 uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint16_t timeout = 0;
     uint8_t error_status = 0; 
     uint8_t rcvd_value = 0;
-    uint32_t argument = 0x00000000;
-    uint8_t rec_array[0];
-    uint8_t num_bytes = 0;
-    
-    //************************************************************************
-    
-    // CMD0:
-    
-    //Set /CS = 1
-    SD_CS_active(SD_CS_PORT, SD_CS_PIN);
+    uint8_t normal = 0x00;
+    uint8_t R1_bytes = 1;
+    uint8_t OCR_bytes = 5;
+    gpio_inst_t MOSI_pin, SCK_pin;
+    uint8_t ACMD41_arg = 0x40000000;
 
-    //TODO: Send 74 clock cycles on SCK
+    uint8_t R1;
+    uint8_t host_supply_v;
+    uint8_t operating_v;
+    uint32_t argument_0 = 0x00000000;
+    uint32_t argument_8 = 0x000001AA;
+    uint8_t rec_array[5];
+    
+    UART_transmit_string(UART1, "Entering SD_CARD INIT \n\r", 0);
+    GPIO_output_ctor(&MOSI_pin, SD_CS_port, SD_CS_pin, 1); // Creates PB4 for the /CS, initial value set to 1
 
-    //************************************************************************
-    
-    // CMD8:
-    //check for errors
-    if(error_status == 0){
-        //Set /CS = 1
-        SD_CS_active(SD_CS_PORT, SD_CS_PIN);
-        // Send CMD0
-        argument = 0x000001AA; // argument for CMD8
-        error_status = send_command(SPI_addr, CMD8, argument);
-        // RxC Response
-        if(error_status == 0) {
-            num_bytes = 5; // RxC response 3 Bytes R1 + 0x000001AA, 0x01
-            error_status = receive_response(SPI_addr, num_bytes, rec_array);
-        }
-        //Set /CS = 0
-        SD_CS_inactive(SD_CS_PORT, SD_CS_PIN);
-        // Check the response (could print the response if necessary)
-        if ((rec_array[0]==0x01)&&(error_status==0)) {
-            if(rec_array[3]==0x01&&(error_status==0)) {
-                if(rec_array[3]==0x01&&(rec_array[4]==0xAA)) {
-                    argument = 0x40000000; //High Capacity support ACMD41 Argument
-                }
-                else {
-                    error_status = 1; // incompatible voltage
-                }
-            }
-            else if (rec_array[0]==0x05) {
-                error_status = 0; // if supporting older cards
-                argument = 0x00000000; // No High Capacity Support
-                // SD_Card_Type_g = Standard_Capacity;
-            }
-            else {
-                error_status = 2; // Flag if received response is neither for HCS or /HCS
-            }
-        }
-    
-    /* Steps to Initialization function:
-     * CMD0 command: (Power on the SD card and wait for completion)
-     * CMD0 w/ CS = 0
-     * CS Active
-     * Send Command
-     * RxC Response
-     * CS inactive
-     * Analyze Response
-     * 
-     * CMD8 Command: (Check for v1 compatibility or v2 compatibility then analyze appropriately)
-     * if(error_status == no_errors){
-     * CS active
-     * send command (8,0x000001AA, 0x87)
-     * RxC response 3 Bytes R1 + 0x000001AA, 0x01
-     * CS inactive
-     * Analyze:
-     * if (R1==0x05){
-     * Assume standard capacity card
-     * if (R1==0x01){
-     * if(voltage==0x01, check_byte==0xAA){
-     * error_status = no_errors
-     * else{
-     * error_status = error
+    GPIO_output_ctor(&SCK_pin, SCK_PORT_SD, SCK_PIN_SD, 0); //Creates PB7 which acts as the SCK. Initial value of 0.
 
-     * CMD58 (For handling v1 cards)
-     * if (error_status == no_errors){
-     * CS Active
-     * Send Command (58, 0x00000000, 0x01)
-     * RxC Response 5 Bytes R1 + OCR (4 Bytes) 0x01 (check voltage)
-     * CS Inactive
-     * Analyze:
-     * if(R1==0x01){
-     * if(OCR Voltage OK){
-     * error_status == no_errors
-     * else{
-     * error_status = error
-     * 
-     * ACMD41 (Application specific command to check for SDHC or SDXC
-     */
-    
+    //10 SPI_transfers of 0xFF
+    for(uint8_t i = 0; i<10; i++){
+        UART_transmit_string(UART1, "Running For Loop \n\r", 0);
+        uint8_t send_value = 0xFF; 
+        rcvd_value = SPI_transfer(SPI_addr,send_value);
     }
+    
+    /****************************CMD0*********************************/
+    if(error_status==normal){
+        UART_transmit_string(UART1, "Sending CMD0 \n\r", 0);
+        //Clear the /CS bit (PB4) to start the communication
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        // Send CMD0 with argument 0x00;
+        send_command(SPI_addr, 0x00, argument_0);
+        //Receive response and check R1
+        receive_response (SPI_addr, R1_bytes, rec_array);
+        R1 = rec_array[0];
+        //Set /CS = 1, stop transmission
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        if(R1!=0x01)
+            error_status = CMD0_error;
+    }
+    /*****************************************************************/
+    
+    /****************************CMD8*********************************/
+    if(error_status==normal){
+        //Clear the /CS bit (PB4) to start the communication
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        // Send CMD8 with argument 0x000001AA;
+        send_command(SPI_addr, 0x08, argument_8);
+        //Receive response and check R1
+        receive_response (SPI_addr, OCR_bytes, rec_array);
+        R1 = rec_array[0];
+        host_supply_v = rec_array[3]; // Read host supply voltage
+        //Set /CS = 1, stop transmission
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        
+        if(R1!=0x01)
+            error_status = CMD8_error;
+        if(R1 == 0x05){
+            error_status = illegal_command; // Checks for illigal command
+            ACMD41_arg = 0x00;
+        }
+        if(host_supply_v != 0x01) //check to see if supply is correct
+            error_status = CMD8_error;
+        if(rec_array[4]!= 0xAA) // Dont know what this does
+            error_status = CMD8_error;            
+    }
+    /*****************************************************************/
+
+    /****************************CMD58*********************************/
+    if(error_status==normal){
+        //Clear the /CS bit (PB4) to start the communication
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        // Send CMD58 with argument 0x00;
+        send_command(SPI_addr, 0x00, argument_0);
+        //Receive response and check R1
+        receive_response (SPI_addr, OCR_bytes, rec_array);
+        R1 = rec_array[0];
+        operating_v = rec_array[2];
+        //Set /CS = 1, stop transmission
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        
+        if(R1!=0x01)
+            error_status = CMD58_error;
+        if(operating_v != 0xFF)
+            error_status = CMD58_error;
+        if (rec_array[3] != 0x80)
+            error_status = CMD58_error;
+    }
+    
+        /*******************************ACMD41***************************/
+    /*
+    do{
+        //Clear the /CS bit (PB4) to start the communication
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin_clear);
+        //TODO: Check send command 55
+        send_command (SPI_addr, 0x55, argument_0); //Sends command 55 with arg = 0
+        //Check the R1 Response
+        receive_response (SPI_addr, R1_bytes, rec_array); //Recieve one byte of data (R1 response), stored in the 0th element of rec_array
+        R1 = rec_array[0];
+        //Send command 41
+        send_command(SPI_addr, 0x41, ACMD41_arg); // Arg by default is 0x40000000
+        // Check the R1 response
+        receive_response (SPI_addr, R1_bytes, rec_array); //Recieve one byte of data (R1 response), stored in the 0th element of rec_array
+        R1 = rec_array[0];
+        //Set /CS = 1, stop transmission
+        GPIO_output_set_value(SD_CS_port, SD_CS_pin);
+        //store the r1 response
+        R1 = rec_array[0];
+        timeout++;
+        UART_transmit_string(UART1, "Loop Complete \n\r", 0);
+    }while((R1 != normal) && timeout != 0);
+
+
+    if(R1 == 0x00){
+        send_command (SPI_addr, 0x58, argument_0); // Send command 58
+        receive_response (SPI_addr,R1_bytes,rec_array); // Check R1
+        R1 = rec_array[0]; 
+    }
+     * /
+    
+    //**********************************************************************
+        /*CMDO
+        //All in ACMD41:^^
+        do{
+            CS = 0;
+            send command(55,0)
+            receiceresponse(1bytes)
+            sendcommand(41, 0x40000000)
+            CS = 1
+        }while(R1 != 0x00)&&(timeout!=0)
+        outside overall do while:
+            if(R1 == 0x00)
+                CMD5:
+                response R1 = 0x00
+                OCR = 0xC0FF8000
+        If error == no errors{
+        cs = 0;
+        send command(0,0)
+        REcieveresponse(1 byte)
+        CS = 1
+        Check R1 = 0x01;
+        }
+        CMD08:
+        if(errorstatus==noerrors){
+        CS=0
+        sendcommand(8,0x000001AA)
+        receiveresponse(5bytes)
+        CS = 1
+        check R1 = 0x01 GOOD!
+        Check R1 = 0x05 illegal command!
+            ACMD41_arg = 0x00 (optional)
+        Check byte 4 = 0x01 (HostSupplyVoltage)
+        byte 5 = 0xAA = OK!
+        }
+        CMD58:
+        Same shit
+        Arg = 0;
+        Response 5 bytes should be 
+            R1 = 0x01
+            OCR = 0x00FF8000
+        */
 }
