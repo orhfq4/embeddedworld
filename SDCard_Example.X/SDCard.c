@@ -164,6 +164,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
         if(R1!=0x01)
             error_status = CMD0_error;
+            UART_transmit_string(UART1, error_status, 0);
             UART_transmit_string(UART1, "CMD0: R1 is not equal to 0x01 \n\r", 0);
     }
     /*****************************************************************/
