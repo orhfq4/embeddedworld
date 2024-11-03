@@ -152,7 +152,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint8_t rcvd_value = 0;
     uint8_t R1_bytes = 1;
     uint8_t OCR_bytes = 5;
-    uint8_t ACMD41_arg = 0x40000000;
+    uint32_t ACMD41_arg = 0x40000000;
 
     uint8_t R1;
     uint8_t host_supply_v;
@@ -216,6 +216,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         }
         if(R1 == 0x05){
             error_status = illegal_command; // Checks for illigal command
+            UART_transmit_string(UART1, "CMD8: R1 is equal to 0x05 ILLEGAL \n\r", 0);
             ACMD41_arg = 0x00;
         }
         if(host_supply_v != 0x01){ //check to see if supply is correct
@@ -279,7 +280,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         R1 = rec_array[0];
         timeout++;
         UART_transmit_string(UART1, "Loop Complete \n\r", 0);
-    }while((R1 != normal) && timeout <= SD_CMD_TIMEOUT);
+    }while((R1 != normal) && (timeout <= SD_CMD_TIMEOUT));
 
 
         if(R1 == 0x00){
@@ -345,15 +346,16 @@ uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t num_byte
     uint8_t rcvd_value;
     uint8_t error_status = normal;
     
+    
      // Wait for initial 0x00 response (indicates no errors)
     do {
         rcvd_value = SPI_transfer(SPI_addr, 0xFF);
     } while(rcvd_value==0xFF);
     
     if (error_status==normal) {
-        if(rcvd_value==0x00) {
+        if(rcvd_value!=0x00) { // if R1 is not 0x00
             error_status = 1; // Error if response is not 0x00
-            UART_transmit_string(UART1, "READ BLOCK: rcvd_value is 0x00 \n\r", 0);
+            UART_transmit_string(UART1, "READ BLOCK: R1 is not 0x00 \n\r", 0);
         }
     }
     
@@ -363,13 +365,14 @@ uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t num_byte
     } while(rcvd_value==0xFF);
     
     if (error_status==normal) {
-        if(rcvd_value==0xFE) {
+        if(rcvd_value!=0xFE) {
             error_status = 2; // Error if start token not received
+            UART_transmit_string(UART1, "READ BLOCK: Data Start is not 0xFE \n\r", 0);
         }
     }
     
     // Read the specified number of bytes
-    for(uint16_t index = 0; index<num_bytes; index++) {
+    for(uint16_t index=0;index<num_bytes;index++) {
         rcvd_value=SPI_transfer(SPI_addr, 0xFF);
         array[index]=rcvd_value;
     }
@@ -377,6 +380,7 @@ uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t num_byte
     // Read and discard CRC bytes (2 bytes)
     rcvd_value=SPI_transfer(SPI_addr,0xFF); // CRC Byte 1
     rcvd_value=SPI_transfer(SPI_addr,0xFF); // CRC Byte 2 
+    rcvd_value=SPI_transfer(SPI_addr,0xFF); // one final SPI transfer
     
     return error_status; // return 0 if successful
 }

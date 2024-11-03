@@ -87,18 +87,16 @@ int main(void)
     
     uint8_t test_data = 0xAA;   // Example byte to test SPI transfer
     uint8_t received_data;
+    
+    temp32 = long_serial_input(UART1);
+    SD_CS_inactive(); // set /CS to 0
+    send_command(SPI0, 17, temp32);
+    read_block(SPI0, buffer1_g, 512);
+    SD_CS_active(); // set /CS to 1
+    print_memory(buffer1_g, 512);
+        
     while (1) 
     {
-        
-        /*
-        temp32 = long_serial_input(UART1);
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0); // set /CS to 0
-        send_command(SPI0, 17, temp32);
-        read_block(SPI0, buffer1_g, 512);
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1); // set /CS to 1
-        print_memory(buffer1_g, 512);
-         */
-        
         
         UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
 
