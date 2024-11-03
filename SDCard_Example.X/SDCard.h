@@ -19,6 +19,16 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes,uint8_t re
 // Desc:
 uint8_t sd_card_init(volatile SPI_t *SPIaddr);
 
+void init_SD_CS(volatile GPIO_t *port, uint8_t pin);
+
+void SD_CS_active();
+
+void SD_CS_inactive();
+
+void init_SCK(volatile GPIO_t *port, uint8_t pin);
+
+void SCK_low();
+
 // Function prototype for read block
 uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t number_of_bytes);
 

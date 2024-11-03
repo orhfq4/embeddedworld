@@ -47,6 +47,7 @@ int main(void)
     //uint8_t input,status,SD_type;
     uint32_t temp32;
     char *buffer;
+    
 	// Initialize the LED outputs
     LED_ctor(&led0, LED0_PORT, LED0_PIN, LED_OFF, ACTIVE_LOW);
    

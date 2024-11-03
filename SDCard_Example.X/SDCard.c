@@ -22,6 +22,29 @@
 #define CMD58_error (10)
 #define normal (0x00)
 
+gpio_inst_t sd_cs_gpio; // Declare it globally
+gpio_inst_t sck_gpio;
+
+void init_SD_CS(volatile GPIO_t *port, uint8_t pin) {
+    GPIO_output_ctor(&sd_cs_gpio, port, pin, GPIO_CLEAR); // Initialize only once
+}
+
+void SD_CS_active() {
+    GPIO_output_set_value(&sd_cs_gpio, GPIO_SET); // Set the pin to high
+}
+
+void SD_CS_inactive() {
+    GPIO_output_set_value(&sd_cs_gpio, GPIO_CLEAR); // Set the pin to low
+}
+
+void init_SCK(volatile GPIO_t *port, uint8_t pin) {
+    GPIO_output_ctor(&sck_gpio, port, pin, GPIO_CLEAR); // Initialize only once
+}
+
+void SCK_low() {
+    GPIO_output_set_value(&sck_gpio, GPIO_CLEAR); // Set the pin to low
+}
+
 uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argument) {
     uint8_t error_status = 0;  // Assume no error initially
 
@@ -139,9 +162,13 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint8_t rec_array[5];
     
     UART_transmit_string(UART1, "Entering SD_CARD INIT \n\r", 0);
-    GPIO_output_init_2(SD_CS_port, SD_CS_pin); // Creates PB4 for the /CS, initial value set to 1
-
-    GPIO_output_init_2(SCK_PORT_SD, SCK_PIN_SD); //Creates PB7 which acts as the SCK. Initial value of 0.
+    
+    init_SD_CS(SD_CS_port, SD_CS_pin); // Creates PB4 for the /CS, initial value set to 1
+    SD_CS_active();
+    
+    init_SCK(SCK_PORT_SD, SCK_PIN_SD); //Creates PB7 which acts as the SCK. Initial value of 0.
+    SCK_low();
+    
 
     // (6a) 10 SPI_transfers of 0xFF
     for(uint8_t i = 0; i<10; i++){
@@ -154,14 +181,14 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if(error_status==normal){ // (6b)
         UART_transmit_string(UART1, "Sending CMD0 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
+        SD_CS_inactive();
         // Send CMD0 with argument 0x00;
         send_command(SPI_addr, 0, argument_0);
         //Receive response and check R1
         receive_response (SPI_addr, R1_bytes, rec_array);
         R1 = rec_array[0];
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
+        SD_CS_active();
         if(R1!=0x01){
             error_status = CMD0_error;
             UART_transmit_string(UART1, "CMD0: R1 is not equal to 0x01 \n\r", 0);
@@ -174,7 +201,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if(error_status==normal){ // (6c)
         UART_transmit_string(UART1, "Sending CMD8 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
+        SD_CS_inactive();
         // Send CMD8 with argument 0x000001AA;
         send_command(SPI_addr, 8, argument_8);
         //Receive response and check R1
@@ -182,7 +209,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         R1 = rec_array[0];
         host_supply_v = rec_array[3]; // Read host supply voltage
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
+        SD_CS_active();
         if(R1!=0x01){
             error_status = CMD8_error;
             UART_transmit_string(UART1, "CMD8: R1 is not equal to 0x01 \n\r", 0);
@@ -207,7 +234,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if(error_status==normal){ // (6d)
         UART_transmit_string(UART1, "Sending CMD58 \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
+        SD_CS_inactive();
         // Send CMD58 with argument 0x00;
         send_command(SPI_addr, 58, argument_0);
         //Receive response and check R1
@@ -215,7 +242,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         R1 = rec_array[0];
         operating_v = rec_array[2];        
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
+        SD_CS_active();
         
         if(R1!=0x01){
             error_status = CMD58_error;
@@ -235,7 +262,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     if (error_status == normal) { // (6e)
     do{  
         //Clear the /CS bit (PB4) to start the communication
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0);
+        SD_CS_inactive();
         //TODO: Check send command 55
         send_command (SPI_addr, 55, argument_0); //Sends command 55 with arg = 0
         //Check the R1 Response
@@ -247,12 +274,12 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         receive_response (SPI_addr, R1_bytes, rec_array); //Recieve one byte of data (R1 response), stored in the 0th element of rec_array
         R1 = rec_array[0];
         //Set /CS = 1, stop transmission
-        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1);
+        SD_CS_active();
         //store the r1 response
         R1 = rec_array[0];
         timeout++;
         UART_transmit_string(UART1, "Loop Complete \n\r", 0);
-    }while((R1 != normal) && timeout != 0);
+    }while((R1 != normal) && timeout <= SD_CMD_TIMEOUT);
 
 
         if(R1 == 0x00){
@@ -326,6 +353,7 @@ uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t num_byte
     if (error_status==normal) {
         if(rcvd_value==0x00) {
             error_status = 1; // Error if response is not 0x00
+            UART_transmit_string(UART1, "READ BLOCK: rcvd_value is 0x00 \n\r", 0);
         }
     }
     
