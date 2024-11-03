@@ -12,6 +12,8 @@
 *
 ************************************************************************************/
 
+// (7)
+
 #include "peripherals.h"
 #include "board.h"
 #include <util/delay.h>
@@ -25,7 +27,10 @@
 #include <avr/pgmspace.h>
 #include <stdio.h>
 
-#define SPI_CLOCK_FREQ (400000)
+#define SPI_CLOCK_FREQ_400KHz (400000)
+#define SPI_CLOCK_FREQ_25MHz (25000000)
+#define SD_CS_port (PB)
+#define SD_CS_pin (1<<4)
 
 const char SD_Header[28] PROGMEM = {"SD Initialization Program\n\r\0"};
 const char LSI_Prompt[16] PROGMEM = {"Enter block #: "};
@@ -59,11 +64,11 @@ int main(void)
     
     
 	//*** SPI initialization for SD Card initialization (400KHz max)
-    if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ) != 0) {
-        UART_transmit_string(UART1, "SPI Init Error\n\r", 0);
+    if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ_400KHz) != 0) {
+        UART_transmit_string(UART1, "SPI Init Error (400KHz)\n\r", 0);
     }
     else {
-        UART_transmit_string(UART1, "SPI Init Success!\n\r", 0);
+        UART_transmit_string(UART1, "SPI Init Success! (400KHz)\n\r", 0);
     }
     
     //*** SD Card initialization
@@ -71,24 +76,42 @@ int main(void)
     
     
     //*** SPI initialization for SD Card communication (25MHHz max)
-	
+	/*if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ_25MHz) != 0) {
+        UART_transmit_string(UART1, "SPI Init Error (25MHz)\n\r", 0);
+    }
+    else {
+        UART_transmit_string(UART1, "SPI Init Success! (25MHz)\n\r", 0);
+    }
+     */
+    
     uint8_t test_data = 0xAA;   // Example byte to test SPI transfer
     uint8_t received_data;
     while (1) 
     {
-	UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
+        
+        /*
+        temp32 = long_serial_input(UART1);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 0); // set /CS to 0
+        send_command(SPI0, 17, temp32);
+        read_block(SPI0, buffer1_g, 512);
+        GPIO_output_set_value_2(SD_CS_port, SD_CS_pin, 1); // set /CS to 1
+        print_memory(buffer1_g, 512);
+         */
+        
+        
+        UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
 
     
     
-    received_data = SPI_receive(SPI0);
+        received_data = SPI_receive(SPI0);
     
-    // Format and transmit the sent and received data to UART
-    sprintf(buffer, "Sent: 0x%02X, Received: 0x%02X\n\r", test_data, received_data);
-    UART_transmit_string(UART1, buffer, 0); 
+        // Format and transmit the sent and received data to UART
+        sprintf(buffer, "Sent: 0x%02X, Received: 0x%02X\n\r", test_data, received_data);
+        UART_transmit_string(UART1, buffer, 0); 
     
-    _delay_ms(500); // Delay to observe output
+        _delay_ms(500); // Delay to observe output
         
-    test_data++;
+        test_data++;
 		
     }
 }

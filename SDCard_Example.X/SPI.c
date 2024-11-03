@@ -15,7 +15,7 @@
 #define MOSI_PIN_SPI1 (1<<3)
 #define SCK_PIN_SPI1 (1<<7)
 
-uint8_t SPI_Master_Init(volatile SPI_t *SPI_addr, uint32_t clock_freq){
+uint8_t SPI_Master_Init(volatile SPI_t *SPI_addr, uint32_t clock_freq){ // (2)
     
     /***********************************************************************/
     gpio_inst_t MOSI_pin, SCK_pin;
@@ -79,7 +79,7 @@ uint8_t SPI_Master_Init(volatile SPI_t *SPI_addr, uint32_t clock_freq){
     return 0;  // Successful initialization
 }
 
-uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value) { // returns the received value
+uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value) { // (3) returns the received value
     (SPI_addr->SPDR)=send_value; // First, start a transfer by writing send_value to SPDR
     uint8_t status;
     do { // Next, wait in a loop until SPIF is set
@@ -89,7 +89,7 @@ uint8_t SPI_transfer(volatile SPI_t *SPI_addr, uint8_t send_value) { // returns 
     return (SPI_addr->SPDR); // Then, return the value from the SPDR
 }
 
-void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value) { // doesn't return a value (we don't care)
+void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value) { // (3) doesn't return a value (we don't care)
     (SPI_addr->SPDR)=send_value; // First, start a transfer by writing send_value to SPDR
     uint8_t status;
     do { // Next, wait in a loop until SPIF is set
@@ -99,7 +99,7 @@ void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value) { // doesn't ret
     (void)SPI_addr->SPDR; // Read from SPDR to clear the SPIF flag and discard the received value
 }
 
-uint8_t SPI_receive(volatile SPI_t *SPI_addr) {
+uint8_t SPI_receive(volatile SPI_t *SPI_addr) { // (3)
     // Send a dummy value (0xFF) to initiate the receive process
     (SPI_addr->SPDR) = 0xFF;
 
