@@ -77,11 +77,10 @@ static inline GPIO_PIN_STATE_t GPIO_output_get_value(gpio_inst_t * const me)
 
 /**************************************************************
 *   GPIO_output_toggle_value
-*   Inputs: pointer to a GPIO port struct
-*           A GPIO_PIN_STATE_t variable that 
+*   Inputs: pointer to a GPIO instance object 
 *   Output: None
 **************************************************************
-*   Function: Sets the GPIO output
+*   Function: toggles the GPIO output value
 *
 *   Caution: 
 ***************************************************************/
