@@ -28,7 +28,7 @@
 #include <stdio.h>
 
 #define SPI_CLOCK_FREQ_400KHz (400000)
-#define SPI_CLOCK_FREQ_25MHz (25000000)
+#define SPI_CLOCK_FREQ_4MHz (4000000)
 #define SD_CS_port (PB)
 #define SD_CS_pin (1<<4)
 
@@ -45,7 +45,7 @@ uint8_t buffer2_g[512];
 int main(void)
 {
     //uint8_t input,status,SD_type;
-    uint32_t temp32;
+    uint32_t block_number;
     char *buffer;
     
 	// Initialize the LED outputs
@@ -67,6 +67,7 @@ int main(void)
 	//*** SPI initialization for SD Card initialization (400KHz max)
     if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ_400KHz) != 0) {
         UART_transmit_string(UART1, "SPI Init Error (400KHz)\n\r", 0);
+        LED_set_value(&led0, LED_ON);  // Light LED to indicate error
     }
     else {
         UART_transmit_string(UART1, "SPI Init Success! (400KHz)\n\r", 0);
@@ -74,33 +75,43 @@ int main(void)
     
     //*** SD Card initialization
 	sd_card_init(SPI0);
+    UART_transmit_string(UART1, Complete, 0);
     
     
-    //*** SPI initialization for SD Card communication (25MHHz max)
-	/*if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ_25MHz) != 0) {
-        UART_transmit_string(UART1, "SPI Init Error (25MHz)\n\r", 0);
+    //*** SPI initialization for SD Card communication (4MHHz max)
+	if (SPI_Master_Init(SPI0, SPI_CLOCK_FREQ_4MHz) != 0) {
+        UART_transmit_string(UART1, "SPI Init Error (4MHz)\n\r", 0);
+        LED_set_value(&led0, LED_ON);  // Light LED to indicate error
     }
     else {
-        UART_transmit_string(UART1, "SPI Init Success! (25MHz)\n\r", 0);
+        UART_transmit_string(UART1, "SPI Init Success! (4MHz)\n\r", 0);
     }
-     */
     
     uint8_t test_data = 0xAA;   // Example byte to test SPI transfer
     uint8_t received_data;
     
-    temp32 = long_serial_input(UART1);
-    SD_CS_inactive(); // set /CS to 0
-    send_command(SPI0, 17, temp32);
-    read_block(SPI0, buffer1_g, 512);
-    SD_CS_active(); // set /CS to 1
     print_memory(buffer1_g, 512);
         
     while (1) 
     {
         
         UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
-
-    
+        // Prompt user for a block number
+        UART_transmit_string(UART1, LSI_Prompt, 0);
+        block_number = long_serial_input(UART1);  // Get block number from user
+        SD_CS_inactive(); // set /CS to 0
+        send_command(SPI0, 17, block_number); // send CMD17 to read the block
+        
+        // Read 512 bytes from the block into buffer1_g
+        if (read_block(SPI0, buffer1_g, 512) == 0) {
+            // Block read successfully, print the block contents
+            print_memory(buffer1_g, 512);
+        } else {
+            // Error in reading the block, print error message
+            UART_transmit_string(UART1, "Error reading block\n\r", 0);
+        }
+        
+        SD_CS_active(); // set /CS to 1
     
         received_data = SPI_receive(SPI0);
     
