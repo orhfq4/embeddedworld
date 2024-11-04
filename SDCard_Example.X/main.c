@@ -75,7 +75,7 @@ int main(void)
     
     //*** SD Card initialization
 	sd_card_init(SPI0);
-    UART_transmit_string(UART1, Complete, 0);
+    UART_transmit_string(UART1, "SD CARD INIT COMPLETE\n\r", 0);
     
     
     //*** SPI initialization for SD Card communication (4MHHz max)
@@ -91,7 +91,7 @@ int main(void)
     while (1) 
     {
         
-        UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
+        UART_transmit_string(UART1, "Entering While loop in main...\n\r", 0); // Checkpoint print
         // Prompt user for a block number
         copy_string_to_buffer(LSI_Prompt, buffer,0);
         UART_transmit_string(UART1, buffer, 0);

@@ -146,6 +146,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint8_t R1;
     uint8_t host_supply_v;
     uint8_t operating_v;
+    uint8_t SD_Card_type_g;
     uint32_t argument_0 = 0x00000000;
     uint32_t argument_8 = 0x000001AA;
     uint8_t rec_array[5];
@@ -161,14 +162,14 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
 
     // (6a) 10 SPI_transfers of 0xFF
     for(uint8_t i = 0; i<10; i++){
-        UART_transmit_string(UART1, "Running For Loop \n\r", 0);
+        UART_transmit_string(UART1, "Sending initial 10 transfers of 0xFF... \n\r", 0);
         uint8_t send_value = 0xFF; 
         rcvd_value = SPI_transfer(SPI_addr,send_value);
     }
     
     /****************************CMD0*********************************/
     if(error_status==normal){ // (6b)
-        UART_transmit_string(UART1, "Sending CMD0 \n\r", 0);
+        UART_transmit_string(UART1, "Sending CMD0... \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
         SD_CS_inactive();
         // Send CMD0 with argument 0x00;
@@ -188,7 +189,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     /****************************CMD8*********************************/
     // Not sure if we need to read the R7 response here too
     if(error_status==normal){ // (6c)
-        UART_transmit_string(UART1, "Sending CMD8 \n\r", 0);
+        UART_transmit_string(UART1, "Sending CMD8... \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
         SD_CS_inactive();
         // Send CMD8 with argument 0x000001AA;
@@ -222,7 +223,7 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     /****************************CMD58*********************************/
     // Not sure if we need to read the R3 response here too
     if(error_status==normal){ // (6d)
-        UART_transmit_string(UART1, "Sending CMD58 \n\r", 0);
+        UART_transmit_string(UART1, "Sending CMD58... \n\r", 0);
         //Clear the /CS bit (PB4) to start the communication
         SD_CS_inactive();
         // Send CMD58 with argument 0x00;
@@ -268,29 +269,33 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         //store the r1 response
         R1 = rec_array[0];
         timeout++;
-        UART_transmit_string(UART1, "Loop Complete \n\r", 0);
+        UART_transmit_string(UART1, "ACMD41 Looping... \n\r", 0);
     }while((R1 != normal) && (timeout <= SD_CMD_TIMEOUT));
 
-        if (timeout == 0) {
-            error_status = 10;
-            UART_transmit_string(UART1, "ACMD41 Timeout occurred :( \n\r", 0);
-        }
-    
-        if(R1 == 0x00){
-            send_command(SPI_addr, 58, argument_0); // Send command 58
-             
-            receive_response(SPI_addr,OCR_bytes,rec_array); // Check R3
-            if (rec_array[1]==high_capacity) {
-                UART_transmit_string(UART1, "High capacity card! \n\r", 0);
-            } else if(rec_array[1]==std_capacity) {
-                error_status = 7;
-                UART_transmit_string(UART1, "Standard capacity! Try a different card :( \n\r", 0);
-            } else {
-                UART_transmit_string(UART1, "No card detected :( \n\r", 0);
-            }
-            R1 = rec_array[0];
-        }
+    if (timeout == 0) {
+        error_status = 10;
+        UART_transmit_string(UART1, "ACMD41 Timeout occurred :( \n\r", 0);
     }
+    
+    // (6f)
+    if(R1 == normal){
+        SD_CS_inactive();
+        send_command(SPI_addr, 58, argument_0); // Send command 58
+        receive_response(SPI_addr,OCR_bytes,rec_array); // Check R3
+        SD_Card_type_g = rec_array[1];
+        SD_CS_active();
+        if (SD_Card_type_g==high_capacity) {
+            UART_transmit_string(UART1, "High capacity card! \n\r", 0);
+        } else if(SD_Card_type_g==std_capacity) {
+            error_status = 7;
+            UART_transmit_string(UART1, "Standard capacity! Try a different card :( \n\r", 0);
+        } else {
+            error_status = 8;
+            UART_transmit_string(UART1, "No card detected :( \n\r", 0); 
+        }
+        R1 = rec_array[0];
+    }
+}
     
     // (6f)
     /* If the SD card is successfully activated CMD58 should be sent again to 
