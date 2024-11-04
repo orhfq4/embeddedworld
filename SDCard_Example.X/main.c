@@ -87,17 +87,14 @@ int main(void)
         UART_transmit_string(UART1, "SPI Init Success! (4MHz)\n\r", 0);
     }
     
-    uint8_t test_data = 0xAA;   // Example byte to test SPI transfer
-    uint8_t received_data;
-    
-    print_memory(buffer1_g, 512);
         
     while (1) 
     {
         
         UART_transmit_string(UART1, "Entering loop...\n\r", 0); // Checkpoint print
         // Prompt user for a block number
-        UART_transmit_string(UART1, LSI_Prompt, 0);
+        copy_string_to_buffer(LSI_Prompt, buffer,0);
+        UART_transmit_string(UART1, buffer, 0);
         block_number = long_serial_input(UART1);  // Get block number from user
         SD_CS_inactive(); // set /CS to 0
         send_command(SPI0, 17, block_number); // send CMD17 to read the block
@@ -113,15 +110,8 @@ int main(void)
         
         SD_CS_active(); // set /CS to 1
     
-        received_data = SPI_receive(SPI0);
-    
-        // Format and transmit the sent and received data to UART
-        sprintf(buffer, "Sent: 0x%02X, Received: 0x%02X\n\r", test_data, received_data);
-        UART_transmit_string(UART1, buffer, 0); 
-    
         _delay_ms(500); // Delay to observe output
         
-        test_data++;
 		
     }
 }

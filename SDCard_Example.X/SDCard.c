@@ -21,6 +21,8 @@
 #define illegal_command (9)
 #define CMD58_error (10)
 #define normal (0x00)
+#define high_capacity (0xC0)
+#define std_capacity (0x80)
 
 gpio_inst_t sd_cs_gpio; // Declare it globally
 gpio_inst_t sck_gpio;
@@ -52,6 +54,7 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     if (error_status==normal) {
         if (CMD_value > 63) {
             error_status = 1;  // Set error flag for illegal command
+            UART_transmit_string(UART1, "Send command: Error command greater than 63 \n\r", 0);
         }
     }
 
@@ -61,24 +64,11 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     // (4c) Send the command byte
     uint8_t rcvd_value = SPI_transfer(SPI_addr, send_value); // The received value is not used in this function
     
-    if (error_status==normal) {
-        if (rcvd_value > 0) {
-            error_status = 2; // Set an error if SPI error occurs and exit early
-        }
-    }
-
     // (4d) Send the 32-bit argument, MSB first
     for (int8_t index = 0; index < 4; index++) {
         send_value = (uint8_t)(argument>>(24-(index*8)));
         rcvd_value = SPI_transfer(SPI_addr,send_value);
-        
-        if (error_status==normal) {
-            if (rcvd_value > 0) {
-                error_status = 3;
-            }
         }
-    }
-
     // (4e) Send the checksum byte or default end bit value
     uint8_t checksum;
     if (CMD_value == CMD0) {
@@ -90,11 +80,6 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     }
 
     rcvd_value = SPI_transfer(SPI_addr, checksum);  // Send checksum byte
-    if (error_status==normal) {
-        if (rcvd_value > 0){
-            error_status = 3;
-        }
-    }
     
     return error_status;  // (4f) Return final error status
 }
@@ -113,6 +98,7 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
         if (error_status==normal) {
             if (timeout >= SD_CMD_TIMEOUT) {
                 error_status = 1;  // Timeout error
+                UART_transmit_string(UART1, "Receive response: Error timeout \n\r", 0);
             }
         }
         
@@ -125,19 +111,22 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
     if (error_status==normal){
         if(timeout == 0) {
             error_status = 2;
+            UART_transmit_string(UART1, "Received Response: Error timeout \n\r", 0);
         }
         else if((rcvd_value&0xFE) != 0x00) { // 0x00 and 0x01 are good
-        *rec_array=rcvd_value; // return the value to see the array
-        error_status = 3;
-    } else {
-        *rec_array=rcvd_value; // first received value  (R1 resp.)
-        if(num_bytes>1) {
-            for(int8_t index=1;index<num_bytes;index++) {
-                rcvd_value=SPI_receive(SPI_addr);
-                *(rec_array+index)=rcvd_value;
+            *rec_array=rcvd_value; // return the value to see the array
+            error_status = 3;
+            UART_transmit_string(UART1, "Receive Response: Error rcvd_value isn't 0xFE \n\r", 0);
+            
+        } else {
+            *rec_array=rcvd_value; // first received value  (R1 resp.)
+            if(num_bytes>1) {
+                for(int8_t index=1;index<num_bytes;index++) {
+                    rcvd_value=SPI_receive(SPI_addr);
+                    *(rec_array+index)=rcvd_value;
+                }
             }
         }
-    }
     }
 
     // (5c) Send a final 0xFF after receiving the response
@@ -282,11 +271,24 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         UART_transmit_string(UART1, "Loop Complete \n\r", 0);
     }while((R1 != normal) && (timeout <= SD_CMD_TIMEOUT));
 
-
+        if (timeout == 0) {
+            error_status = 10;
+            UART_transmit_string(UART1, "ACMD41 Timeout occurred :( \n\r", 0);
+        }
+    
         if(R1 == 0x00){
-            send_command (SPI_addr, 58, argument_0); // Send command 58
-            receive_response (SPI_addr,R1_bytes,rec_array); // Check R1
-            R1 = rec_array[0]; 
+            send_command(SPI_addr, 58, argument_0); // Send command 58
+             
+            receive_response(SPI_addr,OCR_bytes,rec_array); // Check R3
+            if (rec_array[1]==high_capacity) {
+                UART_transmit_string(UART1, "High capacity card! \n\r", 0);
+            } else if(rec_array[1]==std_capacity) {
+                error_status = 7;
+                UART_transmit_string(UART1, "Standard capacity! Try a different card :( \n\r", 0);
+            } else {
+                UART_transmit_string(UART1, "No card detected :( \n\r", 0);
+            }
+            R1 = rec_array[0];
         }
     }
     
