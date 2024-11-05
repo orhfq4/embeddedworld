@@ -12,6 +12,8 @@
       <itemPath>board.h</itemPath>
       <itemPath>peripherals.h</itemPath>
       <itemPath>print_memory.h</itemPath>
+      <itemPath>SPI.h</itemPath>
+      <itemPath>SDCard.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -33,6 +35,8 @@
       <itemPath>board.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>print_memory.c</itemPath>
+      <itemPath>SDCard.c</itemPath>
+      <itemPath>SPI.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -46,7 +50,7 @@
         <targetDevice>ATmega324PB</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>EdbgTool</platformTool>
+        <platformTool>Simulator</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>2.46</languageToolchainVersion>
         <platform>3</platform>
