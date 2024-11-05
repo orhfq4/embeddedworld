@@ -24,8 +24,13 @@
 #define high_capacity (0xC0)
 #define std_capacity (0x80)
 
+// ********************************Global Variables*************************************
+
 gpio_inst_t sd_cs_gpio; // Declare it globally
 gpio_inst_t sck_gpio;
+uint8_t SD_Card_Type;
+
+// ********************************CS and SCK init and control functions****************
 
 void init_SD_CS(volatile GPIO_t *port, uint8_t pin) {
     GPIO_output_ctor(&sd_cs_gpio, port, pin, GPIO_CLEAR); // Initialize only once
@@ -46,6 +51,8 @@ void init_SCK(volatile GPIO_t *port, uint8_t pin) {
 void SCK_low() {
     GPIO_output_set_value(&sck_gpio, GPIO_CLEAR); // Set the pin to low
 }
+
+// ****************************send_command*************************************
 
 uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argument) {
     uint8_t error_status = 0;  // Assume no error initially
@@ -83,6 +90,8 @@ uint8_t send_command(volatile SPI_t *SPI_addr, uint8_t CMD_value, uint32_t argum
     
     return error_status;  // (4f) Return final error status
 }
+
+// ********************************receive_response***************************************
 
 uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t rec_array[]) {
     uint16_t timeout = 0;
@@ -134,6 +143,8 @@ uint8_t receive_response (volatile SPI_t *SPI_addr, uint8_t num_bytes, uint8_t r
 
     return error_status;  // Success (5d)
 }
+
+// ****************************sd_card_init********************************************
 
 uint8_t sd_card_init(volatile SPI_t *SPI_addr){
     uint16_t timeout = 0;
@@ -286,9 +297,11 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         SD_CS_active();
         if (SD_Card_type_g==high_capacity) {
             UART_transmit_string(UART1, "High capacity card! \n\r", 0);
+            SD_Card_Type = 0; // high capacity card
         } else if(SD_Card_type_g==std_capacity) {
             error_status = 7;
-            UART_transmit_string(UART1, "Standard capacity! Try a different card :( \n\r", 0);
+            UART_transmit_string(UART1, "Standard capacity! Will handle block_number later \n\r", 0);
+            SD_Card_Type = 9; // standard capacity
         } else {
             error_status = 8;
             UART_transmit_string(UART1, "No card detected :( \n\r", 0); 
@@ -349,6 +362,8 @@ uint8_t sd_card_init(volatile SPI_t *SPI_addr){
         */
 }
 
+// **************************read_block****************************************
+
 uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t num_bytes) {
     uint8_t rcvd_value;
     uint8_t error_status = normal;
@@ -391,3 +406,27 @@ uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t num_byte
     
     return error_status; // return 0 if successful
 }
+
+// BONUS :) ******************************************************************
+uint8_t adjust_block_number(uint32_t block_number) {
+    uint8_t response;
+    uint8_t error_status = normal;
+    
+    // Only send CMD16 if it's a standard capacity card (SDSC)
+    if (SD_Card_Type == 9) {  // Check if SDSC
+        SD_CS_inactive();
+        response = send_command(SPI0, 16, block_number);  // CMD16 with 512-byte block length
+        SD_CS_active();
+        if (response != 0x00) {
+            // Error handling: CMD16 failed
+            error_status = 1;  // Return an error code if CMD16 fails
+            UART_transmit_string(UART1, "CMD16 error. Standard Capacity handling error.",0);
+
+        }
+        if (error_status == normal) {
+            UART_transmit_string(UART1, "CMD16 Successfully sent. Standard Capacity handled.",0);
+        }
+    }
+    return 0;  // Success
+}
+// ****************************************************************************

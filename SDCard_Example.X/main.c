@@ -88,7 +88,7 @@ int main(void)
     }
     
         
-    while (1) 
+    while (1)
     {
         
         UART_transmit_string(UART1, "Entering While loop in main...\n\r", 0); // Checkpoint print
@@ -96,6 +96,7 @@ int main(void)
         copy_string_to_buffer(LSI_Prompt, buffer,0);
         UART_transmit_string(UART1, buffer, 0);
         block_number = long_serial_input(UART1);  // Get block number from user
+        adjust_block_number(block_number); // Send CMD16
         SD_CS_inactive(); // set /CS to 0
         send_command(SPI0, 17, block_number); // send CMD17 to read the block
         

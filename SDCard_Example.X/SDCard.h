@@ -115,5 +115,7 @@ void SCK_low();
 ***************************************************************/
 uint8_t read_block (volatile SPI_t *SPI_addr, uint8_t array[ ],uint16_t number_of_bytes);
 
+uint8_t adjust_block_number(uint32_t block_number);
+
 #endif	/* SDCARD_H */
 
