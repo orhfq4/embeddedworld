@@ -43,22 +43,23 @@ uint8_t SPI_Master_Init(volatile SPI_t *SPI_addr, uint32_t clock_freq);
 void SPI_transmit(volatile SPI_t *SPI_addr, uint8_t send_value);
 
 /**************************************************************
-*   
-*   Inputs: 
-*   Output: 
+*   SPI_receive
+*   Inputs: a pointer to a SPI object
+*   Output: an unsigned 8-bit integer of what data was received from the SPI
 **************************************************************
-*   Function: 
+*   Function: receives data from the SPI
 *
 *   Caution: 
 ***************************************************************/
 uint8_t SPI_receive(volatile SPI_t *SPI_addr);
 
 /**************************************************************
-*   
-*   Inputs: 
-*   Output: 
+*   SPI_transfer
+*   Inputs: a pointer to a SPI object
+    a 8-bit value for what is being sent to the SPI
+*   Output: an unsigned 8-bit integer of what data was transferred
 **************************************************************
-*   Function: 
+*   Function: Transfer data to the SPI
 *
 *   Caution: 
 ***************************************************************/
