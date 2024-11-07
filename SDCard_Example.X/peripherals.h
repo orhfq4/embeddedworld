@@ -42,21 +42,17 @@ typedef struct _UART
 #define UART2 ((volatile UART_t *) &UCSR2A)
 
 /***** SPI PORTS ******/
+// Define the SPI register struct for memory-mapped access
+typedef struct SPI // (1)
+{
+    volatile uint8_t SPCR; // SPI Control Register
+    volatile uint8_t SPSR; // SPI Status Register
+    volatile uint8_t SPDR; // SPI Data Register
+} SPI_t;
 
-
-
-
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef	__cplusplus
-}
-#endif
+// Define pointers to SPI0 and SPI1 with specific memory addresses
+#define SPI0 ((SPI_t *)0x004C) // Starting address for SPI0
+#define SPI1 ((SPI_t *)0x00AC) // Starting address for SPI1
 
 #endif	/* PERIPHERALS_H */
 
