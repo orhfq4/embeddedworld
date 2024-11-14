@@ -65,6 +65,10 @@ typedef struct TWI
 	volatile uint8_t TWI_TWAMR;
 } TWI_t;
 
+/* There are 2 identical TWI modules
+ * (TWI1: 0xB8)
+ * (TWI2: 0xD8)
+ */
 #define TWI0 ((volatile TWI_t *)&TWBR0)  //0xB8
 #define TWI1 ((volatile TWI_t *)&TWBR1)  //0xD8
 

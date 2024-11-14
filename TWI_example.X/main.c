@@ -32,6 +32,9 @@
 #include <avr/pgmspace.h>
 #include <stdio.h>
 
+#include "TWI.h"
+#include "STA013.h"
+
 const char SD_Header[29] PROGMEM = {"MP3 Initialization Program\n\r"};
 
 uint8_t buffer1_g[512];
