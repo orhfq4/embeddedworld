@@ -27,8 +27,8 @@ uint8_t TWI_master_init(volatile TWI_t *TWI_addr, uint32_t I2C_freq);
 
 // TWI_master_receive prototype
 // Reads values to a slave device
-uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t device_addr, 
-        uint16_t num_bytes, uint8_t * array_name);
+uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr, 
+        uint16_t num_bytes, uint8_t * rec_array);
 
 // TWI_master_receive prototype with bonus implementation (includes internal address size and the address)
 // uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t device_addr, 
