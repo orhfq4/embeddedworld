@@ -1,4 +1,4 @@
-# Ignore files in directory (SD_Card_Example.X):
+# Ignore files in directory (SDCard_Example.X):
 SDCard_Example.X/nbproject/*
 SDCard_Example.X/.generated_files/*
 SDCard_Example.X/build/*
@@ -6,9 +6,9 @@ SDCard_Example.X/dist/*
 
 # Ignore files in directory (TWI_Example.X):
 TWI_example.X/nbproject/*
-TWI_Example.X/.generated_files/*
-TWI_Example.X/build/*
-TWI_Example.X/dist/*
+TWI_example.X/.generated_files/*
+TWI_example.X/build/*
+TWI_example.X/dist/*
 
 # Ignore files in directory (GPIO_Example.X):
 GPIO_example.X/nbproject/*
