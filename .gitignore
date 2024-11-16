@@ -1,29 +1,9 @@
-# Ignore files in directory (SDCard_Example.X):
-SDCard_Example.X/nbproject/*
-SDCard_Example.X/.generated_files/*
-SDCard_Example.X/build/*
-SDCard_Example.X/dist/*
+# Ignore all generated files across all projects
+*.generated_files/*
 
-# Ignore files in directory (TWI_Example.X):
-TWI_example.X/nbproject/*
-TWI_example.X/.generated_files/*
-TWI_example.X/build/*
-TWI_example.X/dist/*
+# Ignore build directories
+*/build/*
+*/dist/*
 
-# Ignore files in directory (GPIO_Example.X):
-GPIO_example.X/nbproject/*
-GPIO_Example.X/.generated_files/*
-GPIO_Example.X/dist/*
-GPIO_Example.X/build/*
-
-# Ignore files in directory (UART_Example.X):
-UART_example.X/nbproject/*
-UART_Example.X/.generated_files/*
-UART_Example.X/build/*
-UART_Example.X/dist/*
-
-# Ignore files in directory (blinky.x):
-blinky.x/nbproject/*
-blinky.x/.generated_files/*
-blinky.x/build/*
-blinky.x/dist/*
+# Ignore project-specific files and configurations
+*/nbproject/*
