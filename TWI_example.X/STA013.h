@@ -8,6 +8,8 @@
 #ifndef STA013_H
 #define	STA013_H
 
+#include "TWI.h"
+void STA013_read();
 /*
  
  * Use to initialize the STA013

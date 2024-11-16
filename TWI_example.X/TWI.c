@@ -74,14 +74,35 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         uint8_t send_value = slave_addr<<1; // LSB will be '0'
         
         // If start was sent, then send SLA+W
-        if (temp8 == 0x08) { // Start sent // 0x10 is a repeated start
+        if (temp8 == 0x18) { // Start sent // 0x10 is a repeated start
             (TWI_addr->TWI_TWDR) = send_value;
             (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEN=1));
         }
         // Should check for other error conditions here as well
+        else if(temp8==0x28){
+            (TWI_addr->TWDR)=send_val;
+            (TWI_addr->TWCR)=((1<<TWINT)|(1<<TWEN));
+        }
+        else if(temp8==0x20){
+            (TWI_addr->TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
+            do{
+                status=(TWI_addr->TWCR); //literally copy pasted status from the slides, not sure if it's supposed to be error status or something else, too tired to think rn :3
+            }while((status & (1<<TWSTO))!=0); //wait for the stop=0
+            return error_status;
+        }   
     }
-    
-    // Pick up from slide 39
+    do{
+        status=(TWI_addr->TWCR);
+    }while((status&0x80)==0);
+    temp8=((TWI_addr->TWSR)&0xF8);//I think this is supposed to be here?
+    if(temp8==0x18){
+        (TWI_addr->TWDR)=send_val;
+        (TWI_addr->TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
+        do{
+            status=(TWI_addr->TWCR);
+        }while((status&(1<<TWSTO))!=0); //also think this should be here? just copying slides at this point ong.
+    }
+    // Pick up from slide 43
    
     
 }
