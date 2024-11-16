@@ -21,3 +21,9 @@
 /UART_Example.X/.generated_files/*
 /UART_Example.X/build/*
 /UART_Example.X/dist/*
+
+# Ignore files in directory (blinky.x):
+/blinky.x/nbproject/*
+/blinky.x/.generated_files/*
+/blinky.x/build/*
+/blinky.x/dist/*
