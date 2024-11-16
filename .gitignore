@@ -1,6 +1,23 @@
-/SDCard.X/build/
-/SDCard.X/dist/
-/SDCard_Example.X/build/
-/SDCard_Example.X/dist/
-/GPIO_Example.X/dist/
-/GPIO_Example.X/build/
+# Ignore files in directory (SD_Card_Example.X):
+/SDCard_Example.X/nbproject/*
+/SDCard_Example.X/.generated_files/*
+/SDCard_Example.X/build/*
+/SDCard_Example.X/dist/*
+
+# Ignore files in directory (TWI_Example.X):
+/TWI_example.X/nbproject/*
+/TWI_Example.X/.generated_files/*
+/TWI_Example.X/build/*
+/TWI_Example.X/dist/*
+
+# Ignore files in directory (GPIO_Example.X):
+/GPIO_example.X/nbproject/*
+/GPIO_Example.X/.generated_files/*
+/GPIO_Example.X/dist/*
+/GPIO_Example.X/build/*
+
+# Ignore files in directory (UART_Example.X):
+/UART_example.X/nbproject/*
+/UART_Example.X/.generated_files/*
+/UART_Example.X/build/*
+/UART_Example.X/dist/*
