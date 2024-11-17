@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 
-const  uint8_t CONFIG[3998] PROGMEM = 
+extern const  uint8_t CONFIG[3998] PROGMEM = 
 {  58, 1,
    42, 4,
    40, 0,
@@ -2004,7 +2004,7 @@ const  uint8_t CONFIG[3998] PROGMEM =
    0xff, 0xff};
 
 
-const  uint8_t CONFIG2[50] PROGMEM =
+extern const  uint8_t CONFIG2[50] PROGMEM =
   {58, 0,
    100, 58,
    101, 187,

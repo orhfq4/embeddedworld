@@ -10,8 +10,23 @@
 #define ERROR_0x18 (5)
 #define OTHER_ERROR (6)
 #define ARBITRATION_ERROR (7)
+#define INVALID_FREQ_ERROR (8)
 
+// To account for "Magic Numbers"
 #define TIMEOUT_LIMIT (1000)
+#define PRESCALE_1    (0x00)
+#define PRESCALE_4    (0x01)
+#define PRESCALE_16   (0x02)
+#define PRESCALE_64   (0x03)
+#define TWI_START_ACK       (0x08)
+#define TWI_REP_START_ACK   (0x10)
+#define TWI_SLA_W_ACK       (0x18)
+#define TWI_SLA_W_NACK      (0x20)
+#define TWI_DATA_ACK        (0x28)
+#define TWI_DATA_NACK       (0x30)
+#define TWI_ARB_LOST        (0x38)
+
+
 
 //******************************** TWI_master_init ********************************************
 
@@ -19,28 +34,33 @@ uint8_t TWI_master_init(volatile TWI_t *TWI_addr, uint32_t I2C_freq) {
     // returns an error status which is why there is uint8_t
     uint8_t prescale = 0;
     uint8_t error_status = 0;
+    
+    if (I2C_freq == 0) {
+    error_status = INVALID_FREQ_ERROR;
+    UART_transmit_string(UART1, "Invalid I2C frequency: 0 Hz.\n\r", 0);
+    }
 
     prescale = (((F_CPU/OSC_DIV)/I2C_freq)-16UL)/(2UL*255); // TWBR must be less than 255
 
     if (prescale < 1) {
         prescale = 1;
         TWI_addr->TWI_TWSR &= ~0x03; // Clear TWPS bits (mask with 0xFC)
-        TWI_addr->TWI_TWSR |= 0x00; // Set TWPS to 00
+        TWI_addr->TWI_TWSR |= PRESCALE_1; // Set TWPS to 00
     }
     else if ((prescale >= 1) && (prescale < 4)) {
         prescale = 4;
         TWI_addr->TWI_TWSR &= ~0x03; // Clear TWPS bits (mask with 0xFC)
-        TWI_addr->TWI_TWSR |= 0x01; // Set TWPS to 01
+        TWI_addr->TWI_TWSR |= PRESCALE_4; // Set TWPS to 01
     }
     else if ((prescale >= 4) && (prescale < 16)) {
         prescale = 16;
         TWI_addr->TWI_TWSR &= ~0x03; // Clear TWPS bits (mask with 0xFC)
-        TWI_addr->TWI_TWSR |= 0x02; // Set TWPS to 10
+        TWI_addr->TWI_TWSR |= PRESCALE_16; // Set TWPS to 10
     }
     else if ((prescale >= 16) && (prescale < 64)) {
         prescale = 64;
         TWI_addr->TWI_TWSR &= ~0x03; // Clear TWPS bits (mask with 0xFC)
-        TWI_addr->TWI_TWSR |= 0x03; // Set TWPS to 11
+        TWI_addr->TWI_TWSR |= PRESCALE_64; // Set TWPS to 11
     }
     if (prescale > 64) {
         error_status = PRESCALE_ERROR;
@@ -95,21 +115,21 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         uint8_t send_value = slave_addr<<1; // LSB will be '0'
         
         // If start was sent, then send SLA+W
-        if (temp8 == 0x18) { // SLA + W sent, ACK received
+        if (temp8 == TWI_SLA_W_ACK) { // SLA + W sent, ACK received
             (TWI_addr->TWI_TWDR) = send_value;
             (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEN)); // Start transmission
             UART_transmit_string(UART1, "Starting Transmission...\n\r", 0);
-        } else if(temp8==0x20){
+        } else if(temp8==TWI_SLA_W_NACK){
             (TWI_addr->TWI_TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
             do{
                 status=(TWI_addr->TWI_TWCR);
             }while((status & (1<<TWSTO))!=0); // Wait for STOP condition
             error_status = NACK_ERROR;
             UART_transmit_string(UART1, "Uh oh! Nack Error. 0x20\n\r", 0);
-        } else if (temp8 == 0x30) {  // NACK received after data byte
+        } else if (temp8 == TWI_DATA_NACK) {  // NACK received after data byte
             error_status = NACK_ERROR;
             UART_transmit_string(UART1, "Uh oh! Nack Error. 0x30\n\r", 0);
-        } else if (temp8 == 0x38) {  // Arbitration lost
+        } else if (temp8 == TWI_ARB_LOST) {  // Arbitration lost
             error_status = ARBITRATION_ERROR;
             UART_transmit_string(UART1, "Uh oh! Arbitration Error. 0x38\n\r", 0);
         }else {
@@ -136,13 +156,13 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
 
         // Check the status after each byte is transmitted
         uint8_t temp8 = (TWI_addr->TWI_TWSR) & 0xF8;  // Mask status bits
-        if (temp8 == 0x28) {  // Data byte transmitted, ACK received
+        if (temp8 == TWI_DATA_ACK) {  // Data byte transmitted, ACK received
             TWI_addr->TWI_TWDR = array[i];  // Write data to TWDR
             TWI_addr->TWI_TWCR = (1 << TWINT) | (1 << TWEN);  // Send next byte
-        } else if (temp8 == 0x30) {  // NACK received after data byte
+        } else if (temp8 == TWI_DATA_NACK) {  // NACK received after data byte
             error_status = NACK_ERROR;
             UART_transmit_string(UART1, "Uh oh! Nack Error. 0x30\n\r", 0);
-        } else if (temp8 == 0x38) {  // Arbitration lost
+        } else if (temp8 == TWI_ARB_LOST) {  // Arbitration lost
             error_status = ARBITRATION_ERROR;
             UART_transmit_string(UART1, "Uh oh! Arbitration Error. 0x38\n\r", 0);
         }else {
@@ -214,7 +234,7 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
     
     if (error_status == NORMAL) {
        // Read the error_status value to determine what happens next (same as transmit)
-        uint8_t temp8 = ((TWI_addr->TWI_TWSR)&0xF8); // 1111 1000 Gets rid of TWDS (lowest 3 bits 000)
+        temp8 = ((TWI_addr->TWI_TWSR)&0xF8); // 1111 1000 Gets rid of TWDS (lowest 3 bits 000)
         
         // Device Address + Write bit (SLA + R)
         uint8_t send_value = (slave_addr<<1) | 0x01; // LSB will be '1'
@@ -229,7 +249,6 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         }
         
         // Use a while loop to send data bytes until all bytes are sent or an error occurs
-        uint8_t index = 0;
         while((num_bytes!=0)&&(error_status==NORMAL)) {
             if(temp8==0x40) { // SLA+R sent, ACK Received
                 // good
