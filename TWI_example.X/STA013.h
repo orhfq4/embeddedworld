@@ -8,7 +8,6 @@
 #ifndef STA013_H
 #define	STA013_H
 
-#include "TWI.h"
 void STA013_init();
 /*
  

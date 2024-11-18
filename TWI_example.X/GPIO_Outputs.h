@@ -9,7 +9,8 @@
 #ifndef _GPIO_OUTPUTS_H_
 #define _GPIO_OUTPUTS_H_
 
-#include "board.h"
+#include <stdint.h>
+#include "peripherals.h"
 
 typedef enum {GPIO_CLEAR=0,GPIO_SET} GPIO_PIN_STATE_t;
 

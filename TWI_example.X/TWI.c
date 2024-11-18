@@ -1,5 +1,6 @@
 // TWI.c
 #include "TWI.h"
+#include "UART_Print.h"
 
 // DEFINES FOR ERRORS
 #define NORMAL (0) // error_status normal
@@ -28,7 +29,7 @@
 
 
 
-//******************************** TWI_master_init ********************************************
+//******************************** TWI_master_init (Question 1) ********************************************
 
 uint8_t TWI_master_init(volatile TWI_t *TWI_addr, uint32_t I2C_freq) {
     // returns an error status which is why there is uint8_t
@@ -82,7 +83,126 @@ uint8_t TWI_master_init(volatile TWI_t *TWI_addr, uint32_t I2C_freq) {
     return error_status;
 }
 
-//******************************** TWI_master_transmit ********************************************
+//******************************** TWI_master_receive (Question 2) ********************************************
+
+uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr, 
+        uint16_t num_bytes, uint8_t * rec_array) {
+    // returns an error status which is why there is uint8_t
+    
+    uint8_t error_status = NORMAL;
+    uint8_t status = 0;
+    uint8_t temp8 = 0;
+    uint8_t index = 0;
+
+    // Start a TWI Communication (same as transmit)
+    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWSTA)|(1<<TWEN));
+    
+    // Wait for the TWINT bit to be set in the TWCR (same as transmit)
+    uint16_t timeout = 0;
+    
+    do {
+        status = (TWI_addr -> TWI_TWCR);
+        timeout++;
+    } while (((status & (1<<TWINT)) == 0) && (timeout!=TIMEOUT_LIMIT));
+    
+    if (timeout == TIMEOUT_LIMIT) {
+        error_status = BUS_BUSY_ERROR;
+        UART_transmit_string(UART1, "Uh oh! Timeout Error! Bus is busy.\n\r", 0);
+    }
+    
+    if (error_status == NORMAL) {
+       // Read the error_status value to determine what happens next (same as transmit)
+        temp8 = ((TWI_addr->TWI_TWSR)&0xF8); // 1111 1000 Gets rid of TWDS (lowest 3 bits 000)
+        
+        // Device Address + Write bit (SLA + R)
+        uint8_t send_value = (slave_addr<<1) | 0x01; // LSB will be '1'
+        
+        // If start was sent, then send SLA+R (temp==0x10 is for repeated start)
+        if ((temp8==0x08 || (temp8==0x10))) { // start sent
+            (TWI_addr->TWI_TWDR) = send_value;
+            (TWI_addr->TWI_TWCR) = ((1<<TWINT) | (1<<TWEN));
+        } else {
+            error_status = OTHER_ERROR;
+            UART_transmit_string(UART1, "Uh oh! Start condition failed.\n\r", 0);
+        }
+        
+        // Use a while loop to send data bytes until all bytes are sent or an error occurs
+        while((num_bytes!=0)&&(error_status==NORMAL)) {
+            if(temp8==0x40) { // SLA+R sent, ACK Received
+                // good
+            }
+            if (num_bytes == 1) { // Send stop condition if only 1 byte is received
+                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(0<<TWEA)|(1<<TWEN));
+            }
+            else {
+                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEA)|(1<<TWEN));
+            }
+            
+            // Wait until TWINT is set
+            do {
+                status = (TWI_addr->TWI_TWCR);
+            } while((status&0x80)==0);
+            
+            // Read the status value to determine what to do next
+            temp8=((TWI_addr->TWI_TWSR)&0xF8); // Clear the lower 3 bits
+            
+            // Repeat the loop until:
+            // 1) There are no more bytes to receive
+            // 2) An error occurs
+            // If else statements below check the above:
+            
+            if (temp8==0x50) { // Data byte received, ACK sent
+                num_bytes--;
+                rec_array[index]=(TWI_addr->TWI_TWDR);
+                index++;
+                if(num_bytes==1) { // Send stop condition if only 1 byte is received
+                    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(0<<TWEA)|(1<<TWEN)); // Disable ACK for last byte
+                }
+                else {
+                    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEA)|(1<<TWEN)); // Continue sending ACK
+                }
+            } else if(temp8==0x58) { // Data byte received, NACK sent
+                // Read the final data byte
+                num_bytes--;
+                rec_array[index]=(TWI_addr->TWI_TWDR);
+                index++;
+                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
+                // Wait for TWSTO to return to 0
+            } else {
+                // If any other status code occurs, return error
+                error_status = OTHER_ERROR;
+                UART_transmit_string(UART1, "Uh oh! Unexpected TWI status received.\n\r", 0);
+                return error_status;
+            }
+        }   
+    }
+    return error_status; // SUCCESS!
+    
+    //****************************************** (BONUS) *************************************
+    
+    // Optional Function prototype can be implemented for bonus points:
+    // Could try it once we know the transmit function works
+    // Additionally we could try implementing non-blocking methods
+    
+    /*
+     * With the original prototype, the internal address is placed in the data array
+     * With this prototype, the internal address is a separate value
+     * The int_addr_size is used to determine how many bytes of internal_addr are used and sent
+     * If int_addr_size = 0, then internal_addr is not used
+     * If int_addr_size = 1, then the least significant byte is used
+     * If int_addr_size = 2, then the two least significant bytes are used
+     * If int_addr_size = 3, then the three least significant bytes are used
+     * The more significant byte is sent first
+     * 
+     * The bytes are sent before the data bytes and in the same manner as the data bytes
+     * 
+     * The receive function cannot send an internal address
+     * If int_addr_size!=0 then the TWI_master_receive function would call the
+     * TWI_master_trasnmit with num_bytes=0 to send the internal address only
+     */
+}
+
+//******************************** TWI_master_transmit (Question 4) ********************************************
 
 uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr, 
         uint16_t num_bytes, uint8_t *array) {
@@ -99,7 +219,7 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
     do {
         status = (TWI_addr -> TWI_TWCR);
         timeout++;
-    } while ((status & (1<<TWINT) == 0) && (timeout!=TIMEOUT_LIMIT));
+    } while (((status & (1<<TWINT)) == 0) && (timeout!=TIMEOUT_LIMIT));
     
     if (timeout == TIMEOUT_LIMIT) {
         error_status = BUS_BUSY_ERROR;
@@ -187,6 +307,8 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
     
     return error_status; // SUCCESS!
     
+    //****************************************** (BONUS) *************************************
+    
     // Optional Function prototype can be implemented for bonus points:
     // Could try it once we know the transmit function works
     // Additionally we could try implementing non-blocking methods
@@ -202,122 +324,5 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
      * The more significant byte is sent first
      * 
      * The bytes are sent before the data bytes and in the same manner as the data bytes
-     */
-}
-
-//******************************** TWI_master_receive ********************************************
-
-uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr, 
-        uint16_t num_bytes, uint8_t * rec_array) {
-    // returns an error status which is why there is uint8_t
-    
-    uint8_t error_status = NORMAL;
-    uint8_t status = 0;
-    uint8_t temp8 = 0;
-    uint8_t index = 0;
-
-    // Start a TWI Communication (same as transmit)
-    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWSTA)|(1<<TWEN));
-    
-    // Wait for the TWINT bit to be set in the TWCR (same as transmit)
-    uint16_t timeout = 0;
-    
-    do {
-        status = (TWI_addr -> TWI_TWCR);
-        timeout++;
-    } while ((status & (1<<TWINT) == 0) && (timeout!=TIMEOUT_LIMIT));
-    
-    if (timeout == TIMEOUT_LIMIT) {
-        error_status = BUS_BUSY_ERROR;
-        UART_transmit_string(UART1, "Uh oh! Timeout Error! Bus is busy.\n\r", 0);
-    }
-    
-    if (error_status == NORMAL) {
-       // Read the error_status value to determine what happens next (same as transmit)
-        temp8 = ((TWI_addr->TWI_TWSR)&0xF8); // 1111 1000 Gets rid of TWDS (lowest 3 bits 000)
-        
-        // Device Address + Write bit (SLA + R)
-        uint8_t send_value = (slave_addr<<1) | 0x01; // LSB will be '1'
-        
-        // If start was sent, then send SLA+R (temp==0x10 is for repeated start)
-        if ((temp8==0x08 || (temp8==0x10))) { // start sent
-            (TWI_addr->TWI_TWDR) = send_value;
-            (TWI_addr->TWI_TWCR) = ((1<<TWINT) | (1<<TWEN));
-        } else {
-            error_status = OTHER_ERROR;
-            UART_transmit_string(UART1, "Uh oh! Start condition failed.\n\r", 0);
-        }
-        
-        // Use a while loop to send data bytes until all bytes are sent or an error occurs
-        while((num_bytes!=0)&&(error_status==NORMAL)) {
-            if(temp8==0x40) { // SLA+R sent, ACK Received
-                // good
-            }
-            if (num_bytes == 1) { // Send stop condition if only 1 byte is received
-                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(0<<TWEA)|(1<<TWEN));
-            }
-            else {
-                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEA)|(1<<TWEN));
-            }
-            
-            // Wait until TWINT is set
-            do {
-                status = (TWI_addr->TWI_TWCR);
-            } while((status&0x80)==0);
-            
-            // Read the status value to determine what to do next
-            temp8=((TWI_addr->TWI_TWSR)&0xF8); // Clear the lower 3 bits
-            
-            // Repeat the loop until:
-            // 1) There are no more bytes to receive
-            // 2) An error occurs
-            // If else statements below check the above:
-            
-            if (temp8==0x50) { // Data byte received, ACK sent
-                num_bytes--;
-                rec_array[index]=(TWI_addr->TWI_TWDR);
-                index++;
-                if(num_bytes==1) { // Send stop condition if only 1 byte is received
-                    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(0<<TWEA)|(1<<TWEN)); // Disable ACK for last byte
-                }
-                else {
-                    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEA)|(1<<TWEN)); // Continue sending ACK
-                }
-            } else if(temp8==0x58) { // Data byte received, NACK sent
-                // Read the final data byte
-                num_bytes--;
-                rec_array[index]=(TWI_addr->TWI_TWDR);
-                index++;
-                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
-                // Wait for TWSTO to return to 0
-            } else {
-                // If any other status code occurs, return error
-                error_status = OTHER_ERROR;
-                UART_transmit_string(UART1, "Uh oh! Unexpected TWI status received.\n\r", 0);
-                return error_status;
-            }
-        }   
-    }
-    return error_status; // SUCCESS!
-    
-    // Optional Function prototype can be implemented for bonus points:
-    // Could try it once we know the transmit function works
-    // Additionally we could try implementing non-blocking methods
-    
-    /*
-     * With the original prototype, the internal address is placed in the data array
-     * With this prototype, the internal address is a separate value
-     * The int_addr_size is used to determine how many bytes of internal_addr are used and sent
-     * If int_addr_size = 0, then internal_addr is not used
-     * If int_addr_size = 1, then the least significant byte is used
-     * If int_addr_size = 2, then the two least significant bytes are used
-     * If int_addr_size = 3, then the three least significant bytes are used
-     * The more significant byte is sent first
-     * 
-     * The bytes are sent before the data bytes and in the same manner as the data bytes
-     * 
-     * The receive function cannot send an internal address
-     * If int_addr_size!=0 then the TWI_master_receive function would call the
-     * TWI_master_trasnmit with num_bytes=0 to send the internal address only
      */
 }

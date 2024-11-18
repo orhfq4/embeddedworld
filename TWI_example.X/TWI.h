@@ -10,10 +10,7 @@
 #ifndef TWI_H
 #define	TWI_H
 
-#include "peripherals.h"
 #include "board.h"
-#include "UART_Print.h"
-
 /*
  
  * Need to add in the following 3 functions:

@@ -52,6 +52,10 @@ int main(void)
    
     UART_init(UART1,9600);
     
+    TWI_master_init(TWI1, 400000); // not sure what I2C frequency to use here
+    
+    STA013_init();
+    
     buffer=export_print_buffer();
     
     

@@ -1,8 +1,9 @@
 
-#include <avr/io.h>
-#include <avr/pgmspace.h>
+#include "Config_Arrays.h"
+#include "board.h"
+#include <avr/pgmspace.h> // For PROGMEM on AVR
 
-extern const  uint8_t CONFIG[3998] PROGMEM = 
+const  uint8_t CONFIG[3998] PROGMEM = 
 {  58, 1,
    42, 4,
    40, 0,
@@ -2004,7 +2005,7 @@ extern const  uint8_t CONFIG[3998] PROGMEM =
    0xff, 0xff};
 
 
-extern const  uint8_t CONFIG2[50] PROGMEM =
+const  uint8_t CONFIG2[50] PROGMEM =
   {58, 0,
    100, 58,
    101, 187,

@@ -1,13 +1,14 @@
 // STA013.c
 
-#include "STA013.h"
-#include <stdint.h>
-#include <stdio.h>
 #include "GPIO_Outputs.h"
+#include "STA013.h"
 #include "TWI.h"
 #include "UART.h"
 #include "board.h"
 #include <util/delay.h>
+#include "Config_Arrays.h"
+#include "UART_Print.h"
+#include <stdio.h>
 
 // "Magic Numbers"
 #define STA013_RESET_PIN &STA013_reset
@@ -17,6 +18,8 @@
 #define TIMEOUT_VAL 50  // Maximum number of retry attempts
 #define NORMAL (0)
 
+//************************************* STA013_init (Question 3) ***********************
+
 void STA013_init() {
     uint8_t rec_array[NUM_BYTES_TO_READ] = {0}; // Array to hold received data
     uint8_t error_status = NORMAL;
@@ -24,20 +27,11 @@ void STA013_init() {
     char prnt_bffr[50]; // Buffer for UART printing
     
     // GPIO instances for STA013
-    gpio_inst_t STA013_reset = {
-        .port_addr = PB, // Port B
-        .pin_mask = (1 << 1) // PB1
-    };
+    gpio_inst_t STA013_reset;
 
-    gpio_inst_t STA013_data_req = {
-        .port_addr = PC, // Port C
-        .pin_mask = (1 << 6) // PC6
-    };
+    gpio_inst_t STA013_data_req;
 
-    gpio_inst_t STA013_BIT_EN = {
-        .port_addr = PD, // Port D
-        .pin_mask = (1 << 6) // PD6
-    };
+    gpio_inst_t STA013_BIT_EN;
     
     // Initialize reset pin as output, start high
     GPIO_output_ctor(&STA013_reset, PB, (1 << 1), GPIO_SET);
@@ -55,6 +49,8 @@ void STA013_init() {
     _delay_us(1); // Wait at least 100ns
     GPIO_output_set_value(&STA013_reset, GPIO_SET); // Set high
 
+    // ******************************* STA013 DEBUG (Question 5)
+    
     // Step 2: Attempt to read 3 bytes from STA013 in a loop
     do {
         error_status = TWI_master_receive(TWI1, STA013_DEVICE_ADDRESS, NUM_BYTES_TO_READ, rec_array);
@@ -63,27 +59,29 @@ void STA013_init() {
     
     if (rec_array[2] != STA013_ID_REGISTER_VALUE) {
         sprintf(prnt_bffr, "Error: STA013 ID mismatch (expected 0xAC, got 0x%02X)\n\r", rec_array[2]);
-        UART_transmit_string(UART1, 0, prnt_bffr);
+        UART_transmit_string(UART1, "Error STA013 ID mismatch\n\r", 0);
     }
     
     if (timeout!=0) {
         sprintf(prnt_bffr, "ID Value=%2.2X\n\r",rec_array[2]);
-        UART_transmit_string(UART1,0,prnt_bffr);
+        UART_transmit_string(UART1, "ID Value correct!\n\r", 0);
+    } else {
+        sprintf(prnt_bffr, "Error: STA013 config failed after multiple attempts\n\r");
+        UART_transmit_string(UART1, "Error STA013 config failed after multiple attempts\n\r", 0);
     }
     
-    if (timeout == 0) {
-        sprintf(prnt_bffr, "Error: STA013 config failed after multiple attempts\n\r");
-        UART_transmit_string(UART1, 0, prnt_bffr);
-    }
+        //****************************************** (BONUS) *************************************
     
     /*
      * Could get bonus points if we use optional function prototype for receive or transmit functions
      */
     
-    //********************************** Now configure the STA013 with config_arrays.c************************
+    //********************* Now configure the STA013 with config_arrays.c (Question 6) ***********************
     
     uint8_t index=0;
-    uint8_t send_array;
+    uint8_t send_array[2];
+    
+    // Send configuration data array
     do {
         send_array[0] = pgm_read_byte(&CONFIG[index]); // internal reg. address
         index++;
@@ -94,7 +92,27 @@ void STA013_init() {
             error_status=TWI_master_transmit(TWI1,STA013_DEVICE_ADDRESS, 2, send_array);
             timeout--;
         } while((error_status!=0)&&(timeout!=0));
-    } while ((send_array[0]!=0xFF)||(send_array[1]!=0xFF)&&(timeout!=0));
+    } while (((send_array[0] != 0xFF) || (send_array[1] != 0xFF)) && (timeout != 0));
     
-    if(timeout!=0) sprintf(prnt_bffr, "Config sent...\n\r");
+    // Check for successful configuration or timeout
+    if (timeout != 0) {
+        sprintf(prnt_bffr, "Config sent successfully...\n\r");
+        UART_transmit_string(UART1, "Config sent successfully...\n\r", 0);
+    } else {
+        sprintf(prnt_bffr, "Config failed to send after multiple attempts\n\r");
+        UART_transmit_string(UART1, "Config failed to send after multiple attempts\n\r", 0);
+    }
+    
+    // Step 3: Handle software reset after config
+    // Software reset may need a short delay after sending the reset command
+    _delay_ms(10); // Wait for reset to complete (10ms or as per datasheet)
+    
+    // may need to increase the delay here
+
+    // Optionally, you can re-read the configuration ID or verify reset operation
+    
+    //*************************** Configuration for I2S and PLL (Question 7) *****************************
+    
+    // Put config for I2S and PLL here
+    // Or alternatively create another function for it
 }
