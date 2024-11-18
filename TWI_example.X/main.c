@@ -52,7 +52,8 @@ int main(void)
    
     UART_init(UART1,9600);
     
-    TWI_master_init(TWI1, 400000); // not sure what I2C frequency to use here
+    TWI_master_init(TWI1, 50000); // not sure what I2C frequency to use here
+    // I2C Frequency standard of 100KHz or less, chosen 50kHz
     
     STA013_init();
     

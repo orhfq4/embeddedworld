@@ -9,6 +9,13 @@
 #include "Config_Arrays.h"
 #include "UART_Print.h"
 #include <stdio.h>
+#include <avr/pgmspace.h>
+
+//bring in CONFIG arrays to be referenced later
+extern const uint8_t CONFIG[3998];
+extern const uint8_t CONFIG2[50];
+extern const uint8_t CONFIG3[50];
+
 
 // "Magic Numbers"
 #define STA013_RESET_PIN &STA013_reset
@@ -82,16 +89,21 @@ void STA013_init() {
     uint8_t send_array[2];
     
     // Send configuration data array
+    
+    //TO-D0: The following needs to be repeated for CONFIG2 and CONFIG3. This can be another function, or copy-paste
     do {
         send_array[0] = pgm_read_byte(&CONFIG[index]); // internal reg. address
         index++;
         send_array[1] = pgm_read_byte(&CONFIG[index]); // value for the reg.
         index++;
         timeout=50;
-        do {
-            error_status=TWI_master_transmit(TWI1,STA013_DEVICE_ADDRESS, 2, send_array);
-            timeout--;
-        } while((error_status!=0)&&(timeout!=0));
+        if (send_array[0] != 0xFF || send_array[1] != 0xFF){ // Added if statment to not transmit if the last two array values are 0xFF
+            do {
+                error_status=TWI_master_transmit(TWI1,STA013_DEVICE_ADDRESS, 2, send_array);
+                timeout--;
+            } while((error_status!=0)&&(timeout!=0));
+        }
+       
     } while (((send_array[0] != 0xFF) || (send_array[1] != 0xFF)) && (timeout != 0));
     
     // Check for successful configuration or timeout
@@ -116,3 +128,5 @@ void STA013_init() {
     // Put config for I2S and PLL here
     // Or alternatively create another function for it
 }
+
+

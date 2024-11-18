@@ -2034,5 +2034,54 @@ const  uint8_t CONFIG2[50] PROGMEM =
    0xff, 0xff,
    0xff, 0xff};
 
+   const  uint8_t CONFIG3[50] PROGMEM =
+  {
+   84, 7, //PCM_DIV = 7 for Oversampling rate of 512 
+   85, 16, // PCMCONF = 16 bit values (0x10)
+   6, 9, // reserved = 9
+   11, 2, // reserved = 2
+   81, 0, // 441 FRAC_L = 0 
+   82, 184, // 441 FRAC_H = 184
+   100, 0, // PLLFRAC_L = 0
+   101, 0, // PLLFRAC_H = 0
+   80, 6, // MFSDF-441 = 6
+   97, 5, // MFSDF_(x) = 5
+   //24, 4,       // Enables DATA_REQ
+   5, 161, // PLLCTRL = Enables OCLK = 161
+   //24, 4,       // Enables DATA_REQ
+   13, 0, // SCLK_POL = 0 (Sampled rising edge)
+   24, 4, // Enables the DATA_REQ (Could be 1?)
+   12, 0, //Active low REQ_POL = 0 
+   70, 7, //DLA (volume control) 
+   72, 7, // DRA volume control
+   114, 1, //Set the run bit
+   0xff, 0xff,
+   0xff, 0xff};
+
+  /*
+     void i2s_pll_config(){
+
+    //**************ADDRESSES FOR PCM CONFIG REGISTERS***************
+    uint8_t PCM_DIV = 0x54;
+    uint8_t PCMCONF = 0x55;
+    uint8_t reserved1 = 0x06;
+    uint8_t reserved2 = 0x0B;
+    uint8_t PLLFRAC_441_H = 0x52;
+    uint8_t PLLFRAC411_L = 0x51;
+    uint8_t PLLFRAC_H = 0x65;
+    uint8_t PLLFRAC_L = 0x64;
+    uint8_t MFSDF_411 = 0x50;
+    uint8_t MFSDF_X = 0x61;
+    uint8_t PLLCTL = 0x05;
+    uint8_t SLCK_POL = 0x0D;
+    uint8_t DATA_REQ_ENABLE = 0x18;
+    uint8_t REQ_POL = 0x0C;
+    uint8_t DLA = 0x48;
+    uint8_t DRA = 0x48;
+    uint8_t RUN = 0x72;
+}
+  */
+
+
  //**** Changed order of last two bytes to Enable DATA_REQ on pin 28 
  //**** Otherwise OCLK will be output on pin 28 leading to excess noise on supply.

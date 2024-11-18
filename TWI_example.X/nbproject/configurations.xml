@@ -13,6 +13,7 @@
       <itemPath>UART.h</itemPath>
       <itemPath>UART_Print.h</itemPath>
       <itemPath>TWI.h</itemPath>
+      <itemPath>STA013.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -35,6 +36,9 @@
       <itemPath>main.c</itemPath>
       <itemPath>print_memory.c</itemPath>
       <itemPath>Config_Arrays.c</itemPath>
+      <itemPath>TWI.c</itemPath>
+      <itemPath>STA013.c</itemPath>
+      <itemPath>GPIO_Outputs_CMSIS_IN.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

@@ -16,5 +16,12 @@ void STA013_init();
  
  */
 
+
+//Pre: None
+//Post:Set up values for I2C and PLL according to the datasheet for the crystal frequency
+//Desc: Configures the values
+//Caution: Seperate function from STA013 init, must be called immediately after
+void i2s_pll_config();
+
 #endif	/* STA013_H */
 
