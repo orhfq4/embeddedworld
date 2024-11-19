@@ -52,11 +52,6 @@ int main(void)
    
     UART_init(UART1,9600);
     
-    TWI_master_init(TWI1, 50000); // not sure what I2C frequency to use here
-    // I2C Frequency standard of 100KHz or less, chosen 50kHz
-    
-    STA013_init();
-    
     buffer=export_print_buffer();
     
     
@@ -67,7 +62,12 @@ int main(void)
 	_delay_ms(200);
 	LED_set_value(&led0, LED_OFF);
     
+    TWI_master_init(TWI1, 50000); // not sure what I2C frequency to use here
+    // I2C Frequency standard of 100KHz or less, chosen 50kHz
     
+    // Master init works
+    
+    STA013_init();
  
    
     
@@ -75,7 +75,7 @@ int main(void)
     while (1) 
     {
   
-        
+       
         
 	
     }

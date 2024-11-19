@@ -80,6 +80,10 @@ uint8_t TWI_master_init(volatile TWI_t *TWI_addr, uint32_t I2C_freq) {
         TWI_addr->TWI_TWBR = TWBR_value;
     }
     
+    if (error_status == NORMAL) {
+        UART_transmit_string(UART1, "Successful TWI init!\n\r", 0);
+    }
+    
     return error_status;
 }
 
@@ -103,7 +107,7 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
     do {
         status = (TWI_addr -> TWI_TWCR);
         timeout++;
-    } while (((status & (1<<TWINT)) == 0) && (timeout!=TIMEOUT_LIMIT));
+    } while (((status &0x80) == 0) && (timeout!=TIMEOUT_LIMIT));
     
     if (timeout == TIMEOUT_LIMIT) {
         error_status = BUS_BUSY_ERROR;
@@ -126,6 +130,11 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
             UART_transmit_string(UART1, "Uh oh! Start condition failed.\n\r", 0);
         }
         
+        char debug_buffer[100];
+        
+        sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
+        UART_transmit_string(UART1, debug_buffer, 0);
+        
         // Use a while loop to send data bytes until all bytes are sent or an error occurs
         while((num_bytes!=0)&&(error_status==NORMAL)) {
             if(temp8==0x40) { // SLA+R sent, ACK Received
@@ -137,14 +146,24 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
             else {
                 (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEA)|(1<<TWEN));
             }
+            sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
+            UART_transmit_string(UART1, debug_buffer, 0);
             
             // Wait until TWINT is set
             do {
                 status = (TWI_addr->TWI_TWCR);
             } while((status&0x80)==0);
             
+            // might need to put int 0x48 and 0x38 in here?
+            
+            sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
+            UART_transmit_string(UART1, debug_buffer, 0);
+            
             // Read the status value to determine what to do next
             temp8=((TWI_addr->TWI_TWSR)&0xF8); // Clear the lower 3 bits
+            
+            sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
+            UART_transmit_string(UART1, debug_buffer, 0);
             
             // Repeat the loop until:
             // 1) There are no more bytes to receive
@@ -210,101 +229,175 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
     
     uint8_t error_status = NORMAL;
     uint8_t status = 0;
+    uint16_t send_value = 0;
+    uint8_t index = 0;
+    uint8_t temp8 = 0;
+    char debug_buffer[100];
     
     // Start TWI communication (send START condition)
-    TWI_addr->TWI_TWCR = ((1<<TWINT)|(1<<TWSTA)|(1<<TWEN));
+    (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWSTA)|(1<<TWEN));
+    
     uint16_t timeout = 0;
     
     // Wait for TWINT to be set (indicating start condition is transmitted)
     do {
         status = (TWI_addr -> TWI_TWCR);
         timeout++;
-    } while (((status & (1<<TWINT)) == 0) && (timeout!=TIMEOUT_LIMIT));
+    } while (((status &0x80) == 0) && (timeout!=TIMEOUT_LIMIT));
     
     if (timeout == TIMEOUT_LIMIT) {
         error_status = BUS_BUSY_ERROR;
         UART_transmit_string(UART1, "Uh oh! Timeout Error! Bus is busy.\n\r", 0);
-    }
+    }    
+    
+    /*
+        #define TWI_START_ACK       (0x08)
+        #define TWI_REP_START_ACK   (0x10)
+        #define TWI_SLA_W_ACK       (0x18)
+        #define TWI_SLA_W_NACK      (0x20)
+        #define TWI_DATA_ACK        (0x28)
+        #define TWI_DATA_NACK       (0x30)
+        #define TWI_ARB_LOST        (0x38)
+    */
     
     // If statement used to determine if next task is done or exit
     if (error_status == NORMAL) {
-        // Read the error_status value to determine what happens next
-        uint8_t temp8 = ((TWI_addr->TWI_TWSR)&0xF8); // 1111 1000 Gets rid of TWDS (lowest 3 bits 000)
-        
+        temp8 = ((TWI_addr->TWI_TWSR)&0xF8); // 1111 1000 Gets rid of TWDS (lowest 3 bits 000)
+
         // Device Address + Write bit (SLA + W)
-        uint8_t send_value = slave_addr<<1; // LSB will be '0'
+        send_value = slave_addr<<1; // LSB will be '0'
+        
+        
+        sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
+        UART_transmit_string(UART1, debug_buffer, 0);
+        
         
         // If start was sent, then send SLA+W
-        if (temp8 == TWI_SLA_W_ACK) { // SLA + W sent, ACK received
+        if (temp8 == 0x08 || temp8 == 0x10) { // SLA + W sent, ACK received
             (TWI_addr->TWI_TWDR) = send_value;
             (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEN)); // Start transmission
             UART_transmit_string(UART1, "Starting Transmission...\n\r", 0);
-        } else if(temp8==TWI_SLA_W_NACK){
-            (TWI_addr->TWI_TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
-            do{
-                status=(TWI_addr->TWI_TWCR);
-            }while((status & (1<<TWSTO))!=0); // Wait for STOP condition
-            error_status = NACK_ERROR;
-            UART_transmit_string(UART1, "Uh oh! Nack Error. 0x20\n\r", 0);
-        } else if (temp8 == TWI_DATA_NACK) {  // NACK received after data byte
-            error_status = NACK_ERROR;
-            UART_transmit_string(UART1, "Uh oh! Nack Error. 0x30\n\r", 0);
-        } else if (temp8 == TWI_ARB_LOST) {  // Arbitration lost
-            error_status = ARBITRATION_ERROR;
-            UART_transmit_string(UART1, "Uh oh! Arbitration Error. 0x38\n\r", 0);
-        }else {
-            error_status = OTHER_ERROR; // for handling other errors
-            UART_transmit_string(UART1, "Uh oh! Unrecognized command.\n\r", 0);
-        }
-    }
-    
-    // If statement used to determine if next task is done or exit
-    if (error_status == NORMAL) {
-        // Now send the data bytes in the array
-        for (uint16_t i = 0; i < num_bytes; i++) {
-        // Wait for TWINT flag to be set before sending the next byte
+        } 
+        
         timeout = 0;
+
+        // Wait for TWINT to be set (indicating start condition is transmitted)
+        
         do {
-            status = TWI_addr->TWI_TWCR;
+            status = (TWI_addr -> TWI_TWCR);
             timeout++;
-        } while ((status & (1 << TWINT)) == 0 && timeout < TIMEOUT_LIMIT);
+        } while (((status &0x80) == 0) && (timeout!=TIMEOUT_LIMIT));
+
         
         if (timeout == TIMEOUT_LIMIT) {
             error_status = BUS_BUSY_ERROR;
-            UART_transmit_string(UART1, "Uh oh! Timeout Error while transmitting data.\n\r", 0);
+            UART_transmit_string(UART1, "Uh oh! Timeout Error! Bus is busy.\n\r", 0);
+        }   
+            
+        temp8 = ((TWI_addr->TWI_TWSR)&0xF8);
+                
+        if(temp8==0x18){    
+            UART_transmit_string(UART1, "Starting 0x18 Transmission...\n\r", 0);
         }
-
-        // Check the status after each byte is transmitted
-        uint8_t temp8 = (TWI_addr->TWI_TWSR) & 0xF8;  // Mask status bits
-        if (temp8 == TWI_DATA_ACK) {  // Data byte transmitted, ACK received
-            TWI_addr->TWI_TWDR = array[i];  // Write data to TWDR
-            TWI_addr->TWI_TWCR = (1 << TWINT) | (1 << TWEN);  // Send next byte
-        } else if (temp8 == TWI_DATA_NACK) {  // NACK received after data byte
+        else if(temp8==0x20){
+            (TWI_addr->TWI_TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
             error_status = NACK_ERROR;
-            UART_transmit_string(UART1, "Uh oh! Nack Error. 0x30\n\r", 0);
-        } else if (temp8 == TWI_ARB_LOST) {  // Arbitration lost
+            UART_transmit_string(UART1, "Uh oh! Nack Error. 0x20\n\r", 0);
+        } else if (temp8 == 0x38) {  // Arbitration lost
             error_status = ARBITRATION_ERROR;
             UART_transmit_string(UART1, "Uh oh! Arbitration Error. 0x38\n\r", 0);
-        }else {
+        } else {
             error_status = OTHER_ERROR; // for handling other errors
-            UART_transmit_string(UART1, "Uh oh! Unrecognized command.\n\r", 0);
-            }
+            UART_transmit_string(UART1, "Uh oh! Part 2 Unrecognized command.\n\r", 0); 
+          
+            
+            sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
+            UART_transmit_string(UART1, debug_buffer, 0);
         }
     }
     
-    // After sending all data, send STOP condition
-    TWI_addr->TWI_TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN);  // Send STOP condition
-    timeout = 0;
-    do {
-        status = TWI_addr->TWI_TWCR;
-        timeout++;
-    } while ((status & (1 << TWSTO)) == 0 && timeout < TIMEOUT_LIMIT);  // Wait for STOP condition to complete
+    // enter loop to read bytes
+ 
     
-    if (timeout == TIMEOUT_LIMIT) {
-        error_status = BUS_BUSY_ERROR;
-        UART_transmit_string(UART1, "Uh oh! Timeout Error while sending STOP condition.\n\r", 0);
+    // If statement used to determine if next task is done or exit
+    if (error_status == NORMAL) {
+        
+            // Now send the data bytes in the array
+            while ((num_bytes!=0) && (error_status == NORMAL)) {
+                UART_transmit_string(UART1, "entering for loop...\n\r", 0);
+                send_value = array[index];
+                
+                (TWI_addr->TWI_TWDR) = send_value;
+                (TWI_addr->TWI_TWCR) = ((1<<TWINT)|(1<<TWEN)); // Start transmission
+                UART_transmit_string(UART1, "Starting for loop transmit...\n\r", 0);
+
+                // Wait for TWINT flag to be set before sending the next byte
+                timeout = 0;
+                do {
+                    status = TWI_addr->TWI_TWCR;
+                    timeout++;
+                } while ((status & (1 << TWINT)) == 0 && timeout < TIMEOUT_LIMIT);
+
+                if (timeout == TIMEOUT_LIMIT) {
+                    error_status = BUS_BUSY_ERROR;
+                    UART_transmit_string(UART1, "Part 3a Uh oh! Timeout Error while transmitting data.\n\r", 0);
+                }
+
+                // Check the status after each byte is transmitted
+                temp8 = ((TWI_addr->TWI_TWSR) & 0xF8);  // Mask status bits
+
+                if (temp8 == TWI_DATA_ACK) {  // Data byte transmitted, ACK received
+                    /*
+                    TWI_addr->TWI_TWDR = array[index];  // Write data to TWDR
+                    TWI_addr->TWI_TWCR = (1 << TWINT) | (1 << TWEN);  // Send next byte
+                     */
+                    index++;
+                    num_bytes--;
+                } else if (temp8 == TWI_DATA_NACK) {  // NACK received after data byte
+                    error_status = NACK_ERROR;
+                    UART_transmit_string(UART1, "Uh oh! Nack Error. 0x30\n\r", 0);
+                } else if (temp8 == TWI_ARB_LOST) {  // Arbitration lost
+                    error_status = ARBITRATION_ERROR;
+                    UART_transmit_string(UART1, "Uh oh! Arbitration Error. 0x38\n\r", 0);
+                } else {
+                    error_status = OTHER_ERROR; // for handling other errors
+                    UART_transmit_string(UART1, "Uh oh! Part 3 Unrecognized command.\n\r", 0);
+                    }
+        }
+        
     }
     
+    sprintf(debug_buffer, "Current TWI state: after data sent 0x%02X\n\r", temp8);
+    UART_transmit_string(UART1, debug_buffer, 0);
+    
+    // After sending all data, send STOP condition
+    // TWI_addr->TWI_TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN);  // Send STOP condition
+    
+    if(temp8==0x18) {
+        (TWI_addr->TWI_TWDR)=send_value;
+        (TWI_addr->TWI_TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
+        timeout = 0;
+        do {
+            status = TWI_addr->TWI_TWCR;
+        } while ((status & (1 << TWSTO)) != 0);  // Wait for STOP condition to complete
+    
+        if (timeout == TIMEOUT_LIMIT) {
+            error_status = BUS_BUSY_ERROR;
+            UART_transmit_string(UART1, "Part 3b Uh oh! Timeout Error while sending STOP condition.\n\r", 0);
+        }
+    
+        UART_transmit_string(UART1, "ending master_transmit\n\r", 0);
+    }
+    else if(temp8 == 0x28){
+        (TWI_addr->TWI_TWDR)=send_value;
+        (TWI_addr->TWI_TWCR)=((1<<TWINT)|(1<<TWSTO)|(1<<TWEN));
+        timeout = 0;
+        do {
+            status = TWI_addr->TWI_TWCR;
+        } while ((status & (1 << TWSTO)) != 0);  // Wait for STOP condition to complete
+    }
+    sprintf(debug_buffer, "Error status: 0x%02X\n\r", error_status);
+    UART_transmit_string(UART1, debug_buffer, 0);
     return error_status; // SUCCESS!
     
     //****************************************** (BONUS) *************************************
