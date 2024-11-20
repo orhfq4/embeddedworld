@@ -38,7 +38,7 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         uint16_t num_bytes, uint8_t * rec_array);
 
 // TWI_master_receive prototype with bonus implementation (includes internal address size and the address)
-uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t device_addr, 
+uint8_t TWI_master_receive_bonus(volatile TWI_t *TWI_addr, uint8_t device_addr, 
     uint32_t int_addr, uint8_t int_addr_sz, uint16_t num_bytes, uint8_t * array_name);
 
 /**************************************************************
@@ -57,7 +57,7 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         uint16_t num_bytes, uint8_t *array);
 
 // TWI_master_transmit prototype with bonus implementation (includes internal address size and the address)
-uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, int32_t internal_addr, 
+uint8_t TWI_master_transmit_bonus(volatile TWI_t *TWI_addr, int32_t internal_addr, 
         uint8_t int_addr_size, int8_t slave_addr, uint16_t num_bytes, uint8_t *array);
 
 #endif	/* TWI_H */
