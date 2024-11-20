@@ -23,5 +23,11 @@ void STA013_init();
 //Caution: Seperate function from STA013 init, must be called immediately after
 void i2s_pll_config();
 
+//Pre: Reference to the array to configure
+//Post:uses the macro to read the byte and update specific registers
+//Desc: Configures the values
+//Caution: Can overwrite other values, ensure array passed into the function is correct
+void configArray(const uint8_t CONFIG[]);
+
 #endif	/* STA013_H */
 
