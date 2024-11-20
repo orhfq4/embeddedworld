@@ -1,6 +1,7 @@
 // TWI.c
 #include "TWI.h"
 #include "UART_Print.h"
+#include <stdio.h>
 
 // DEFINES FOR ERRORS
 #define NORMAL (0) // error_status normal
@@ -94,7 +95,6 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
     // returns an error status which is why there is uint8_t
     
     uint8_t error_status = NORMAL;
-    UART_transmit_string(UART1, "That bitch is reset. \n\r", 0);
     uint8_t status = 0;
     uint8_t temp8 = 0;
     uint16_t index = 0;
@@ -289,7 +289,7 @@ uint8_t TWI_master_transmit(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         
         
         //sprintf(debug_buffer, "Current TWI state: 0x%02X\n\r", temp8);
-        UART_transmit_string(UART1, debug_buffer, 0);
+        //UART_transmit_string(UART1, debug_buffer, 0);
         
         
         // If start was sent, then send SLA+W

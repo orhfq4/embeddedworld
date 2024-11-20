@@ -5,20 +5,10 @@
  * Created on November 8, 2024, 11:14 AM
  */
 
-// Verifying
-
 #ifndef TWI_H
 #define	TWI_H
 
 #include "board.h"
-/*
- 
- * Need to add in the following 3 functions:
- * TWI_master_init()
- * TWI_master_transmit()
- * TWI_master_receive()
- 
- */
 
 // TWI_master_init prototype
 // Sets the clock rate for the TWI
