@@ -43,15 +43,13 @@ uint8_t buffer2_g[512];
 
 int main(void)
 {
-    //uint8_t input,status,SD_type;
-    //uint32_t temp32;
     char *buffer;
 
 	// Initialize the LED outputs
     LED_ctor(&led0, LED0_PORT, LED0_PIN, LED_OFF, ACTIVE_LOW);
-   
+    //Initialize the UART
     UART_init(UART1,9600);
-    
+    //Set buffer to be the print buffer
     buffer=export_print_buffer();
     
     
@@ -61,10 +59,10 @@ int main(void)
     LED_set_value(&led0, LED_ON);
 	_delay_ms(200);
 	LED_set_value(&led0, LED_OFF);
-    
+    //Initialize the TWI
     TWI_master_init(TWI1, 50000); // not sure what I2C frequency to use here
     // I2C Frequency standard of 100KHz or less, chosen 50kHz
-    
+    //Initialize the STA013
     STA013_init();
     while (1) 
     {

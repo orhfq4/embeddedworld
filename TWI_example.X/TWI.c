@@ -216,29 +216,6 @@ uint8_t TWI_master_receive(volatile TWI_t *TWI_addr, uint8_t slave_addr,
         
     }
     return error_status; // SUCCESS!
-    
-    //****************************************** (BONUS) *************************************
-    
-    // Optional Function prototype can be implemented for bonus points:
-    // Could try it once we know the transmit function works
-    // Additionally we could try implementing non-blocking methods
-    
-    /*
-     * With the original prototype, the internal address is placed in the data array
-     * With this prototype, the internal address is a separate value
-     * The int_addr_size is used to determine how many bytes of internal_addr are used and sent
-     * If int_addr_size = 0, then internal_addr is not used
-     * If int_addr_size = 1, then the least significant byte is used
-     * If int_addr_size = 2, then the two least significant bytes are used
-     * If int_addr_size = 3, then the three least significant bytes are used
-     * The more significant byte is sent first
-     * 
-     * The bytes are sent before the data bytes and in the same manner as the data bytes
-     * 
-     * The receive function cannot send an internal address
-     * If int_addr_size!=0 then the TWI_master_receive function would call the
-     * TWI_master_trasnmit with num_bytes=0 to send the internal address only
-     */
 }
 
 //******************************** TWI_master_transmit (Question 4) ********************************************

@@ -93,7 +93,7 @@ void STA013_init() {
     _delay_ms(10); // Wait at least 100ns
     GPIO_output_set_value(&STA013_reset, GPIO_SET); // Set high
 
-    // ******************************* STA013 DEBUG (Question 5)
+    // ******************************* STA013 DEBUG (Question 5) **********************************
     
     // Step 2: Attempt to read 3 bytes from STA013 in a loop
     do {
@@ -131,14 +131,6 @@ void STA013_init() {
     // Software reset may need a short delay after sending the reset command
     _delay_ms(10); // Wait for reset to complete (10ms or as per datasheet)
     
-    // may need to increase the delay here
-
-    // Optionally, you can re-read the configuration ID or verify reset operation
-    
-    //*************************** Configuration for I2S and PLL (Question 7) *****************************
-    
-    // Put config for I2S and PLL here
-    // Or alternatively create another function for it
 }
 
 
