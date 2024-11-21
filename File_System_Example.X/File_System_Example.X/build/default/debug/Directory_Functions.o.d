@@ -1,54 +1,54 @@
 build/default/debug/Directory_Functions.o.d \
  build/default/debug/Directory_Functions.o: Directory_Functions.c \
- /Applications/microchip/xc8/v2.46/avr/avr/include/stdio.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/features.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/bits/alltypes.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\stdio.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\features.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\bits\alltypes.h \
  board.h peripherals.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/sfr_defs.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/inttypes.h \
- /Applications/microchip/xc8/v2.46/avr/lib/gcc/avr/5.4.0/include/stdint.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/stdint.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/bits/stdint.h \
- /Users/owenhancock/.mchp_packs/Microchip/ATmega_DFP/3.2.269/xc8/avr/include/avr/iom324pb.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/portpins.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/common.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/fuse.h \
- /Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h LEDS.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\io.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\sfr_defs.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\inttypes.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\lib\gcc\avr\5.4.0\include\stdint.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\stdint.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\bits\stdint.h \
+ C:/Users/Younger/.mchp_packs/Microchip/ATmega_DFP/3.2.269/xc8/avr/include/avr/iom324pb.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\portpins.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\common.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\fuse.h \
+ c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\lock.h LEDS.h \
  GPIO_Outputs.h SPI_CS.h UART.h Directory_Functions.h Read_Sector.h \
  UART_Print.h Drive_Values.h Read_Values.h
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/stdio.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\stdio.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/features.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\features.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/bits/alltypes.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\bits\alltypes.h:
 
 board.h:
 
 peripherals.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/avr/io.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\io.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/avr/sfr_defs.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\sfr_defs.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/inttypes.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\inttypes.h:
 
-/Applications/microchip/xc8/v2.46/avr/lib/gcc/avr/5.4.0/include/stdint.h:
+c:\program\ files\microchip\xc8\v2.46\avr\lib\gcc\avr\5.4.0\include\stdint.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/stdint.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\stdint.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/bits/stdint.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\bits\stdint.h:
 
-/Users/owenhancock/.mchp_packs/Microchip/ATmega_DFP/3.2.269/xc8/avr/include/avr/iom324pb.h:
+C:/Users/Younger/.mchp_packs/Microchip/ATmega_DFP/3.2.269/xc8/avr/include/avr/iom324pb.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/avr/portpins.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\portpins.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/avr/common.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\common.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/avr/fuse.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\fuse.h:
 
-/Applications/microchip/xc8/v2.46/avr/avr/include/avr/lock.h:
+c:\program\ files\microchip\xc8\v2.46\avr\avr\include\avr\lock.h:
 
 LEDS.h:
 
