@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include "OLED.h"
 #include "Read_Sector.h"
+#include "Read_Values.h"
 #include "Drive_Values.h"
 #include "Directory_Functions.h"
 //#include "File_System.h"
@@ -109,6 +110,25 @@ int main(void)
 	   copy_string_to_buffer(High_Cap,buffer,0);
 	   OLED_transmit_string(OLED_SPI_Port,buffer,0);
     }
+    
+    //******************** (for testing read_value functions) ****************
+    
+    // Example array for testing (little-endian representation)
+    uint8_t data[] = {
+        0x01, 0x02, 0x03, 0x04, // 32-bit value = 0x04030201
+        0x05, 0x06,             // 16-bit value = 0x0605
+        0x07                    // 8-bit value = 0x07
+    };
+
+    // Read and print 8-bit, 16-bit, and 32-bit values
+    uint8_t val8 = read_value_8(6, data); // Offset 6: 8-bit value
+    uint16_t val16 = read_value_16(4, data); // Offset 4: 16-bit value
+    uint32_t val32 = read_value_32(0, data); // Offset 0: 32-bit value
+
+    // Print values
+    printf("8-bit value: %u (0x%X)\n", val8, val8);
+    printf("16-bit value: %u (0x%X)\n", val16, val16);
+    printf("32-bit value: %lu (0x%lX)\n", val32, val32);
     
     
     while (1) 

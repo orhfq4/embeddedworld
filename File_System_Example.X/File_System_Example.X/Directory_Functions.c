@@ -21,7 +21,7 @@ RETURNS: uint16_t number of entries found in the directory
 CAUTION: Supports FAT16, SD_shift must be set before using this function
 ************************************************************************/
 
-
+//******************************* (Question 2) ********************************
 
 uint16_t  print_directory(uint32_t Sector_num, uint8_t * array_in)
 { 
@@ -130,6 +130,8 @@ RETURNS: uint32_t with cluster in lower 28 bits.  Bit 28 set if this is
          a directory entry, clear for a file.  Bit 31 set for error.
 CAUTION: 
 ************************************************************************/
+
+//******************************* (Question 2) ********************************
 
 uint32_t read_dir_entry(uint32_t Sector_num, uint16_t Entry, uint8_t * array_in)
 { 
