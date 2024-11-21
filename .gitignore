@@ -1,6 +1,9 @@
-/SDCard.X/build/
-/SDCard.X/dist/
-/SDCard_Example.X/build/
-/SDCard_Example.X/dist/
-/GPIO_Example.X/dist/
-/GPIO_Example.X/build/
+# Ignore all generated files across all projects
+*.generated_files/*
+
+# Ignore build directories
+*/build/*
+*/dist/*
+
+# Ignore project-specific files and configurations
+*/nbproject/*
