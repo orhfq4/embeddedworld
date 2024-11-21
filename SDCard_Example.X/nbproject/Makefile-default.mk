@@ -19,7 +19,7 @@ endif
 endif
 
 # Environment
-MKDIR=mkdir -p
+MKDIR=gnumkdir -p
 RM=rm -f 
 MV=mv 
 CP=cp 
@@ -88,122 +88,122 @@ MP_PROCESSOR_OPTION=ATmega324PB
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/GPIO_Outputs.o: GPIO_Outputs.c  .generated_files/flags/default/c1c14fce422cd07c477e56feaa43ec0e5131f3a6 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/GPIO_Outputs.o: GPIO_Outputs.c  .generated_files/flags/default/a43221d73f5e16a86ccf61e18f6635c19fb83c92 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/GPIO_Outputs.o.d 
 	@${RM} ${OBJECTDIR}/GPIO_Outputs.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/GPIO_Outputs.o.d" -MT "${OBJECTDIR}/GPIO_Outputs.o.d" -MT ${OBJECTDIR}/GPIO_Outputs.o -o ${OBJECTDIR}/GPIO_Outputs.o GPIO_Outputs.c 
 	
-${OBJECTDIR}/LEDS.o: LEDS.c  .generated_files/flags/default/d67a63f491a68a788d40a9b1736ace34f836f76d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/LEDS.o: LEDS.c  .generated_files/flags/default/26824d239b801749e099bd80e434ef266e66d898 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/LEDS.o.d 
 	@${RM} ${OBJECTDIR}/LEDS.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/LEDS.o.d" -MT "${OBJECTDIR}/LEDS.o.d" -MT ${OBJECTDIR}/LEDS.o -o ${OBJECTDIR}/LEDS.o LEDS.c 
 	
-${OBJECTDIR}/Long_Serial_In.o: Long_Serial_In.c  .generated_files/flags/default/1ebd7f804e66d4acee8217398f4fab7dd8575f1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/Long_Serial_In.o: Long_Serial_In.c  .generated_files/flags/default/9dea52c63e7f15b015828e25d72922192f4b2a34 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/Long_Serial_In.o.d 
 	@${RM} ${OBJECTDIR}/Long_Serial_In.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/Long_Serial_In.o.d" -MT "${OBJECTDIR}/Long_Serial_In.o.d" -MT ${OBJECTDIR}/Long_Serial_In.o -o ${OBJECTDIR}/Long_Serial_In.o Long_Serial_In.c 
 	
-${OBJECTDIR}/UART.o: UART.c  .generated_files/flags/default/4d1cbd8cc31ab1ae5e6d20be30caaaf3a17fa525 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/UART.o: UART.c  .generated_files/flags/default/db14b6c73e41d93b51ac3543b638256e74cd5228 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/UART.o.d 
 	@${RM} ${OBJECTDIR}/UART.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/UART.o.d" -MT "${OBJECTDIR}/UART.o.d" -MT ${OBJECTDIR}/UART.o -o ${OBJECTDIR}/UART.o UART.c 
 	
-${OBJECTDIR}/UART_Print.o: UART_Print.c  .generated_files/flags/default/e28435be7e1efe7599e195e6897a2fd50ecaeb80 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/UART_Print.o: UART_Print.c  .generated_files/flags/default/9683fa52f5338d923a89e471fcae6a3ab1879218 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/UART_Print.o.d 
 	@${RM} ${OBJECTDIR}/UART_Print.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/UART_Print.o.d" -MT "${OBJECTDIR}/UART_Print.o.d" -MT ${OBJECTDIR}/UART_Print.o -o ${OBJECTDIR}/UART_Print.o UART_Print.c 
 	
-${OBJECTDIR}/board.o: board.c  .generated_files/flags/default/4c097db79d954250a9198a6e2c4ce5d0885fcc61 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/board.o: board.c  .generated_files/flags/default/90107839e1b3a8b4b9afe08610192f2dbd431363 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/board.o.d 
 	@${RM} ${OBJECTDIR}/board.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/board.o.d" -MT "${OBJECTDIR}/board.o.d" -MT ${OBJECTDIR}/board.o -o ${OBJECTDIR}/board.o board.c 
 	
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/abe05c1d8194824cab190af4330cc88ffc42fdf5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/e1502af746636e5cf4f9c47ca60bdeb2a952710a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/main.o.d" -MT "${OBJECTDIR}/main.o.d" -MT ${OBJECTDIR}/main.o -o ${OBJECTDIR}/main.o main.c 
 	
-${OBJECTDIR}/print_memory.o: print_memory.c  .generated_files/flags/default/69fbfa54fff67970ccadf7c9f502da3bf373cb3b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/print_memory.o: print_memory.c  .generated_files/flags/default/c249c231d139f153a9f3adf06be392647d010470 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/print_memory.o.d 
 	@${RM} ${OBJECTDIR}/print_memory.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/print_memory.o.d" -MT "${OBJECTDIR}/print_memory.o.d" -MT ${OBJECTDIR}/print_memory.o -o ${OBJECTDIR}/print_memory.o print_memory.c 
 	
-${OBJECTDIR}/SDCard.o: SDCard.c  .generated_files/flags/default/717e8480b06dd21e20be43dbaf6fc4524c14ad99 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/SDCard.o: SDCard.c  .generated_files/flags/default/18ad5410e11af26999b06268f591537a81ad638e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/SDCard.o.d 
 	@${RM} ${OBJECTDIR}/SDCard.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/SDCard.o.d" -MT "${OBJECTDIR}/SDCard.o.d" -MT ${OBJECTDIR}/SDCard.o -o ${OBJECTDIR}/SDCard.o SDCard.c 
 	
-${OBJECTDIR}/SPI.o: SPI.c  .generated_files/flags/default/7dd0e241f46c2f7a63a0651ea9c3f83030b9e887 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/SPI.o: SPI.c  .generated_files/flags/default/8952b270bd2d637fce300bdc0b792f209d168f9b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/SPI.o.d 
 	@${RM} ${OBJECTDIR}/SPI.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1 -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/SPI.o.d" -MT "${OBJECTDIR}/SPI.o.d" -MT ${OBJECTDIR}/SPI.o -o ${OBJECTDIR}/SPI.o SPI.c 
 	
 else
-${OBJECTDIR}/GPIO_Outputs.o: GPIO_Outputs.c  .generated_files/flags/default/52f56a105b293b9649828e43d4c13bd78882ff59 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/GPIO_Outputs.o: GPIO_Outputs.c  .generated_files/flags/default/a76bdd693ffaa20a7bc5486dd7e163385825d25 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/GPIO_Outputs.o.d 
 	@${RM} ${OBJECTDIR}/GPIO_Outputs.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/GPIO_Outputs.o.d" -MT "${OBJECTDIR}/GPIO_Outputs.o.d" -MT ${OBJECTDIR}/GPIO_Outputs.o -o ${OBJECTDIR}/GPIO_Outputs.o GPIO_Outputs.c 
 	
-${OBJECTDIR}/LEDS.o: LEDS.c  .generated_files/flags/default/f1499dfd0eaad6705db1d0216a1007a8a8ddbe9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/LEDS.o: LEDS.c  .generated_files/flags/default/a67caa9a2ac66c8875d8d646fba492c4c2750839 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/LEDS.o.d 
 	@${RM} ${OBJECTDIR}/LEDS.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/LEDS.o.d" -MT "${OBJECTDIR}/LEDS.o.d" -MT ${OBJECTDIR}/LEDS.o -o ${OBJECTDIR}/LEDS.o LEDS.c 
 	
-${OBJECTDIR}/Long_Serial_In.o: Long_Serial_In.c  .generated_files/flags/default/e547cb635b568c5d62eec24c3a7314719e1c0c81 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/Long_Serial_In.o: Long_Serial_In.c  .generated_files/flags/default/fb1ea013aa59b60a742e46fc49807178b1b69889 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/Long_Serial_In.o.d 
 	@${RM} ${OBJECTDIR}/Long_Serial_In.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/Long_Serial_In.o.d" -MT "${OBJECTDIR}/Long_Serial_In.o.d" -MT ${OBJECTDIR}/Long_Serial_In.o -o ${OBJECTDIR}/Long_Serial_In.o Long_Serial_In.c 
 	
-${OBJECTDIR}/UART.o: UART.c  .generated_files/flags/default/152f2ae6903c871e4d5deaee234b5969e23bf7f0 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/UART.o: UART.c  .generated_files/flags/default/ad50054463bd1f17a1230db87d4d1e72e08ff2e1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/UART.o.d 
 	@${RM} ${OBJECTDIR}/UART.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/UART.o.d" -MT "${OBJECTDIR}/UART.o.d" -MT ${OBJECTDIR}/UART.o -o ${OBJECTDIR}/UART.o UART.c 
 	
-${OBJECTDIR}/UART_Print.o: UART_Print.c  .generated_files/flags/default/24f96efa2dc6cd0d7b882fdce6ca64c306d01e39 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/UART_Print.o: UART_Print.c  .generated_files/flags/default/de33edfb449bbf79c1eab7da2740728d7f36490a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/UART_Print.o.d 
 	@${RM} ${OBJECTDIR}/UART_Print.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/UART_Print.o.d" -MT "${OBJECTDIR}/UART_Print.o.d" -MT ${OBJECTDIR}/UART_Print.o -o ${OBJECTDIR}/UART_Print.o UART_Print.c 
 	
-${OBJECTDIR}/board.o: board.c  .generated_files/flags/default/239cc160ab7cf7225309f8b442b2cc8e32d456d7 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/board.o: board.c  .generated_files/flags/default/5f1a976f222462e5124a38269f0a2dc500d8e6fe .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/board.o.d 
 	@${RM} ${OBJECTDIR}/board.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/board.o.d" -MT "${OBJECTDIR}/board.o.d" -MT ${OBJECTDIR}/board.o -o ${OBJECTDIR}/board.o board.c 
 	
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/3c1b5a8b9ccea0eeabb35781db82e9a31178ee67 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/2c33729f4097da183d5f44350aac68c4b996f127 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/main.o.d" -MT "${OBJECTDIR}/main.o.d" -MT ${OBJECTDIR}/main.o -o ${OBJECTDIR}/main.o main.c 
 	
-${OBJECTDIR}/print_memory.o: print_memory.c  .generated_files/flags/default/5ff475ef684a04a6a61f457867027002203b729 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/print_memory.o: print_memory.c  .generated_files/flags/default/91630953894f3a1658ebd8c33047c2adfc735e17 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/print_memory.o.d 
 	@${RM} ${OBJECTDIR}/print_memory.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/print_memory.o.d" -MT "${OBJECTDIR}/print_memory.o.d" -MT ${OBJECTDIR}/print_memory.o -o ${OBJECTDIR}/print_memory.o print_memory.c 
 	
-${OBJECTDIR}/SDCard.o: SDCard.c  .generated_files/flags/default/5cd75dc15f21fe5deee9c80abf0ad5497a9621b1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/SDCard.o: SDCard.c  .generated_files/flags/default/24024ddd295aa9d9939f062949b51068abba422d .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/SDCard.o.d 
 	@${RM} ${OBJECTDIR}/SDCard.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3 -mno-const-data-in-progmem     -MD -MP -MF "${OBJECTDIR}/SDCard.o.d" -MT "${OBJECTDIR}/SDCard.o.d" -MT ${OBJECTDIR}/SDCard.o -o ${OBJECTDIR}/SDCard.o SDCard.c 
 	
-${OBJECTDIR}/SPI.o: SPI.c  .generated_files/flags/default/e17e89a3a77d32bca0754b5ed6f66c3b93dd4586 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/SPI.o: SPI.c  .generated_files/flags/default/92613373d1e164e8c48b9dba1f069dca63c906d0 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/SPI.o.d 
 	@${RM} ${OBJECTDIR}/SPI.o 
@@ -236,7 +236,7 @@ else
 ${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
 	@${MKDIR} ${DISTDIR} 
 	${MP_CC} $(MP_EXTRA_LD_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -Wl,-Map=${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.map  -DXPRJ_default=$(CND_CONF)  -Wl,--defsym=__MPLAB_BUILD=1   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O1 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -gdwarf-3 -mno-const-data-in-progmem     $(COMPARISON_BUILD) -Wl,--memorysummary,${DISTDIR}/memoryfile.xml -o ${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  -o ${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      -Wl,--start-group  -Wl,-lm -Wl,--end-group 
-	${MP_CC_DIR}/avr-objcopy -O ihex "${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}" "${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.hex"
+	${MP_CC_DIR}\\avr-objcopy -O ihex "${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}" "${DISTDIR}/SDCard_Example.X.${IMAGE_TYPE}.hex"
 	
 endif
 
