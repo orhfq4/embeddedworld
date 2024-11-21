@@ -1,9 +1,9 @@
 # Ignore all generated files across all projects
-**.generated_files/*
+*.generated_files/*
 
 # Ignore build directories
-**/build/*
-**/dist/*
+*/build/*
+*/dist/*
 
 # Ignore project-specific files and configurations
-**/nbproject/*
+*/nbproject/*
