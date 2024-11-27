@@ -1,7 +1,18 @@
 #ifndef _Directory_Func_H
 #define _Directory_Func_H
 
-
+//FS object struct
+typedef struct{
+    uint8_t SecPerClus;
+    uint8_t FATType;
+    uint8_t BytesPerSecShift;
+    uint8_t FATshift;
+    uint16_t BytesPerSec;
+    uint32_t FirstRootDirSec;
+    uint32_t FirstDataSec;
+    uint32_t StartofFAT;
+    uint32_t RootDirSecs;
+} FS_values_t;
 
 //------- Public Constants  -----------------------------------------
 #define FAT32 (4)

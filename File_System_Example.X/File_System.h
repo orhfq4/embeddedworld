@@ -8,9 +8,9 @@
 #ifndef FILE_SYSTEM_H
 #define	FILE_SYSTEM_H
 
-uint8_t mount_drive(void);
+// uint8_t mount_drive(void);
 
-// or uint8_t mount_drive(uint8_t array[]);
+uint8_t mount_drive(uint8_t *array);
 
 #ifdef	__cplusplus
 extern "C" {

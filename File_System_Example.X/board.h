@@ -14,6 +14,7 @@
 #include "peripherals.h"
 #include "LEDS.h"
 #include "SPI_CS.h"
+#include "Directory_Function.h"
 
 #define F_CPU (16000000UL)
 #define F_DIV (1)
@@ -63,7 +64,7 @@ extern led_inst_t led0, led1, led2, led3;
 
 
 extern spi_cs_inst_t sd_cs, oled_cs;
-
 extern gpio_inst_t oled_reset, oled_cmd;
+extern FS_values_t Mount_drive;
 
 #endif /* BOARD_H_ */
