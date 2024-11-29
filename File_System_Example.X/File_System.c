@@ -2,7 +2,24 @@
 #include "board.h"
 
 /************************************************ Question 5 ***********************************************************/
-/*Variables to determine (according to 14b and 14d):
+/*Variables to determine (according to 14b and 14d) and store for global access by other functions:
+    BPB_BytesPerSec
+    BPB_SecPerClus
+    StartofFAT(relative to sector 0)
+    FirstDataSector (relative to sector 0)
+    FirstRootDirSec(relative to sector 0)
+    RootDirSecs (if FAT 16 is supported)
+
+    Current variables on the FS_values_t struct:
+    uint8_t SecPerClus;
+    uint8_t FATType;
+    uint8_t BytesPerSecShift;
+    uint8_t FATshift;
+    uint16_t BytesPerSec;
+    uint32_t FirstRootDirSec;
+    uint32_t FirstDataSec;
+    uint32_t StartofFAT;
+    uint32_t RootDirSecs;
 */
 uint8_t mount_drive(FS_values_t *drive, uint8_t *array) {
     uint8_t Success = 0; //0 for mounting failure, 1 for mounting success
@@ -50,10 +67,14 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *array) {
     uint8_t = ThisFATSecNum = BPB_ResvdSecCnt + (FATOffset/BPB_BytesPerSec);
 
     //Step 5: Determine the first sector of the data area
+    drive->FirstDataSector = BPB_ResvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors;
 
     //Step 6: Determine the first sector of the Root Directory (FAT16)
-
+    if(drive->FATType == FAT16/*?*/){
+        drive->FirstRootDirSec = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz16) + MBR_RelativeSectors;
+    }
     //Step 6: Determine the first sector of the Root Directory (FAT32)
-
-    
+    else{
+        drive->FirstRootDirSec = ((BPB_RootClus - 2) * BPB_SecPerClus) + First Data Sector;
+    }    
 }
