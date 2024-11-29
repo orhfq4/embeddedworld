@@ -50,10 +50,10 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *array) {
     //Step 3: Determine the count of clusters and FAT type
     uint8_t CountofClusters = DataSec/BPB_SecPerClus;
     if(CountofClusters < 65525){
-        /* Fat 16 */
+        drive->FATType = FAT16; //uh
     }
     else{
-        /* Fat 32 */
+        drive->FATType = FAT32;
     }
 
     //Step 4: Determine the first sector of the file allocation table
