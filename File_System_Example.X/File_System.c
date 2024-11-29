@@ -78,3 +78,15 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *array) {
         drive->FirstRootDirSec = ((BPB_RootClus - 2) * BPB_SecPerClus) + First Data Sector;
     }    
 }
+//14e slides
+/* Question 6 */
+uint32_t First_Sector (FS_values_t *drive, uint32_t cluster_num){
+    uint32_t sector;
+    if (cluster_num == 0){
+        sector = drive->FirstRootDirSec;
+    }
+    else{
+        sector = ((cluster_num-2) * drive->SecPerClus) + drive->FirstDataSec;
+    }
+}
+

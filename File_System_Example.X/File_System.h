@@ -10,7 +10,9 @@
 
 // uint8_t mount_drive(void);
 
-uint8_t mount_drive(uint8_t *array);
+uint8_t mount_drive(FS_values_t *drive, uint8_t *array);
+
+uint32_t first_sector(FS_values_t *drive, uint32_t cluster_num);
 
 #ifdef	__cplusplus
 extern "C" {
