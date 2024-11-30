@@ -90,3 +90,24 @@ uint32_t First_Sector (FS_values_t *drive, uint32_t cluster_num){
     }
 }
 
+uint32_t find_next_clus(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
+    uint32_t sector;
+    uint32_t return_clus;
+    //Step 1: Determine the FAT sector number for the cluster.
+    sector = ((cluster * drive->FATType)/drive->BytesPerSec) + drive->StartofFAT;
+
+    //Step 2: Read the FAT sector into SRAM
+    read_sector(sector, drive->BytesPerSec, array);
+
+    //Step 3: Determine the entry offeset of the cluster within this sector
+    FATOffset = (uint16_t)((cluster * drive->FATType)%(drive->BytesPerSec));
+
+    //Step 4: Read the cluster entry from the FAT sector in SRAM
+    if(drive->FATType == FAT32){
+        return_clus = (read_value_32(FATOffset,array)&0x0FFFFFFF);
+    }
+    else{
+        return_clus = (read_value_16(FATOffset,array));
+    }
+    return return_clus;
+}

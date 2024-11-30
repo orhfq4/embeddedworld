@@ -14,6 +14,8 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *array);
 
 uint32_t first_sector(FS_values_t *drive, uint32_t cluster_num);
 
+uint32_t find_next_clus(FS_values_t *drive, uint32_t cluster, uint8_t array[]);
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
