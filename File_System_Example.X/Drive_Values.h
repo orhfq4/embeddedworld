@@ -8,6 +8,8 @@
 #ifndef DRIVE_VALUES_H
 #define	DRIVE_VALUES_H
 
+#include <avr/pgmspace.h>
+#include <stdio.h>
 #include "peripherals.h"
 //----------------- Typedefs ----------------------------------------
 typedef struct
