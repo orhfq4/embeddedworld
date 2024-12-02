@@ -111,6 +111,8 @@ int main(void)
 	   OLED_transmit_string(OLED_SPI_Port,buffer,0);
     }
     
+    
+    
     //******************** (for testing read_value functions) ****************
     
     // Example array for testing (little-endian representation)
@@ -130,6 +132,11 @@ int main(void)
     printf("16-bit value: %u (0x%X)\n", val16, val16);
     printf("32-bit value: %lu (0x%lX)\n", val32, val32);
     
+    //******************** Calling the mount drive function (Question 8) *****************
+    //Comment out for debugging:
+        //What to pass for array? Not used in function?    
+        //FS_values_t * FS_value = export_drive_values();
+        //mount_drive(FS_value, data);
     
     while (1) 
     {
@@ -152,6 +159,25 @@ int main(void)
         
         
 	
+    }
+    
+    //******************(Question 9) Super Loop **************************************
+    while(1){
+     //*************** Part A ***********************************
+     // Call print directory function with the current direct variable
+     //Prompt user for entry number
+     // Error check to see if entered number is too large
+     // Then use as input parameter to read_directory function
+     // Bit 28 = 1 means directory, Bit #28 = 0 means file,
+     // (Bit 31) for an error
+     // Use cluster number to update directory or open file
+    //*************** Part B ************************************
+    /* 
+        If the directory entry selected is another directory (a sub-directory):
+     *      then use the first_sector function to calculate the first sector of that directory,and update the current directory value.
+     *  The super loop should then repeat which will call the print_directory function and prompt the user for the next entry number 
+    */
+        
     }
 }
 
