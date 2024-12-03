@@ -1,5 +1,10 @@
 #include "File_System.h"
 #include "board.h"
+#include "print_memory.h"
+#include "Read_Sector.h"
+#include "Read_Values.h"
+#include "UART_Print.h"
+#include <stdio.h>
 
 /************************************************ Question 5 ***********************************************************/
 /*Variables to determine (according to 14b and 14d) and store for global access by other functions:
@@ -48,6 +53,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     
     temp8 = read_sector(sector_number, sector_size, buffer); // Using the global buffer 1
     
+    print_memory(buffer,512);
     UART_transmit_string(UART1, "Entering Mount Drive Function...\n\r" , 0);
     
     // for debugging
@@ -56,6 +62,11 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     
     if (temp8 == 0){ // Sector read successfully!
         readVal8 = read_value_8(0, buffer);
+        
+        // for debugging
+        sprintf(debug_buffer, "Reading readval8 at offset 0 readVal8 is: 0x%02X\n\r", readVal8);
+        UART_transmit_string(UART1, debug_buffer , 0);
+        
         if (readVal8 == 0xEB || readVal8 == 0xE9){ // EB and E9 denote the start of BPB
              // Good to go!
         // for debugging
@@ -67,13 +78,16 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
             
             readVal32 = read_value_32(ReadOffset, buffer);
             
+            sector_number = readVal32;
             // for debugging
-            sprintf(debug_buffer, "1st BPB read. Read value 32 is: 0x%08X\n\r", readVal32);
+            sprintf(debug_buffer, "1st BPB read. Read value 32 is: 0x%lX\n\r", readVal32);
             UART_transmit_string(UART1, debug_buffer , 0);
             
-            sector_number = readVal32;
+            
             //read a new sector with the relative sectors value stored at 0x01C6
-            temp8 = read_sector(sector_number, sector_size, buffer);
+            temp8 = read_sector(/*sector_number*/8192, sector_size, buffer);
+            
+            print_memory(buffer,512);
             
             readVal8 = read_value_8(0x00, buffer);
             
@@ -86,7 +100,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
              MBR_RelativeSectors = readVal32;
              
              // for debugging
-            sprintf(debug_buffer, "BPB found successfully! Read Value 32 is: 0x%02X\n\r", readVal32);
+            sprintf(debug_buffer, "BPB found successfully! Read Value 32 is: 0xlX\n\r", readVal32);
             UART_transmit_string(UART1, debug_buffer , 0);
             }
             else if(temp8 != 0){
@@ -161,7 +175,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     drive->RootDirSecs = ((BPB_RootEntCnt*32) + (BPB_BytesPerSec-1)) / (BPB_BytesPerSec); 
     
     // for debugging
-    sprintf(debug_buffer, "Determining Root Dir Secs: 0x%08X\n\r", drive->RootDirSecs);
+    sprintf(debug_buffer, "Determining Root Dir Secs: 0x%lX\n\r", drive->RootDirSecs);
     UART_transmit_string(UART1, debug_buffer , 0);
 
     //Step 3: Determine how many sectors are data sectors
@@ -183,14 +197,14 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     NumDataSec = BPB_TotSec32 - (BPB_ResvdSecCnt + (BPB_NumFATs*BPB_FATSz32) + drive->RootDirSecs);
     
     // for debugging
-    sprintf(debug_buffer, "Determining NumDataSec: 0x%08X\n\r", NumDataSec);
+    sprintf(debug_buffer, "Determining NumDataSec: 0x%lX\n\r", NumDataSec);
     UART_transmit_string(UART1, debug_buffer , 0);
 
     //Step 4: Determine the count of clusters and FAT type    
     uint32_t CountofClusters = NumDataSec/BPB_SecPerClus;
     
     // for debugging
-    sprintf(debug_buffer, "Count of clusters: 0x%08X\n\r", CountofClusters);
+    sprintf(debug_buffer, "Count of clusters: 0x%lX\n\r", CountofClusters);
     UART_transmit_string(UART1, debug_buffer , 0);
     
     if(CountofClusters < 65525){
@@ -212,14 +226,14 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     drive->StartofFAT = BPB_ResvdSecCnt + MBR_RelativeSectors;
     
      // for debugging
-    sprintf(debug_buffer, "StartofFAT: 0x%08X\n\r", drive->StartofFAT);
+    sprintf(debug_buffer, "StartofFAT: 0x%lX\n\r", drive->StartofFAT);
     UART_transmit_string(UART1, debug_buffer , 0);
     
     //Step 6: Determine the first sector of the data area
     drive->FirstDataSec = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz32) + drive->RootDirSecs;
     
     // for debugging
-    sprintf(debug_buffer, "Determining first data sector... FirstDataSec is: 0x%08X\n\r", drive->FirstDataSec);
+    sprintf(debug_buffer, "Determining first data sector... FirstDataSec is: 0x%lX\n\r", drive->FirstDataSec);
     UART_transmit_string(UART1, debug_buffer , 0);
     
     //Relative to the start of the volume and not to sector 0
@@ -233,7 +247,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     }
 
     // for debugging
-    sprintf(debug_buffer, "Determining first root directory sector... FirstRootDirSec is: 0x%08X\n\r", drive->FirstRootDirSec);
+    sprintf(debug_buffer, "Determining first root directory sector... FirstRootDirSec is: 0x%lX\n\r", drive->FirstRootDirSec);
     UART_transmit_string(UART1, debug_buffer , 0);
     }
     return error_status;
