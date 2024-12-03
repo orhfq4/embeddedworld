@@ -35,20 +35,24 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *array) {
     uint8_t temp8 = 0;
     uint16_t offset = 0;
     uint8_t readVal8 = 0x00;
+    uint8_t BPB_error = 0;
     temp8 = read_sector(uint32_t sector_number, sector_size, buffer1_g); // Using the global buffer 1
     if (temp8 == 0){ // Sector read successfully!
         readVal8 = read_value_8(offset, buffer1_g);
         if (readVal8 == 0xEB || readVal8 == 0xE9){
-             // BPB at 0!
+             // Good to go!
+            BPB_error = 0;
         }
         else{ // BPB aint at 0, try using offset found in tables
             offset = 0x01C6; // Relative sectors 32
             readVal8 = read_value_8(offset, buffer1_g);
             if (readVal8 == 0xEB || readVal8 == 0xE9){
              // BPB at offset!
+                BPB_error = 0;
             }
             else{
                 // You have an error
+                BPB_error = 1;
             }
             
         }
