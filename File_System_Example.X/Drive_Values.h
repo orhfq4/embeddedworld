@@ -12,15 +12,26 @@
 #include <stdio.h>
 #include "peripherals.h"
 //----------------- Typedefs ----------------------------------------
-typedef struct
-{
-  uint8_t SecPerClus;
-  uint8_t FATtype;
-  uint16_t BytesPerSec;
-  uint32_t FirstRootDirSec;
-  uint32_t FirstDataSec;
-  uint32_t StartofFAT;
-  uint32_t RootDirSecs;
+//FS object struct
+typedef struct{
+    uint8_t SecPerClus;
+    uint8_t FATtype;
+    uint8_t BytesPerSecShift;
+    uint8_t FATshift;
+    uint16_t BytesPerSec;
+    uint32_t FirstRootDirSec;
+    uint32_t FirstDataSec;
+    uint32_t StartofFAT;
+    uint32_t RootDirSecs;
+    
+    // Adding in extra variables to account for read values in mount_drive
+    // ** Ask Dr. Younger **************************************************
+    uint16_t FATSz16;
+    uint32_t FATSz32;
+    uint16_t TotSec16;
+    uint32_t TotSec32;
+    uint32_t NumDataSec;
+    
 } FS_values_t;
 
 

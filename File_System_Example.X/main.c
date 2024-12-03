@@ -135,8 +135,7 @@ int main(void)
     //******************** Calling the mount drive function (Question 8) *****************
     //Comment out for debugging:
         //What to pass for array? Not used in function?    
-        //FS_values_t * FS_value = export_drive_values();
-        //mount_drive(FS_value, data);
+        //mount_drive(Mount_Drive, data);
     
     while (1) 
     {
