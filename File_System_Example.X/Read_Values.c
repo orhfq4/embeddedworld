@@ -6,24 +6,38 @@
 
 uint8_t read_value_8(uint16_t offset, uint8_t array[])
 {
-    return array[offset];
+    uint8_t return_val;
+    uint8_t temp;
+    return_val = 0;
+    temp=*(array+offset);
+    return_val=return_val<<8;
+    return_val|=temp;
+    return return_val;
 }
 
 
 uint16_t read_value_16(uint16_t offset, uint8_t array[])
-{
-    uint16_t temp16 = 0;
-    temp16 = array[offset]; // LSB
-    temp16 |= ((uint16_t)array[offset + 1] << 8); // MSB
-    return temp16; 
+{   
+    uint16_t return_val;
+    uint8_t temp, i;
+    return_val = 0;
+    for (i;i<2;i++) {
+        temp=*(array+offset+(1-i));
+        return_val=return_val<<8;
+        return_val|=temp;
+    }
+    return return_val;
 }
 
 uint32_t read_value_32(uint16_t offset, uint8_t array[]) // Little Endian
-{
-    uint32_t temp32 = 0;
-    temp32 = array[offset];           // Byte 0 (LSB)
-    temp32 |= ((uint32_t)array[offset + 1] << 8);  // Byte 1
-    temp32 |= ((uint32_t)array[offset + 2] << 16); // Byte 2
-    temp32 |= ((uint32_t)array[offset + 3] << 24); // Byte 3 (MSB)
-    return temp32;
+{   
+    uint32_t return_val;
+    uint8_t temp, i;
+    return_val = 0;
+    for (i;i<4;i++) {
+        temp=*(array+offset+(3-i));
+        return_val=return_val<<8;
+        return_val|=temp;
+    }
+    return return_val;
 }

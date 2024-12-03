@@ -135,7 +135,7 @@ int main(void)
     //******************** Calling the mount drive function (Question 8) *****************
     //Comment out for debugging:
         //What to pass for array? Not used in function?    
-        // uint8_t error_flag = mount_drive(&Mount_Drive, buffer1_g);
+    uint8_t error_flag = mount_drive(&Mount_drive, buffer1_g);
     
     while (1) 
     {

@@ -8,6 +8,9 @@
 #ifndef FILE_SYSTEM_H
 #define	FILE_SYSTEM_H
 
+#include "board.h"
+#include <stdio.h>
+
 // uint8_t mount_drive(void);
 
 uint8_t mount_drive(FS_values_t *drive, uint8_t *array);

@@ -23,11 +23,12 @@
 */
 #define NORMAL (0)
 #define RELATIVE_SECTORS_32 (0x01C6)
+
 // FAT16 and FAT32 are defined in Directory_Functions.h
 
 // *********************************** (Question 5) *****************************
 
-uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
+uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     uint8_t error_status = NORMAL; //!0 for mounting failure, 0 for mounting success
     
     // call a function that returns FATtype then assign to value [PERFORMED LATER]
@@ -46,10 +47,20 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
     char debug_buffer[100];
     
     temp8 = read_sector(sector_number, sector_size, buffer); // Using the global buffer 1
+    
+    UART_transmit_string(UART1, "Entering Mount Drive Function...\n\r" , 0);
+    
+    // for debugging
+    sprintf(debug_buffer, "Read_Sector begun! Temp8 is: 0x%02X\n\r", temp8);
+    UART_transmit_string(UART1, debug_buffer , 0);
+    
     if (temp8 == 0){ // Sector read successfully!
         readVal8 = read_value_8(0, buffer);
         if (readVal8 == 0xEB || readVal8 == 0xE9){ // EB and E9 denote the start of BPB
              // Good to go!
+        // for debugging
+        sprintf(debug_buffer, "Oh shit! found 0xEB immediately! readVal8 is: 0x%02X\n\r", readVal8);
+        UART_transmit_string(UART1, debug_buffer , 0);
         }
         else{ // BPB ain't at 0, try using relative offset
             ReadOffset = RELATIVE_SECTORS_32; // Relative sectors 32
@@ -57,31 +68,51 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
             readVal32 = read_value_32(ReadOffset, buffer);
             
             // for debugging
-            sprintf(debug_buffer, "Read Value 32 is: 0x%02X\n\r", readVal32);
+            sprintf(debug_buffer, "1st BPB read. Read value 32 is: 0x%08X\n\r", readVal32);
             UART_transmit_string(UART1, debug_buffer , 0);
             
             sector_number = readVal32;
             //read a new sector with the relative sectors value stored at 0x01C6
             temp8 = read_sector(sector_number, sector_size, buffer);
             
-            readVal8 = read_value_8(0, buffer);
+            readVal8 = read_value_8(0x00, buffer);
+            
+            // for debugging
+            sprintf(debug_buffer, "2nd BPB read. Read value 8 is: 0x%02X\n\r", readVal8);
+            UART_transmit_string(UART1, debug_buffer , 0);
             
             if (readVal8 == 0xEB || readVal8 == 0xE9){ // EB and E9 denote the BPB
              // BPB at offset!
              MBR_RelativeSectors = readVal32;
+             
+             // for debugging
+            sprintf(debug_buffer, "BPB found successfully! Read Value 32 is: 0x%02X\n\r", readVal32);
+            UART_transmit_string(UART1, debug_buffer , 0);
             }
             else if(temp8 != 0){
                 error_status = read_sector_error;
+                
+                // for debugging
+                sprintf(debug_buffer, "2nd Read sector error. readVal8 is: 0x%02X\n\r", readVal8);
+                UART_transmit_string(UART1, debug_buffer , 0);
             }
             else{
                 // You have an error
                 error_status = BPB_error;
+                
+                // for debugging
+                sprintf(debug_buffer, "BPB error. readVal8 is: 0x%02X\n\r", readVal8);
+                UART_transmit_string(UART1, debug_buffer , 0);
             }
             
         }
     }
     else{
         error_status = read_sector_error;
+        
+        // for debugging
+        sprintf(debug_buffer, "Read sector error unknown pt2. Temp8 is: 0x%02X\n\r", temp8);
+        UART_transmit_string(UART1, debug_buffer , 0);
     }
     
     // Define variables for BPB before reading in
@@ -98,6 +129,9 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
     //********************* READ VALUES FROM BPB ************************
     
     if (error_status == 0) {
+        
+        // for debugging
+        UART_transmit_string(UART1, "Error status normal. Reading from the BPB :) \n\r" , 0);
         
         // Read values for both FAT16 and FAT32
         BPB_BytesPerSec = read_value_16(0x0B, buffer);
@@ -116,15 +150,22 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
         // Read values for FAT32
         BPB_FATSz32 = read_value_32(0x24, buffer);
         BPB_RootClus = read_value_32(0x2C, buffer);
-
-    }
     
     //*****************************************************************
     
     //Step 2: Determine how many sectors are in the Root Dir
+    
+    // for debugging
+    UART_transmit_string(UART1, "Determining sector count...\n\r" , 0);
+    
     drive->RootDirSecs = ((BPB_RootEntCnt*32) + (BPB_BytesPerSec-1)) / (BPB_BytesPerSec); 
+    
+    // for debugging
+    sprintf(debug_buffer, "Determining Root Dir Secs: 0x%08X\n\r", drive->RootDirSecs);
+    UART_transmit_string(UART1, debug_buffer , 0);
 
     //Step 3: Determine how many sectors are data sectors
+    
     if(BPB_FATSz16 != 0){
         FATSz16 = BPB_FATSz16;
     }
@@ -140,9 +181,18 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
     }
     // Need to add support for FAT16
     NumDataSec = BPB_TotSec32 - (BPB_ResvdSecCnt + (BPB_NumFATs*BPB_FATSz32) + drive->RootDirSecs);
+    
+    // for debugging
+    sprintf(debug_buffer, "Determining NumDataSec: 0x%08X\n\r", NumDataSec);
+    UART_transmit_string(UART1, debug_buffer , 0);
 
-    //Step 4: Determine the count of clusters and FAT type
-    uint8_t CountofClusters = NumDataSec/BPB_SecPerClus;
+    //Step 4: Determine the count of clusters and FAT type    
+    uint32_t CountofClusters = NumDataSec/BPB_SecPerClus;
+    
+    // for debugging
+    sprintf(debug_buffer, "Count of clusters: 0x%08X\n\r", CountofClusters);
+    UART_transmit_string(UART1, debug_buffer , 0);
+    
     if(CountofClusters < 65525){
         drive->FATtype = FAT16; // FAT16 and FAT32 are defined in Directory_Functions.h
         error_status = FAT16; // FAT16 not supported, error thrown
@@ -151,18 +201,26 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
         drive->FATtype = FAT32;
     }
 
+    // for debugging
+    sprintf(debug_buffer, "FATType: 0x%02X\n\r", drive->FATtype);
+    UART_transmit_string(UART1, debug_buffer , 0);
+    
     //Step 5: Determine the first sector of the file allocation table
-  
     
-    
-    // Ask Dr. Younger what to do about FATOffset
     uint32_t ThisFATSecNum = (BPB_ResvdSecCnt + 0); // Assume (FATOffset / BPB_BytesPerSec) == 0
-    // Remove for now (FATOffset/BPB_BytesPerSec);
     
-    // Ask Dr. Younger what to do about MBR_RelativeSectors
     drive->StartofFAT = BPB_ResvdSecCnt + MBR_RelativeSectors;
+    
+     // for debugging
+    sprintf(debug_buffer, "StartofFAT: 0x%08X\n\r", drive->StartofFAT);
+    UART_transmit_string(UART1, debug_buffer , 0);
+    
     //Step 6: Determine the first sector of the data area
     drive->FirstDataSec = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz32) + drive->RootDirSecs;
+    
+    // for debugging
+    sprintf(debug_buffer, "Determining first data sector... FirstDataSec is: 0x%08X\n\r", drive->FirstDataSec);
+    UART_transmit_string(UART1, debug_buffer , 0);
     
     //Relative to the start of the volume and not to sector 0
     //Step 7: Determine the first sector of the Root Directory (FAT16)
@@ -174,10 +232,14 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t *buffer) {
         drive->FirstRootDirSec = ((BPB_RootClus - 2) * BPB_SecPerClus) + drive->FirstDataSec;
     }
 
+    // for debugging
+    sprintf(debug_buffer, "Determining first root directory sector... FirstRootDirSec is: 0x%08X\n\r", drive->FirstRootDirSec);
+    UART_transmit_string(UART1, debug_buffer , 0);
+    }
     return error_status;
 }
 //14e slides
-/* Question 6 */
+/************************************** (Question 6) *************************/
 uint32_t First_Sector (FS_values_t *drive, uint32_t cluster_num){
     uint32_t sector;
     if (cluster_num == 0){
@@ -186,7 +248,10 @@ uint32_t First_Sector (FS_values_t *drive, uint32_t cluster_num){
     else{
         sector = ((cluster_num-2) * drive->SecPerClus) + drive->FirstDataSec;
     }
+    return sector;
 }
+
+/************************************** (Question 7) *************************/
 
 uint32_t find_next_clus(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
     uint32_t sector;
