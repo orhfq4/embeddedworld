@@ -32,8 +32,4 @@ led_state_t LED_get_value(led_inst_t * const me);
 
 void LED_toggle_value(led_inst_t * const me);
 
-
-
-
-
 #endif /* _LEDS_H_ */

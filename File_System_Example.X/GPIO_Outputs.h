@@ -18,6 +18,7 @@ typedef struct
     volatile GPIO_t * port_addr;
     uint8_t pin_mask;
 }gpio_inst_t;
+
 /**************************************************************
 *   GPIO_output_init
 *   Inputs: pointer to a GPIO port struct,
@@ -28,7 +29,6 @@ typedef struct
 *
 *   Caution: Does not set the pins to a default value
 ***************************************************************/
-
 
 void GPIO_output_ctor(gpio_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, GPIO_PIN_STATE_t _state);
 
@@ -60,7 +60,5 @@ static inline void GPIO_output_toggle_value(gpio_inst_t * const me)
 {
     (me->port_addr->GPIO_PORT)^=(me->pin_mask);   
 }
-
-
 
 #endif /* _GPIO_OUTPUTS_H_ */

@@ -6,7 +6,6 @@
 #include "UART_Print.h"
 #include <stdio.h>
 
-/************************************************ Question 5 ***********************************************************/
 /*Variables to determine (according to 14b and 14d) and store for global access by other functions:
     BPB_BytesPerSec
     BPB_SecPerClus

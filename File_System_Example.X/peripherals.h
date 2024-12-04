@@ -53,18 +53,4 @@ typedef struct _SPI
 #define SPI1 ((volatile SPI_t *) &SPCR1)
 
 
-
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef	__cplusplus
-}
-#endif
-
 #endif	/* PERIPHERALS_H */
-

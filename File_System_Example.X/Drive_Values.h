@@ -26,14 +26,14 @@ typedef struct{
     
 } FS_values_t;
 
-
+/***********************************************************************
+*   export_drive_values
+DESC:    Returns a pointer to the global `drive_values` structure for access to
+         file system parameters.
+RETURNS: FS_values_t* - Pointer to the `drive_values` structure.
+CAUTION: Ensure `drive_values` is initialized before calling this function.
+************************************************************************/
 
 FS_values_t * export_drive_values(void);
 
-
-
-
-
-
 #endif	/* DRIVE_VALUES_H */
-
