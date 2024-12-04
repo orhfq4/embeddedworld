@@ -161,9 +161,11 @@ int main(void)
     }
     
     //******************(Question 9) Super Loop **************************************
+    //uint16_t  directoryEntries = 0;
     while(1){
      //*************** Part A ***********************************
      // Call print directory function with the current direct variable
+     print_memory(buffer1_g,512); 
      //Prompt user for entry number
      // Error check to see if entered number is too large
      // Then use as input parameter to read_directory function

@@ -100,7 +100,8 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
              MBR_RelativeSectors = readVal32;
              
              // for debugging
-            sprintf(debug_buffer, "BPB found successfully! Read Value 32 is: 0xlX\n\r", readVal32);
+            //sprintf(debug_buffer, "BPB found successfully! Read Value 32 is: 0xlX\n\r", readVal32);
+            // *******SOURCE OF THE ERROR, DO NOT ADD A PRINT STATEMENT ABOVE THIS LINE **************
             UART_transmit_string(UART1, debug_buffer , 0);
             }
             else if(temp8 != 0){
@@ -221,7 +222,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     
     //Step 5: Determine the first sector of the file allocation table
     
-    uint32_t ThisFATSecNum = (BPB_ResvdSecCnt + 0); // Assume (FATOffset / BPB_BytesPerSec) == 0
+    //uint32_t ThisFATSecNum = (BPB_ResvdSecCnt + 0); // Assume (FATOffset / BPB_BytesPerSec) == 0
     
     drive->StartofFAT = BPB_ResvdSecCnt + MBR_RelativeSectors;
     
