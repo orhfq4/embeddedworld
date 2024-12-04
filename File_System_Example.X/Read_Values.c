@@ -6,9 +6,7 @@
 
 uint8_t read_value_8(uint16_t offset, uint8_t array[])
 {
-    uint8_t return_val;
     uint8_t temp;
-    return_val = 0;
     temp=*(array+offset);
     return temp;
 }

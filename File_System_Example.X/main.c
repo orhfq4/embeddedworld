@@ -53,7 +53,7 @@ uint8_t buffer2_g[512];
 
 int main(void)
 {
-    uint8_t input,status,SD_type;
+    uint8_t status,SD_type;
     uint32_t temp32;
     char *buffer;
 	// Initialize the LED outputs
@@ -136,7 +136,8 @@ int main(void)
     //Comment out for debugging:
         //What to pass for array? Not used in function?    
     uint8_t error_flag = mount_drive(&Mount_drive, buffer1_g);
-    
+    /*
+    // ASK TO SEE IF WE USE THIS, IN OTHER LOOP?
     while (1) 
     {
 		copy_string_to_buffer(LSI_Prompt,buffer,0);
@@ -148,7 +149,7 @@ int main(void)
 		temp32=(temp32<<SD_type);
 		LED_set_value(&led0, LED_ON);
         
-        //*** This is for testing read_sector when implemented ****
+        //This is for testing read_sector when implemented ****
         read_sector(temp32, 512, buffer1_g);
         
         
@@ -159,70 +160,83 @@ int main(void)
         
 	
     }
+    */
+    
     
     //******************(Question 9) Super Loop **************************************
     uint16_t  directoryEntries = 0;
     uint32_t  userInput = 0;
     uint8_t error_status = 0x00;
     
-    while(1){
-        uint8_t repeat = 1; // Variable to repeat loop to get to a file
-        do{
-              //*************** Part A ***********************************
-            // Call print directory function with the current direct variable
-            directoryEntries = print_directory(Mount_drive->FirstRootDirSec, buffer2_g); // USING BUFFER 2 NOW :D
-            //Prompt user for entry number
-            uint8_t error_check = 0;
+    if (error_flag == 0){ // Check to see if mount drive returned an error
+        while(1){
+            uint8_t repeat = 1; // Variable to repeat loop to get to a file
             do{
-               copy_string_to_buffer("Enter desired entry number >:3",buffer,0);
-               UART_transmit_string(print_port,buffer,0);
-               temp32=long_serial_input(print_port); // Waiting for input
-               sprintf(buffer," %lu \n\r",temp32);
-               UART_transmit_string(print_port,buffer,0); // Printing the input
-               // Error check to see if entered number is too large
-               if (temp32 > directoryEntries){ // Entry is too large!
-                   copy_string_to_buffer("Entry too large, try again",buffer,0);
+                  //*************** Part A ***********************************
+                // Call print directory function with the current direct variable
+                uint32_t SecNum = Mount_drive.FirstRootDirSec;
+                directoryEntries = print_directory(SecNum, buffer2_g); // USING BUFFER 2 NOW :D
+                //Prompt user for entry number
+                uint8_t error_check = 0;
+                do{
+                   copy_string_to_buffer("Enter desired entry number >:3",buffer,0);
                    UART_transmit_string(print_port,buffer,0);
-               }
-               else{
-                   error_check = 1; // User entry is correct size, exit loop :D
-                   userInput = temp32;
-               }
-            }while(error_check == 0);
-            // Then use as input parameter to read_directory function
-            uint32_t returnCluster = 0;
-            returnCluster = read_dir_entry(Mount_drive->FirstRootDirSec, userInput, buffer2_g);
-            returnCluster &= 0xF0000000; // Keeping the upper four bits :D
-             // Bit 28 = 1 means directory, Bit #28 = 0 means file,
-            if(returnCluster & (1 << 31)){
-                if(returnCluster & (1 << 28)){ // Check Bit 28 for directory of file
-                    // Bit 28 == 1, must be directory
-                    repeat = 1;
+                   temp32=long_serial_input(print_port); // Waiting for input
+                   sprintf(buffer," %lu \n\r",temp32);
+                   UART_transmit_string(print_port,buffer,0); // Printing the input
+                   // Error check to see if entered number is too large
+                   if (temp32 > directoryEntries){ // Entry is too large!
+                       copy_string_to_buffer("Entry too large, try again",buffer,0);
+                       UART_transmit_string(print_port,buffer,0);
+                   }
+                   else{
+                       error_check = 1; // User entry is correct size, exit loop :D
+                       userInput = temp32;
+                   }
+                }while(error_check == 0);
+                // Then use as input parameter to read_directory function
+                uint32_t returnCluster = 0;
+                SecNum = Mount_drive.FirstRootDirSec;
+                returnCluster = read_dir_entry(SecNum, userInput, buffer2_g);
+                //returnCluster &= 0xF0000000; // Keeping the upper four bits :D
+                 // Bit 28 = 1 means directory, Bit #28 = 0 means file,
+                if(returnCluster & (1 << 31)){ //  Check bit 31 for error 1 = no error
+                    if(returnCluster & (1 << 28)){ // Check Bit 28 for directory of file
+                        // Bit 28 == 1, must be directory
+                        repeat = 1;
+                    }
+                    else{ // Bit 28 == 0, must be a file
+                        repeat = 0;
+                    }
                 }
-                else{ // Bit 28 == 0, must be a file
-                    repeat = 0;
-                }
-            }
-            else{  //There is an error :(
-                error_status = 1; //  Throw an error to exit loop
-            }  
-        }while((repeat == 1) && (error_status == 0x00));
+                else{  //There is an error :(
+                    error_status = 1; //  Throw an error to exit loop
+                }  
+            }while((repeat == 1) && (error_status == 0x00));
+
+            uint32_t InputCluster = read_dir_entry(Mount_drive.FirstRootDirSec, userInput, buffer2_g);
+            // Ask Younger: What to pass for "cluster" into this function??
+            open_file(&Mount_drive, InputCluster, buffer2_g); 
+
+        // Bit 31 is error, checking to see if there is an error
+         // (Bit 31) for an error
+         // Use cluster number to update directory or open file
+        //*************** Part B ************************************
         
-        uint32_t InputCluster = read_dir_entry(Mount_drive->FirstRootDirSec, userInput, buffer2_g);
-        // Ask Younger: What to pass for "cluster" into this function??
-        open_file(&Mount_drive, InputCluster, buffer2_g); 
-     
-    // Bit 31 is error, checking to see if there is an error
-     // (Bit 31) for an error
-     // Use cluster number to update directory or open file
-    //*************** Part B ************************************
-    /* 
-        If the directory entry selected is another directory (a sub-directory):
-     *      then use the first_sector function to calculate the first sector of that directory,and update the current directory value.
-     *  The super loop should then repeat which will call the print_directory function and prompt the user for the next entry number 
-    */
+        //    If the directory entry selected is another directory (a sub-directory):
+        // *      then use the first_sector function to calculate the first sector of that directory,and update the current directory value.
+        // *  The super loop should then repeat which will call the print_directory function and prompt the user for the next entry number 
         
+
+        }
     }
+    else{
+        // Error with the mount drive function
+         copy_string_to_buffer("Mount drive failed",buffer,0);
+        UART_transmit_string(print_port,buffer,0);
+    }
+    
+    return 0;
 }
 
 

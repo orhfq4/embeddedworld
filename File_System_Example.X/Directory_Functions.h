@@ -1,6 +1,9 @@
 #ifndef _Directory_Func_H
 #define _Directory_Func_H
 
+#include "board.h"
+#include "Drive_Values.h"
+
 //------- Public Constants  -----------------------------------------
 #define FAT32 (4)
 #define FAT16 (2)
