@@ -20,6 +20,8 @@ uint16_t print_directory(uint32_t Sector_num, uint8_t * array_in);
 
 uint32_t read_dir_entry(uint32_t Sector_num, uint16_t Entry, uint8_t * array_in);
 
+uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]);
+
 
 
 #endif

@@ -161,15 +161,58 @@ int main(void)
     }
     
     //******************(Question 9) Super Loop **************************************
-    //uint16_t  directoryEntries = 0;
+    uint16_t  directoryEntries = 0;
+    uint32_t  userInput = 0;
+    uint8_t error_status = 0x00;
+    
     while(1){
-     //*************** Part A ***********************************
-     // Call print directory function with the current direct variable
-     print_memory(buffer1_g,512); 
-     //Prompt user for entry number
-     // Error check to see if entered number is too large
-     // Then use as input parameter to read_directory function
-     // Bit 28 = 1 means directory, Bit #28 = 0 means file,
+        uint8_t repeat = 1; // Variable to repeat loop to get to a file
+        do{
+              //*************** Part A ***********************************
+            // Call print directory function with the current direct variable
+            directoryEntries = print_directory(Mount_drive->FirstRootDirSec, buffer2_g); // USING BUFFER 2 NOW :D
+            //Prompt user for entry number
+            uint8_t error_check = 0;
+            do{
+               copy_string_to_buffer("Enter desired entry number >:3",buffer,0);
+               UART_transmit_string(print_port,buffer,0);
+               temp32=long_serial_input(print_port); // Waiting for input
+               sprintf(buffer," %lu \n\r",temp32);
+               UART_transmit_string(print_port,buffer,0); // Printing the input
+               // Error check to see if entered number is too large
+               if (temp32 > directoryEntries){ // Entry is too large!
+                   copy_string_to_buffer("Entry too large, try again",buffer,0);
+                   UART_transmit_string(print_port,buffer,0);
+               }
+               else{
+                   error_check = 1; // User entry is correct size, exit loop :D
+                   userInput = temp32;
+               }
+            }while(error_check == 0);
+            // Then use as input parameter to read_directory function
+            uint32_t returnCluster = 0;
+            returnCluster = read_dir_entry(Mount_drive->FirstRootDirSec, userInput, buffer2_g);
+            returnCluster &= 0xF0000000; // Keeping the upper four bits :D
+             // Bit 28 = 1 means directory, Bit #28 = 0 means file,
+            if(returnCluster & (1 << 31)){
+                if(returnCluster & (1 << 28)){ // Check Bit 28 for directory of file
+                    // Bit 28 == 1, must be directory
+                    repeat = 1;
+                }
+                else{ // Bit 28 == 0, must be a file
+                    repeat = 0;
+                }
+            }
+            else{  //There is an error :(
+                error_status = 1; //  Throw an error to exit loop
+            }  
+        }while((repeat == 1) && (error_status == 0x00));
+        
+        uint32_t InputCluster = read_dir_entry(Mount_drive->FirstRootDirSec, userInput, buffer2_g);
+        // Ask Younger: What to pass for "cluster" into this function??
+        open_file(&Mount_drive, InputCluster, buffer2_g); 
+     
+    // Bit 31 is error, checking to see if there is an error
      // (Bit 31) for an error
      // Use cluster number to update directory or open file
     //*************** Part B ************************************

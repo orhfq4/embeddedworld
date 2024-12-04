@@ -216,5 +216,68 @@ uint32_t read_dir_entry(uint32_t Sector_num, uint16_t Entry, uint8_t * array_in)
    return return_clus;
  }
 
+uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
+    uint8_t exit = 0;
+    char print_buffer[512];
+    uint32_t tempSector = 0; //Gabe
+    uint8_t temp8 = 0;
+    uint32_t temp32 = 0;
+    tempSector = First_Sector(drive, cluster); 
+    temp8 = read_sector(tempSector, 512, array[]); // temp8 holds error status
+    print_memory(print_buffer,512);
+    
+    do{
+        // PROMPT THE USER FOR CONT OR EXIT:
+        copy_string_to_buffer("Enter 1 to continue, 0 to exit",print_buffer,0);
+        UART_transmit_string(print_port,print_buffer,0);
+        temp32=long_serial_input(print_port); // Waiting for input
+        sprintf(print_buffer," %lu \n\r",temp32);
+        UART_transmit_string(print_port,print_buffer,0); // Printing the input
+        if(temp32 == 1){
+            //continue
+            tempSector++; // Move on to the next sector (inc the sector index)
+            exit = 0;
+            if(tempSector == drive->SecPerClus){
+               cluster = find_next_clus(FS_values_t *drive, uint32_t cluster, uint8_t array[]);
+               if(cluster == 0x0FFFFFFF){  // End of file reached
+                   exit = 1; // exit the loop
+               }
+               tempSector = First_Sector(drive, cluster); // Could be just set to 0?
+            }
+            else{ // Print the next sector :D
+                temp8 = read_sector(tempSector, 512, array[]); // temp8 holds error status
+                print_memory(print_buffer,512);
+            }
+        }
+        else if(temp32 == 0){
+            //exit 
+            exit = 1; // exits do-while
+        }
+        else{
+            // user typed the wrong thing
+        }
+    }while(exit == 0);
+    
+    
+    
+    //if there is a new cluster, (index == 0), calc first sector
+    /*
+    typedef struct{
+    uint8_t SecPerClus;
+    uint8_t FATtype;
+    uint8_t BytesPerSecShift;
+    uint8_t FATshift;
+    uint16_t BytesPerSec;
+    uint32_t FirstRootDirSec;
+    uint32_t FirstDataSec;
+    uint32_t StartofFAT;
+    uint32_t RootDirSecs;
+*/
+    First_Sector (FS_values_t *drive, uint32_t cluster_num); // Returns 32b 
+    read_sector(uint32_t sector_number, uint16_t sector_size, uint8_t array_for_data[]); // 
+    find_next_clus(FS_values_t *drive, uint32_t cluster, uint8_t array[]);
+    print_memory(uint8_t * array_in, uint16_t number_of_bytes); // Returns nothing
+}
+
 
 
