@@ -34,7 +34,7 @@ INPUT:   FS_values_t *drive - Pointer to the drive structure.
 RETURNS: uint32_t - The first sector number for the given cluster.
 ************************************************************************/
 
-uint32_t first_sector(FS_values_t *drive, uint32_t cluster_num);
+uint32_t First_Sector(FS_values_t *drive, uint32_t cluster_num);
 
 /***********************************************************************
 *   find_next_clus
