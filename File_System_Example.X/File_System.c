@@ -49,7 +49,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     uint32_t MBR_RelativeSectors = 0x000000000;
     uint8_t BPB_error = 5;
     uint8_t read_sector_error = 6;
-    char debug_buffer[100];
+    char debug_buffer[50];
     
     temp8 = read_sector(sector_number, sector_size, buffer); // Using the global buffer 1
     

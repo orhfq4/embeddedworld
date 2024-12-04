@@ -223,22 +223,23 @@ uint32_t read_dir_entry(uint32_t Sector_num, uint16_t Entry, uint8_t * array_in)
 uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
     uint8_t error_status = 0;
     uint8_t exit = 0;
-    char print_buffer[512];
-    uint8_t memBuffer[512];
+    //extern char * buffer1_g;
+    char * buffer;
+    buffer=export_print_buffer();
     uint32_t tempSector = 0; //Gabe
     uint8_t temp8 = 0;
     uint32_t temp32 = 0;
     tempSector = First_Sector(drive, cluster); 
     temp8 = read_sector(tempSector, 512, array); // temp8 holds error status
-    print_memory(memBuffer,512);
+    print_memory(array,512);
     if (temp8 == 0){ // No read sector errors
         do{
             // PROMPT THE USER FOR CONT OR EXIT:
-            copy_string_to_buffer("Enter 1 to continue, 0 to exit",print_buffer,0);
-            UART_transmit_string(print_port,print_buffer,0);
+            copy_string_to_buffer("Enter 1 to continue, 0 to exit",buffer,0);
+            UART_transmit_string(print_port,buffer,0);
             temp32=long_serial_input(print_port); // Waiting for input
-            sprintf(print_buffer," %lu \n\r",temp32);
-            UART_transmit_string(print_port,print_buffer,0); // Printing the input
+            sprintf(buffer," %lu \n\r",temp32);
+            UART_transmit_string(print_port,buffer,0); // Printing the input
             if(temp32 == 1){
                 //continue
                 tempSector++; // Move on to the next sector (inc the sector index)
@@ -252,7 +253,7 @@ uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
                 }
                 else{ // Print the next sector :D
                     temp8 = read_sector(tempSector, 512, array); // temp8 holds error status
-                    print_memory(memBuffer,512);
+                    print_memory(array,512);
                 }
             }
             else if(temp32 == 0){

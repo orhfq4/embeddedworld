@@ -48,7 +48,7 @@ const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 
 uint8_t buffer1_g[512];
-uint8_t buffer2_g[512];
+//uint8_t buffer2_g[512];
 
 
 int main(void)
@@ -175,7 +175,7 @@ int main(void)
                   //*************** Part A ***********************************
                 // Call print directory function with the current direct variable
                 uint32_t SecNum = Mount_drive.FirstRootDirSec;
-                directoryEntries = print_directory(SecNum, buffer2_g); // USING BUFFER 2 NOW :D
+                directoryEntries = print_directory(SecNum, buffer1_g); // USING BUFFER 1 NOW :D
                 //Prompt user for entry number
                 uint8_t error_check = 0;
                 do{
@@ -197,11 +197,11 @@ int main(void)
                 // Then use as input parameter to read_directory function
                 uint32_t returnCluster = 0;
                 SecNum = Mount_drive.FirstRootDirSec;
-                returnCluster = read_dir_entry(SecNum, userInput, buffer2_g);
+                returnCluster = read_dir_entry(SecNum, userInput, buffer1_g);
                 //returnCluster &= 0xF0000000; // Keeping the upper four bits :D
                  // Bit 28 = 1 means directory, Bit #28 = 0 means file,
-                if(returnCluster & (1 << 31)){ //  Check bit 31 for error 1 = no error
-                    if(returnCluster & (1 << 28)){ // Check Bit 28 for directory of file
+                if(returnCluster & (1UL << 31)){ //  Check bit 31 for error 1 = no error
+                    if(returnCluster & (1UL << 28)){ // Check Bit 28 for directory of file
                         // Bit 28 == 1, must be directory
                         repeat = 1;
                     }
@@ -214,9 +214,9 @@ int main(void)
                 }  
             }while((repeat == 1) && (error_status == 0x00));
 
-            uint32_t InputCluster = read_dir_entry(Mount_drive.FirstRootDirSec, userInput, buffer2_g);
+            uint32_t InputCluster = read_dir_entry(Mount_drive.FirstRootDirSec, userInput, buffer1_g);
             // Ask Younger: What to pass for "cluster" into this function??
-            open_file(&Mount_drive, InputCluster, buffer2_g); 
+            open_file(&Mount_drive, InputCluster, buffer1_g); 
 
         // Bit 31 is error, checking to see if there is an error
          // (Bit 31) for an error
