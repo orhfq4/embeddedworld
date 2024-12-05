@@ -46,9 +46,11 @@ const char LSI_Prompt[16] PROGMEM = {"Enter block #: "};
 const char Complete[9] PROGMEM = {"  OK!\n\r\0"};
 const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
+const char EnterNum[29] PROGMEM = {"Enter desired entry number\n\r\0"};
+
 
 uint8_t buffer1_g[512];
-uint8_t buffer2_g[512];
+//uint8_t buffer2_g[512];
 
 
 int main(void)
@@ -178,12 +180,12 @@ int main(void)
                   //*************** Part A ***********************************
                 // Call print directory function with the current direct variable
                 uint32_t SecNum = drive->FirstDataSec;
-                directoryEntries = print_directory(16384, buffer2_g); // USING BUFFER 1 NOW :D
+                directoryEntries = print_directory(16384, buffer1_g); // USING BUFFER 1 NOW :D
                 //Prompt user for entry number
 
                 uint8_t error_check = 0;
                 do{
-                   copy_string_to_buffer("Enter desired entry number >:3",buffer,0);
+                   copy_string_to_buffer(EnterNum,buffer,0);
                    UART_transmit_string(print_port,buffer,0);
                    temp32=long_serial_input(print_port); // Waiting for input
                    sprintf(buffer," %lu \n\r",temp32);
@@ -224,7 +226,7 @@ int main(void)
     }
     else{
         // Error with the mount drive function
-         copy_string_to_buffer("Mount drive failed",buffer,0);
+        copy_string_to_buffer("Mount drive failed",buffer,0);
         UART_transmit_string(print_port,buffer,0);
     }
     
