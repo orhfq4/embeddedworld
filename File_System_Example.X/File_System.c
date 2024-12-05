@@ -27,7 +27,8 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     uint32_t MBR_RelativeSectors = 0x000000000;
     uint8_t BPB_error = 5;
     uint8_t read_sector_error = 6;
-    char debug_buffer[50];
+    char * debug_buffer;
+    debug_buffer = export_print_buffer();
     
     temp8 = read_sector(sector_number, sector_size, buffer); // Using the global buffer 1
     
@@ -202,7 +203,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     //UART_transmit_string(UART1, debug_buffer , 0);
     
     //Step 6: Determine the first sector of the data area
-    drive->FirstDataSec = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz32) + drive->RootDirSecs;
+    drive->FirstDataSec = BPB_ResvdSecCnt + (BPB_NumFATs * BPB_FATSz32) + drive->RootDirSecs + MBR_RelativeSectors;
     
     // for debugging
     //sprintf(debug_buffer, "Determining first data sector... FirstDataSec is: 0x%lX\n\r", drive->FirstDataSec);
@@ -219,14 +220,16 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
     }
 
     // for debugging
-    sprintf(debug_buffer, "FirstRootDirSec is: 0x%lX\n\r", drive->FirstRootDirSec);
-    UART_transmit_string(UART1, debug_buffer , 0);
+    //sprintf(debug_buffer, "FirstRootDirSec is: 0x%lX\n\r", drive->FirstRootDirSec);
+    //UART_transmit_string(UART1, debug_buffer , 0);
     }
     return error_status;
 }
 //14e slides
 /************************************** (Question 6) *************************/
 uint32_t First_Sector (FS_values_t *drive, uint32_t cluster_num){
+    char * debug_buffer;
+    debug_buffer = export_print_buffer();
     uint32_t sector;
     if (cluster_num == 0){
         sector = drive->FirstRootDirSec;
@@ -234,6 +237,8 @@ uint32_t First_Sector (FS_values_t *drive, uint32_t cluster_num){
     else{
         sector = ((cluster_num-2) * drive->SecPerClus) + drive->FirstDataSec;
     }
+    sprintf(debug_buffer, "Sector is: %X\n\r", sector);
+    UART_transmit_string(UART1, debug_buffer , 0);
     return sector;
 }
 

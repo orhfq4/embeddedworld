@@ -9,13 +9,13 @@
 #include "Read_Values.h"
 #include "print_memory.h"
 #include "Long_Serial_In.h"
-
+#include <avr/pgmspace.h>
 
 /******* Private Constants *************/
 #define CR (0x0D)
 #define LF (0x0A) 
 
-
+const char openFilePrompt[33] PROGMEM = {"Enter 1 to continue, 0 to exit\n\r\0"};
 
 /***********************************************************************
 DESC: Prints all short file name entries for a given directory 
@@ -223,25 +223,24 @@ uint32_t read_dir_entry(uint32_t Sector_num, uint16_t Entry, uint8_t * array_in)
 uint8_t open_file(FS_values_t *drive, uint32_t start_cluster, uint8_t array[]){
     uint8_t error_status = 0;
     uint8_t exit = 0;
-    uint32_t cluster = start_cluster;
     char * buffer; 
     buffer=export_print_buffer();
     uint32_t tempSector = 0; //Gilbert
     uint8_t temp8 = 0; //Ronald
     uint32_t temp32 = 0; //Jerry
     //reading the first sector of the cluster
-    tempSector = First_Sector(drive, cluster); 
+    tempSector = First_Sector(drive, start_cluster); 
     //header print after first sector read
-    sprintf(buffer, "Cluster: %X\r\n", cluster);
+    sprintf(buffer, "Cluster: %X\r\n", start_cluster);
     UART_transmit_string(print_port, buffer, 0);
     sprintf(buffer, "Sector: %X\r\n", tempSector);
     UART_transmit_string(print_port, buffer, 0);
-    temp8 = read_sector(tempSector, 512, array); // temp8 holds error status
+    temp8 = read_sector(tempSector, drive->BytesPerSec, array); // temp8 holds error status
     print_memory(array,512); //print_memory(buffer1_g, drive->BytesPerSec);
-    if (temp8 == 0){ // No read sector errors
+    if (1/*temp8 == 0*/){ // No read sector errors
         do{
             // PROMPT THE USER FOR CONT OR EXIT:
-            copy_string_to_buffer("Enter 1 to continue, 0 to exit",buffer,0);
+            copy_string_to_buffer(openFilePrompt,buffer,0);
             UART_transmit_string(print_port,buffer,0);
             temp32=long_serial_input(print_port); // Waiting for input. 
             sprintf(buffer," %lu \n\r",temp32);
@@ -251,11 +250,11 @@ uint8_t open_file(FS_values_t *drive, uint32_t start_cluster, uint8_t array[]){
                 tempSector++; // Move on to the next sector (inc the sector index)
                 exit = 0;
                 if(tempSector == drive->SecPerClus){
-                   cluster = find_next_clus(drive, cluster, array);
-                   if(cluster == 0x0FFFFFFF){  // End of file reached
+                   start_cluster = find_next_clus(drive, start_cluster, array);
+                   if(start_cluster == 0x0FFFFFFF){  // End of file reached
                        exit = 1; // exit the loop
                    }
-                   tempSector = First_Sector(drive, cluster); // Could be just set to 0?
+                   tempSector = First_Sector(drive, start_cluster); // Could be just set to 0?
                 }
                 else{ // Print the next sector
                     temp8 = read_sector(tempSector, 512, array); // temp8 holds error status

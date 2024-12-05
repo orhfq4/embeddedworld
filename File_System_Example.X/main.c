@@ -48,7 +48,7 @@ const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 const char EnterNum[29] PROGMEM = {"Enter desired entry number\n\r\0"};
 const char entryFeedback[18] PROGMEM = {"Entry too large\n\r\0"};
-const char error_message[13] PROGMEM = {"error here\n\r\0"};
+const char error_message[13] PROGMEM = {"error. Goodbye :)\n\r\0"};
 
 
 
@@ -115,66 +115,33 @@ int main(void)
 	   copy_string_to_buffer(High_Cap,buffer,0);
 	   OLED_transmit_string(OLED_SPI_Port,buffer,0);
     }
-    
-    
+
     
     //******************** Calling the mount drive function (Question 8) *****************
     //Comment out for debugging:  
     FS_values_t* drive = export_drive_values();    
     uint8_t error_flag = mount_drive(drive, buffer1_g);
-    /*
-     * 
-     * 
-    // ASK TO SEE IF WE USE THIS, IN OTHER LOOP?
-    while (1) 
-    {
-		copy_string_to_buffer(LSI_Prompt,buffer,0);
-		UART_transmit_string(print_port,buffer,0);
-		temp32=long_serial_input(print_port);
-		sprintf(buffer," %lu \n\r",temp32);
-		UART_transmit_string(print_port,buffer,0);
-		SD_type=Return_SD_Card_Type();
-		temp32=(temp32<<SD_type);
-		LED_set_value(&led0, LED_ON);
-        
-        //This is for testing read_sector when implemented ****
-        read_sector(temp32, 512, buffer1_g);
-        
-        
-		LED_set_value(&led0, LED_OFF);
-		print_memory(buffer1_g,512);  
-        
-        
-        
-	
-    }
-    */
-    
     
     //******************(Question 9) Super Loop **************************************
     uint16_t  directoryEntries = 0;
     uint32_t  userInput = 0;
     uint8_t error_status = 0x00;
-    
+    uint32_t curr_dir;
     error_flag = 0;
+    curr_dir = drive->FirstDataSec;
     if (error_flag == 0){ // Check to see if mount drive returned an error
-        while(1){      
+        while(error_status == 0){      
             uint8_t repeat = 1; // Variable to repeat loop to get to a file
-            
             do{
                   //*************** Part A ***********************************
                 // Call print directory function with the current direct variable
-                uint32_t SecNum = drive->FirstDataSec;
-                directoryEntries = print_directory(16384, buffer1_g); // USING BUFFER 1 NOW :D
+                directoryEntries = print_directory(curr_dir, buffer1_g); // USING BUFFER 1 NOW :D
                 //Prompt user for entry number
-
                 uint8_t error_check = 0;
                 do{
                    copy_string_to_buffer(EnterNum,buffer,0);
                    UART_transmit_string(print_port,buffer,0);
                    temp32=long_serial_input(print_port); // Waiting for input
-                   sprintf(buffer," %lu \n\r",temp32);
-                   UART_transmit_string(print_port,buffer,0); // Printing the input
                    // Error check to see if entered number is too large
                    if (temp32 > directoryEntries){ // Entry is too large!
                        copy_string_to_buffer(entryFeedback,buffer,0);
@@ -182,22 +149,30 @@ int main(void)
                    }
                    else{
                        error_check = 1; // User entry is correct size, exit loop :D
-                       userInput = temp32;
+                       userInput = temp32; // for clarity
                    }
                 }while(error_check == 0);
                 // Then use as input parameter to read_directory function
                 uint32_t returnCluster = 0;
-                SecNum = drive->FirstDataSec;
-                returnCluster = read_dir_entry(SecNum, userInput, buffer1_g);
-                returnCluster &= 0xF0000000; // Keeping the upper four bits :D
-                 // Bit 28 = 1 means directory, Bit #28 = 0 means file,
-                if(returnCluster & (1UL << 31 == 0)){ //
+                
+                returnCluster = read_dir_entry(curr_dir, userInput, buffer1_g);
+                
+               
+                                
+                if((returnCluster & (1UL << 31)) == 0){ //
                     if(returnCluster & (1UL << 28)){ // Check Bit 28 for directory of file
                         // Bit 28 == 1, must be directory
                         repeat = 1;
+                        returnCluster &= 0x0FFFFFFF;
+                        curr_dir = First_Sector(drive, returnCluster); // needs to be set to a variable
+ 
+                        // Needs to actually enter the subdirectory ****************
                     }
                     else{ // Bit 28 == 0, must be a file
-                        repeat = 0;
+                        repeat = 0; 
+                        
+                        // Exits loop to read file
+                        
                     }
                 }
                 else{  //There is an error :(
@@ -206,9 +181,11 @@ int main(void)
                     UART_transmit_string(print_port,buffer,0);
                 }  
             }while((repeat == 1) && (error_status == 0x00));
+            
             if(error_status == 0x00){
-                uint32_t InputCluster = read_dir_entry(drive->FirstRootDirSec, userInput, buffer1_g);
-                open_file(drive, InputCluster, buffer1_g);
+                uint32_t InputCluster = read_dir_entry(curr_dir, userInput, buffer1_g);
+                open_file(drive, InputCluster, buffer1_g); // This is fine :)
+                
             }
             else{
                 // error Bit 31 signals error
