@@ -231,17 +231,12 @@ uint8_t open_file(FS_values_t *drive, uint32_t start_cluster, uint8_t array[]){
     //reading the first sector of the cluster
     tempSector = First_Sector(drive, start_cluster); 
     //header print after first sector read
-    sprintf(buffer, "Cluster: %X\r\n", start_cluster);
-    UART_transmit_string(print_port, buffer, 0);
-    sprintf(buffer, "Sector: %X\r\n", tempSector);
-    UART_transmit_string(print_port, buffer, 0);
     temp8 = read_sector(tempSector, drive->BytesPerSec, array); // temp8 holds error status
     print_memory(array,512); //print_memory(buffer1_g, drive->BytesPerSec);
-    if (1/*temp8 == 0*/){ // No read sector errors
+    if (temp8 == 0){ // No read sector errors
         do{
             // PROMPT THE USER FOR CONT OR EXIT:
-            copy_string_to_buffer(openFilePrompt,buffer,0);
-            UART_transmit_string(print_port,buffer,0);
+            UART_transmit_string(print_port, "1 = cont, 0 = exit\n\r\0", 0);
             temp32=long_serial_input(print_port); // Waiting for input. 
             sprintf(buffer," %lu \n\r",temp32);
             UART_transmit_string(print_port,buffer,0); // Printing the input

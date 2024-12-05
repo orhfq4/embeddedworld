@@ -48,7 +48,7 @@ const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 const char EnterNum[29] PROGMEM = {"Enter desired entry number\n\r\0"};
 const char entryFeedback[18] PROGMEM = {"Entry too large\n\r\0"};
-const char error_message[13] PROGMEM = {"error. Goodbye :)\n\r\0"};
+const char error_message[20] PROGMEM = {"error. Goodbye :)\n\r\0"};
 
 
 
@@ -122,7 +122,7 @@ int main(void)
     FS_values_t* drive = export_drive_values();    
     uint8_t error_flag = mount_drive(drive, buffer1_g);
     
-    //******************(Question 9) Super Loop **************************************
+    //******************Super Loop **************************************
     uint16_t  directoryEntries = 0;
     uint32_t  userInput = 0;
     uint8_t error_status = 0x00;
@@ -133,7 +133,6 @@ int main(void)
         while(error_status == 0){      
             uint8_t repeat = 1; // Variable to repeat loop to get to a file
             do{
-                  //*************** Part A ***********************************
                 // Call print directory function with the current direct variable
                 directoryEntries = print_directory(curr_dir, buffer1_g); // USING BUFFER 1 NOW :D
                 //Prompt user for entry number
@@ -165,8 +164,7 @@ int main(void)
                         repeat = 1;
                         returnCluster &= 0x0FFFFFFF;
                         curr_dir = First_Sector(drive, returnCluster); // needs to be set to a variable
- 
-                        // Needs to actually enter the subdirectory ****************
+                        
                     }
                     else{ // Bit 28 == 0, must be a file
                         repeat = 0; 
