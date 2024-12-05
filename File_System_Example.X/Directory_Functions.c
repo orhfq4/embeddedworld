@@ -220,24 +220,30 @@ uint32_t read_dir_entry(uint32_t Sector_num, uint16_t Entry, uint8_t * array_in)
    return return_clus;
  }
 
-uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
+uint8_t open_file(FS_values_t *drive, uint32_t start_cluster, uint8_t array[]){
     uint8_t error_status = 0;
     uint8_t exit = 0;
-    //extern char * buffer1_g;
-    char * buffer;
+    uint32_t cluster = start_cluster;
+    char * buffer; 
     buffer=export_print_buffer();
-    uint32_t tempSector = 0; //Gabe
-    uint8_t temp8 = 0;
-    uint32_t temp32 = 0;
+    uint32_t tempSector = 0; //Gilbert
+    uint8_t temp8 = 0; //Ronald
+    uint32_t temp32 = 0; //Jerry
+    //reading the first sector of the cluster
     tempSector = First_Sector(drive, cluster); 
+    //header print after first sector read
+    sprintf(buffer, "Cluster: \r\n", cluster);
+    UART_transmit_string(print_port, buffer, 0);
+    sprintf(buffer, "Sector: \r\n", tempSector);
+    UART_transmit_string(print_port, buffer, 0);
     temp8 = read_sector(tempSector, 512, array); // temp8 holds error status
-    print_memory(array,512);
+    print_memory(array,512); //print_memory(buffer1_g, drive->BytesPerSec);
     if (temp8 == 0){ // No read sector errors
         do{
             // PROMPT THE USER FOR CONT OR EXIT:
             copy_string_to_buffer("Enter 1 to continue, 0 to exit",buffer,0);
             UART_transmit_string(print_port,buffer,0);
-            temp32=long_serial_input(print_port); // Waiting for input
+            temp32=long_serial_input(print_port); // Waiting for input. 
             sprintf(buffer," %lu \n\r",temp32);
             UART_transmit_string(print_port,buffer,0); // Printing the input
             if(temp32 == 1){
@@ -251,7 +257,7 @@ uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
                    }
                    tempSector = First_Sector(drive, cluster); // Could be just set to 0?
                 }
-                else{ // Print the next sector :D
+                else{ // Print the next sector
                     temp8 = read_sector(tempSector, 512, array); // temp8 holds error status
                     print_memory(array,512);
                 }
@@ -268,32 +274,9 @@ uint8_t open_file(FS_values_t *drive, uint32_t cluster, uint8_t array[]){
         }while(exit == 0);
     }
     else{
-        // There's and error
+        // There's an error
         error_status = 2;
     }
-    
-    
-    
-    //if there is a new cluster, (index == 0), calc first sector
-    /*
-    typedef struct{
-    uint8_t SecPerClus;
-    uint8_t FATtype;
-    uint8_t BytesPerSecShift;
-    uint8_t FATshift;
-    uint16_t BytesPerSec;
-    uint32_t FirstRootDirSec;
-    uint32_t FirstDataSec;
-    uint32_t StartofFAT;
-    uint32_t RootDirSecs;
-*/
-    //First_Sector (FS_values_t *drive, uint32_t cluster_num); // Returns 32b 
-    //read_sector(uint32_t sector_number, uint16_t sector_size, uint8_t array_for_data[]); // 
-    //find_next_clus(FS_values_t *drive, uint32_t cluster, uint8_t array[]);
-    //print_memory(uint8_t * array_in, uint16_t number_of_bytes); // Returns nothing
     return error_status;
     
 }
-
-
-

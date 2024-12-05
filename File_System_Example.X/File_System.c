@@ -84,7 +84,7 @@ uint8_t mount_drive(FS_values_t *drive, uint8_t buffer[]) {
             
             
             //read a new sector with the relative sectors value stored at 0x01C6
-            temp8 = read_sector(/*sector_number*/8192, sector_size, buffer);
+            temp8 = read_sector(sector_number, sector_size, buffer);
             
             print_memory(buffer,512);
             
