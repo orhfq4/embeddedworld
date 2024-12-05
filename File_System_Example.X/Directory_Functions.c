@@ -232,9 +232,9 @@ uint8_t open_file(FS_values_t *drive, uint32_t start_cluster, uint8_t array[]){
     //reading the first sector of the cluster
     tempSector = First_Sector(drive, cluster); 
     //header print after first sector read
-    sprintf(buffer, "Cluster: %lu\r\n", cluster);
+    sprintf(buffer, "Cluster: %X\r\n", cluster);
     UART_transmit_string(print_port, buffer, 0);
-    sprintf(buffer, "Sector: %lu\r\n", tempSector);
+    sprintf(buffer, "Sector: %X\r\n", tempSector);
     UART_transmit_string(print_port, buffer, 0);
     temp8 = read_sector(tempSector, 512, array); // temp8 holds error status
     print_memory(array,512); //print_memory(buffer1_g, drive->BytesPerSec);
