@@ -47,10 +47,12 @@ const char Complete[9] PROGMEM = {"  OK!\n\r\0"};
 const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 const char EnterNum[29] PROGMEM = {"Enter desired entry number\n\r\0"};
+const char entryFeedback[18] PROGMEM = {"Entry too large\n\r\0"};
+
 
 
 uint8_t buffer1_g[512];
-//uint8_t buffer2_g[512];
+uint8_t buffer2_g[512];
 
 
 int main(void)
@@ -180,7 +182,7 @@ int main(void)
                   //*************** Part A ***********************************
                 // Call print directory function with the current direct variable
                 uint32_t SecNum = drive->FirstDataSec;
-                directoryEntries = print_directory(16384, buffer1_g); // USING BUFFER 1 NOW :D
+                directoryEntries = print_directory(16384, buffer2_g); // USING BUFFER 1 NOW :D
                 //Prompt user for entry number
 
                 uint8_t error_check = 0;
@@ -191,14 +193,14 @@ int main(void)
                    sprintf(buffer," %lu \n\r",temp32);
                    UART_transmit_string(print_port,buffer,0); // Printing the input
                    // Error check to see if entered number is too large
-//                   if (temp32 > directoryEntries){ // Entry is too large!
-//                       copy_string_to_buffer("Entry too large, try again",buffer,0);
-//                       UART_transmit_string(print_port,buffer,0);
-//                   }
-//                   else{
-//                       error_check = 1; // User entry is correct size, exit loop :D
-//                       userInput = temp32;
-//                   }
+                   if (temp32 > directoryEntries){ // Entry is too large!
+                       copy_string_to_buffer(entryFeedback,buffer,0);
+                       UART_transmit_string(print_port,buffer,0);
+                   }
+                   else{
+                       error_check = 1; // User entry is correct size, exit loop :D
+                       userInput = temp32;
+                   }
                 }while(error_check == 0);
                 // Then use as input parameter to read_directory function
                 uint32_t returnCluster = 0;
