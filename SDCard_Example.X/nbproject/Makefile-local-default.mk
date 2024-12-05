@@ -34,4 +34,4 @@ MP_CC_DIR="C:\Program Files\Microchip\xc8\v2.50\bin"
 MP_AS_DIR="C:\Program Files\Microchip\xc8\v2.50\bin"
 MP_LD_DIR="C:\Program Files\Microchip\xc8\v2.50\bin"
 MP_AR_DIR="C:\Program Files\Microchip\xc8\v2.50\bin"
-DFP_DIR=C:/Users/Jacob Byers/.mchp_packs/Microchip/ATmega_DFP/3.2.269
+DFP_DIR=C:/Users/tshan/.mchp_packs/Microchip/ATmega_DFP/3.2.269
