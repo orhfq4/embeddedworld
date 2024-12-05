@@ -128,9 +128,9 @@ int main(void)
     uint32_t val32 = read_value_32(0, data); // Offset 0: 32-bit value
 
     // Print values
-    printf("8-bit value: %u (0x%X)\n", val8, val8);
-    printf("16-bit value: %u (0x%X)\n", val16, val16);
-    printf("32-bit value: %lu (0x%lX)\n", val32, val32);
+    //printf("8-bit value: %u (0x%X)\n", val8, val8);
+    //printf("16-bit value: %u (0x%X)\n", val16, val16);
+    //printf("32-bit value: %lu (0x%lX)\n", val32, val32);
     
     //******************** Calling the mount drive function (Question 8) *****************
     //Comment out for debugging:
@@ -178,7 +178,7 @@ int main(void)
                   //*************** Part A ***********************************
                 // Call print directory function with the current direct variable
                 uint32_t SecNum = drive->FirstDataSec;
-                //directoryEntries = print_directory(16384, buffer2_g); // USING BUFFER 1 NOW :D
+                directoryEntries = print_directory(16384, buffer2_g); // USING BUFFER 1 NOW :D
                 //Prompt user for entry number
 
                 uint8_t error_check = 0;
