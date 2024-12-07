@@ -15,6 +15,7 @@
 #include "LEDS.h"
 #include "GPIO_Outputs.h"
 #include "GPIO_Inputs.h"
+#include "Switch.h"
 
 #define F_CPU (16000000UL)
 #define F_DIV (1)
@@ -78,7 +79,7 @@ extern led_inst_t led0, led1, led2, led3;
 
 extern gpio_inst_t  sta013_reset;
 extern gpio_inst_t oled_reset, oled_cmd;
-extern input_inst_t sw1, sw2, sw3;
+extern sw_inst_t sw1, sw2, sw3; // replaced input_inst_t to switch_inst_t
 
 
 #define MP3_DEVICE_ADDR (0x43)
