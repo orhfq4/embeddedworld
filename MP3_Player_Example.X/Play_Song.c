@@ -20,6 +20,7 @@ void play_song(uint32_t Start_Cluster)
    uint8_t buf_flag1, buf_flag2;
    INPUT_STATE_t temp8;
    uint32_t sector, sector_offset;
+   uint32_t currentCluster = Start_Cluster;
    char *prnt_bffr;
    
    prnt_bffr=export_print_buffer();
@@ -155,6 +156,23 @@ void play_song(uint32_t Start_Cluster)
            }
         }
       }while(buf_flag2==1);
-  }while(sector_offset<128);
+      
+      // After completing the sectors, check if we need to move to the next cluster
+      if (sector_offset >= Drive_p->SecPerClus)  // Assuming a cluster has 128 sectors
+        {
+            currentCluster = find_next_clus(currentCluster);
+            if (currentCluster == 0x0FFFFFFF)
+            {
+                // EOF reached, stop playing
+                break;
+            }
+
+            // Reset the sector offset for the next cluster
+            sector = first_sector(currentCluster);
+            sector_offset = 0;
+        }
+      
+      
+  }while(sector_offset<Drive_p->SecPerClus);
 } 
 
