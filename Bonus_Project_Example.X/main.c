@@ -27,7 +27,6 @@
 #include <avr/interrupt.h>
 #include "LEDS.h"
 #include "LEDS_CMSIS_IN.h"
-#include "switch.h"
 
 
 int main(void)
@@ -38,12 +37,6 @@ int main(void)
     LED_ctor(&led2, LED2_PORT, LED2_PIN, LED_OFF, ACTIVE_LOW);
     // initialize PA7 as an output set to '1' (LED3)
     LED_ctor(&led3, LED3_PORT, LED3_PIN, LED_OFF, ACTIVE_LOW);
-    
-//*************************************** Need to fix sw_ctor function
-    // initialize switch 1, 2, 3
-   // sw_ctor(&sw1, SW1_PORT, SW1_PIN, SW_NOT_PRESSED, SW_ACTIVE_LOW); // if don't work change SW_NOT_PRESSED to SW_PRESSED
-   //sw_ctor(&sw2, SW2_PORT, SW2_PIN, SW_NOT_PRESSED, SW_ACTIVE_LOW);
-   //sw_ctor(&sw3, SW3_PORT, SW3_PIN, SW_NOT_PRESSED, SW_ACTIVE_LOW);
     while (1) 
     {		
 		
