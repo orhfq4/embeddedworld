@@ -158,9 +158,9 @@ void play_song(uint32_t Start_Cluster)
       }while(buf_flag2==1);
       
       // After completing the sectors, check if we need to move to the next cluster
-      if (sector_offset >= Drive_p->SecPerClus)  // Assuming a cluster has 128 sectors
+      if (sector_offset >= 128/*Drive_p->SecPerClus*/)  // Assuming a cluster has 128 sectors
         {
-            currentCluster = find_next_clus(currentCluster);
+            currentCluster = find_next_clus(currentCluster, buffer1_g);
             if (currentCluster == 0x0FFFFFFF)
             {
                 // EOF reached, stop playing
@@ -173,6 +173,6 @@ void play_song(uint32_t Start_Cluster)
         }
       
       
-  }while(sector_offset<Drive_p->SecPerClus);
+  }while(sector_offset< 128/*Drive_p->SecPerClus*/);
 } 
 

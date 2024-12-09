@@ -21,6 +21,8 @@
 #define BPB_FATsize32 (0x24)
 #define BPB_RootCluster (0x2C)
 
+#include "Drive_Values.h"
+
 // ------- Extern Declaration for Drive_p ------------------------
 extern FS_values_t *Drive_p; // Extern declaration for global pointer
 
