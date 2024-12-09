@@ -23,6 +23,9 @@ void play_song(uint32_t Start_Cluster)
    uint32_t currentCluster = Start_Cluster;
    char *prnt_bffr;
    
+   FS_values_t * drive;
+   drive=export_drive_values();
+   
    prnt_bffr=export_print_buffer();
    //**** LEDS initialized for debugging ****//
    LED_ctor(&led0, LED0_PORT, LED0_PIN, LED_OFF, ACTIVE_LOW);
@@ -158,14 +161,16 @@ void play_song(uint32_t Start_Cluster)
       }while(buf_flag2==1);
       
       // After completing the sectors, check if we need to move to the next cluster
-      if (sector_offset >= 128/*Drive_p->SecPerClus*/)  // Assuming a cluster has 128 sectors
+      if (sector_offset >= drive->SecPerClus /*128*/)  // Assuming a cluster has 128 sectors
         {
             currentCluster = find_next_clus(currentCluster, buffer1_g);
+            /*
             if (currentCluster == 0x0FFFFFFF)
             {
                 // EOF reached, stop playing
                 break;
             }
+             */
 
             // Reset the sector offset for the next cluster
             sector = first_sector(currentCluster);
@@ -173,6 +178,6 @@ void play_song(uint32_t Start_Cluster)
         }
       
       
-  }while(sector_offset< 128/*Drive_p->SecPerClus*/);
+  }while((sector_offset< drive->SecPerClus/*128*/) && (currentCluster != 0x0FFFFFFF));
 } 
 
