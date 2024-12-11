@@ -51,7 +51,7 @@ const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 
 #define DATA_REQ (1<<6)
-
+#define MP3_timeout_ms (12)
 uint8_t buffer1_g[512];
 uint8_t buffer2_g[512];
 
@@ -151,7 +151,8 @@ int main(void)
     // It must be declared as volatile, since it is changed in the ISR
     volatile uint8_t play_status_g=1;
     // Set up Timer 2 to cause the interrupt
-    Timer2_Interrupt_Init(MP3_timeout_ms); // Do we have to make a timer init?
+    //Timer2_Interrupt_Init(MP3_timeout_ms); // Do we have to make a timer init?
+    sEOS_Init(MP3_timeout_ms);
     // Set the global interrupt enable
     sei();
     // Sleep mode is optional
