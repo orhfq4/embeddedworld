@@ -9,7 +9,7 @@
  */
 
 //Description: Intializes the SEOS to interrupt at a given interval longer than the longest task
-uint8_t sEOS_Init(uint8_t interval);
+uint8_t sEOS_Init(uint8_t interval_ms);
 
 
 #endif

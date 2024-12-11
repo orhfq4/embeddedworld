@@ -6,17 +6,20 @@
  */
 
 
-#include <xc.h>
-#include <seos.h>
-#include <board.h>
-#include <avr/pgmspace.h>
-#include <stdio.h>
-#include <Drive_Values.h>
+#include "xc.h"
+#include "seos.h"
+#include "board.h"
+#include "avr/pgmspace.h"
+#include "stdio.h"
+#include "Drive_Values.h"
+#include "peripherals.h"
+#include <avr/interrupt.h>
 
+#define INTERVAL (12) // 12ms interval each time interrupt occurs
 
-uint8_t sEOS_Init(uint8_t interval){ // Interval is in ms
+uint8_t sEOS_Init(uint8_t interval_ms){
     uint8_t OCR_value,error_flag;
-    OCR_value =(uint8_t)((((interval*F_CPU)+(1023999UL))/(1024000UL))-1);
+    OCR_value =(uint8_t)((((interval_ms*F_CPU)+(1023999UL))/(1024000UL))-1);
     if(OCR_value<=255)
     {
         error_flag=0; // no errors;
@@ -35,11 +38,14 @@ ISR(TIMER2_COMPA_vect){
     FS_values_t * drive;
     uint8_t buffer_flag, DR_input;
     drive=export_drive_values();
+    
+    time_g += INTERVAL;
+    
     switch(play_state_g)
     {
         case data_idle_1:
         {
-            DR_input=Read_Pin(PC,DATA_REQ);
+            DR_input=GPIO_read_pin(sta013_data_req);
             if(DR_input==0)
             {
                 play_state_g=send_data_1;
@@ -49,17 +55,24 @@ ISR(TIMER2_COMPA_vect){
         case send_data_1:
         {
             buffer_flag=0;
-            DR_input=Read_Pin(PC,DATA_REQ);
+            DR_input=GPIO_read_pin(sta013_data_req);
             while((DR_input==0)&&(buffer_flag==0))
             {
-                Output_Set(PD,(BIT_EN)); //BIT_EN=1;
-                SPI_Transfer(SPI0,buffer1[index1_g]);
-                Output_Clear(PD,(BIT_EN)); //BIT_EN=0;
+                // Output_Set(PD,(BIT_EN)); //BIT_EN=1;
+                // Maybe we need to use the spi_cs_inst_t sta013_biten object here?
+                
+                GPIO_output_ctor(sta013_biten, PD, /*Don't know which PIN Mask*/, GPIO_CLEAR /*Probably clear because it's for CS*/);
+                GPIO_output_toggle_value(sta013_biten); // BIT_EN = 1
+                
+                SPI_transfer(SPI0,buffer1[index1_g]);
+                //Output_Clear(PD,(BIT_EN)); //BIT_EN=0;
+                GPIO_output_toggle_value(sta013_biten); // BIT_EN = 0
+                
                 index1_g++;
                 if(index1_g>511) {
                     if(index2_g>511 {
-                        if(num_sectors_g==(Drive_p->SecPerClus)) {
-                            play_state_g=locate_cluster_2;
+                        if(num_sectors_g==(drive->SecPerClus)) {
+                            play_state_g=/*locate_cluster_2*/ find_next_clus(num_sectors_g);
                         }
                         else {
                             play_state_g=load_buf_2;
@@ -71,14 +84,14 @@ ISR(TIMER2_COMPA_vect){
                 }
                 buffer_flag=1;
             } // end of if(index1_g>511)
-                DR_input=Read_Pin(PC,DATA_REQ);
+                DR_input=GPIO_read_pin(sta013_data_req);
         } // end of while loop
         // Checks for empty buffer 2 when DATA_REQ goes inactive
-            DR_input=Read_Pin(PC,DATA_REQ);
+            DR_input=GPIO_read_pin(sta013_data_req);
             if((DR_input==1)&&(play_state_g==send_data_1)) {
                 if(index2_g>511) {
-                    if(num_sectors_g==(Drive_p->SecPerClus)) {
-                        play_state_g=locate_cluster_2;
+                    if(num_sectors_g==(drive->SecPerClus)) { // if num_sectors is at the limit reset
+                        play_state_g=/*locate_cluster_2*/ find_next_clus(num_sectors_g);
                     }
                     else {
                         play_state_g=load_buf_2;
@@ -92,8 +105,3 @@ ISR(TIMER2_COMPA_vect){
         }
     }
 }
-   
-
-
-
-

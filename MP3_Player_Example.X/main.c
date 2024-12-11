@@ -43,6 +43,8 @@
 #include "STA013_Config.h"
 #include "Play_Song.h"
 #include <avr/interrupt.h>
+#include "timer2.h"
+#include <avr/sleep.h>
 
 const char SD_Header[28] PROGMEM = {"SD Initialization Program\n\r\0"};
 const char LSI_Prompt[16] PROGMEM = {"Enter block #: "};
@@ -54,6 +56,7 @@ const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 #define MP3_timeout_ms (12)
 uint8_t buffer1_g[512];
 uint8_t buffer2_g[512];
+uint16_t time_g; // global variable used in Interrupt
 
 
 int main(void)
@@ -125,16 +128,16 @@ int main(void)
     /*************** Simple Embedded OS Initialization***********************/
     // Enable pull-up resistor on DATA_REQ pin
      //Pull_Up_Enable(PC, DATA_REQ);
-    GPIO_input_set_pullup(PC, PU_ENABLED);    
+    GPIO_input_set_pullup(sta013_data_req, PU_ENABLED);    
    
     // Initialize input on DATA_REQ pin
     //Input_Init(PC, DATA_REQ);
-    GPIO_input_ctor(&sta013_data_req, PC, DATA_REQ, PU_ENABLED);
+    GPIO_input_ctor(sta013_data_req, PC, DATA_REQ, PU_ENABLED);
     
     // Initialize global variables
-    uint32_t cluster_g = begin_cluster; //unsure what begin_cluster is? Or how to find it?
-    uint32_t sector_g = first_sector(begin_cluster); // Are these initialized as globals? (In main?))
-    uint32_t num_sectors_g = 0;
+    // uint32_t cluster_g = begin_cluster; //I think we are supposed to use drive->FirstRootDirSec to return back to root directory after implementing ISR
+    uint32_t sector_g = drive->FirstRootDirSec; // Same as curr_dir in while loop
+    uint32_t num_sectors_g = 0; // similar to sector_offset
 
     // Read the first two sectors into the global buffers
     read_sector((sector_g + num_sectors_g), drive->BytesPerSec, buffer1_g);
@@ -151,8 +154,8 @@ int main(void)
     // It must be declared as volatile, since it is changed in the ISR
     volatile uint8_t play_status_g=1;
     // Set up Timer 2 to cause the interrupt
-    //Timer2_Interrupt_Init(MP3_timeout_ms); // Do we have to make a timer init?
     sEOS_Init(MP3_timeout_ms);
+    
     // Set the global interrupt enable
     sei();
     // Sleep mode is optional
@@ -182,6 +185,11 @@ int main(void)
         read_sector(temp32, 512, buffer1_g);
 		LED_set_value(&led0, LED_OFF);
 		print_memory(buffer1_g,512);*/  
+        
+        /*
+         sleep_mode();
+         */
+        
         uint16_t num_entries;
         uint32_t cluster_num;
         num_entries=print_directory(curr_directory,buffer1_g);
