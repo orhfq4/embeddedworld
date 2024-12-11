@@ -54,7 +54,8 @@ typedef enum {NOT_PRESSED, DEBOUNCE_P, PRESSED, P_ACTION, HELD, HELD_HOLD, DEBOU
 int main(void)
 {
     sei();
-    
+    led_state_t led_state;
+    sw_state_t sw_state;
     // initialize PB3 as an output set to '1' (LED1)
     LED_ctor(&led1, LED1_PORT, LED1_PIN, LED_OFF, ACTIVE_LOW);
     // initialize PE4 as an output set to '1' (LED2)
@@ -64,28 +65,75 @@ int main(void)
     // initialize switches, not sure why SW_NOT_PRESSED doesn't work/register on my end...
     sw_ctor(&sw1, SW1_PORT, SW1_PIN, SW_NOT_PRESSED, ACTIVE_HIGH);
     sw_ctor(&sw2, SW2_PORT, SW2_PIN, SW_NOT_PRESSED, ACTIVE_HIGH);
-    sw_ctor(&sw3, );
+    sw_ctor(&sw3, SW3_PORT, SW3_PIN, SW_NOT_PRESSED, ACTIVE_HIGH);
+
+    LED_set_value(&led1, LED_ON);
+	_delay_ms(1000);
+	LED_set_value(&led1, LED_OFF);
+	_delay_ms(1000);
+		
+		
+    LED_set_value(&led2, LED_ON);
+	_delay_ms(1000);
+	LED_set_value(&led2, LED_OFF);
+	_delay_ms(1000);
+		
+	
+	LED_set_value(&led3, LED_ON);
+	_delay_ms(1000);
+	LED_set_value(&led3, LED_OFF);
+	_delay_ms(1000);
 
     while (1) 
     {		
-		
-        LED_set_value(&led1, LED_ON);
-		_delay_ms(1000);
-		LED_set_value(&led1, LED_OFF);
-		_delay_ms(1000);
-		
-		
-        LED_set_value(&led2, LED_ON);
-		_delay_ms(1000);
-		LED_set_value(&led2, LED_OFF);
-		_delay_ms(1000);
-		
-	
-		LED_set_value(&led3, LED_ON);
-		_delay_ms(1000);
-		LED_set_value(&led3, LED_OFF);
-		_delay_ms(1000);
-	
+        switch (led_state){
+            case LED_OFF_SM:
+            {
+
+            }
+            case LED_ON_SM:
+            {
+
+            }
+            case FLASH_ON_SM:
+            {
+
+            }
+            case FLASH_OFF_SM:
+            {
+
+            }
+        } //end of switch(led_state)
+        switch(sw_state){
+            case NOT_PRESSED:
+            {
+
+            }
+            case DEBOUNCE_P:
+            {
+
+            }
+            case PRESSED:
+            {
+
+            }
+            case P_ACTION:
+            {
+
+            }
+            case HELD:
+            {
+
+            }
+            case HELD_HOLD:
+            {
+
+            }
+            case DEBOUNCE_R:
+            {
+
+            }
+        } //end of switch(sw_state)
     }
 }
 
