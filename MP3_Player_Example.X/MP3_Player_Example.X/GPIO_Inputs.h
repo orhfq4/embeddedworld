@@ -17,6 +17,22 @@
 typedef enum {PU_DISABLED=0,PU_ENABLED} PU_STATE_t;
 typedef enum {INPUT_CLEAR=0,INPUT_SET} INPUT_STATE_t;
 
+// Define the states for the playback state machine
+typedef enum {
+    Data_Idle_1,
+            Data_Send_1,
+            Load_Buffer_2,
+            Find_Cluster_2,
+            Data_Idle_2,
+            Data_Send_2,
+            Load_Buffer_1,
+            Find_Cluster_1
+    // Add other states as needed
+} PLAYBACK_STATE_t;
+
+// Declare the state variable
+PLAYBACK_STATE_t play_state_g;
+
 typedef struct
 {
     volatile GPIO_t * port_addr;
