@@ -26,6 +26,7 @@
       <itemPath>Read_Values.h</itemPath>
       <itemPath>Play_Song.h</itemPath>
       <itemPath>GPIO_Inputs.h</itemPath>
+      <itemPath>seos.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -63,6 +64,7 @@
       <itemPath>Read_Values.c</itemPath>
       <itemPath>Play_Song.c</itemPath>
       <itemPath>GPIO_Inputs.c</itemPath>
+      <itemPath>seos.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -78,7 +80,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>EdbgTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>2.46</languageToolchainVersion>
+        <languageToolchainVersion>2.36</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>

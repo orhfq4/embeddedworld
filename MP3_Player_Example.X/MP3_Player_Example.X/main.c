@@ -49,6 +49,8 @@ const char Complete[9] PROGMEM = {"  OK!\n\r\0"};
 const char High_Cap[15] PROGMEM = {"High Capacity\0"};
 const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 
+#define DATA_REQ (1<<6)
+
 uint8_t buffer1_g[512];
 uint8_t buffer2_g[512];
 
@@ -117,6 +119,50 @@ int main(void)
     mount_drive(buffer1_g);
     FS_values_t * drive;
     drive=export_drive_values();
+    /* Simple Embedded OS Initialization*/
+    // Enable pull-up resistor on DATA_REQ pin
+     //Pull_Up_Enable(PC, DATA_REQ);
+    GPIO_input_set_pullup(PC, PU_ENABLED);    
+   
+    // Initialize input on DATA_REQ pin
+    //Input_Init(PC, DATA_REQ);
+    GPIO_input_ctor(&sta013_data_req, PC, DATA_REQ, PU_ENABLED);
+    
+//*********************************WORK IN PROGRESS BELOW*************************
+    // Initialize global variables
+    cluster_g = begin_cluster;
+    sector_g = First_Sector(begin_cluster);
+    num_sectors_g = 0;
+
+    // Read the first two sectors into the global buffers
+    Read_Sector((sector_g + num_sectors_g), Drive_p->BytesPerSec, buffer1);
+    num_sectors_g++;
+    index1_g = 0;
+    Read_Sector((sector_g + num_sectors_g), Drive_p->BytesPerSec, buffer2);
+    num_sectors_g++;
+    
+    index2_g = 0;
+
+    // Initialize the state variable
+    play_state_g=send_data_1;
+    // I use this variable to exit playing the song.
+    // It must be declared as volatile, since it is changed in the ISR
+    play_status_g=1;
+    // Set up Timer 2 to cause the interrupt
+    Timer2_Interrupt_Init(MP3_timeout_ms);
+    // Set the global interrupt enable
+    sei();
+    // Sleep mode is optional
+    set_sleep_mode(SLEEP_MODE_IDLE);
+    while(play_status_g!=0) // Plays until play_status_g==0
+    {
+    sleep_mode(); //Go to Sleep
+    }
+    // Clear the global interrupt enable (and stop timer 2) to end
+    cli();
+
+ //*********************************WORK IN PROGRESS ABOVE ********************************
+    
     uint32_t curr_directory;
     curr_directory=drive->FirstRootDirSec;
     while (1) 
