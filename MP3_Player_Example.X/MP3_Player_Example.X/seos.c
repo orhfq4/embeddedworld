@@ -9,6 +9,10 @@
 #include <xc.h>
 #include <seos.h>
 #include <board.h>
+#include <avr/pgmspace.h>
+#include <stdio.h>
+#include <Drive_Values.h>
+
 
 uint8_t sEOS_Init(uint8_t interval){ // Interval is in ms
     uint8_t OCR_value,error_flag;
@@ -26,3 +30,70 @@ uint8_t sEOS_Init(uint8_t interval){ // Interval is in ms
     }
     return error_flag;
 }
+
+ISR(TIMER2_COMPA_vect){
+    FS_values_t * drive;
+    uint8_t buffer_flag, DR_input;
+    drive=export_drive_values();
+    switch(play_state_g)
+    {
+        case data_idle_1:
+        {
+            DR_input=Read_Pin(PC,DATA_REQ);
+            if(DR_input==0)
+            {
+                play_state_g=send_data_1;
+            }
+            break;
+        }
+        case send_data_1:
+        {
+            buffer_flag=0;
+            DR_input=Read_Pin(PC,DATA_REQ);
+            while((DR_input==0)&&(buffer_flag==0))
+            {
+                Output_Set(PD,(BIT_EN)); //BIT_EN=1;
+                SPI_Transfer(SPI0,buffer1[index1_g]);
+                Output_Clear(PD,(BIT_EN)); //BIT_EN=0;
+                index1_g++;
+                if(index1_g>511) {
+                    if(index2_g>511 {
+                        if(num_sectors_g==(Drive_p->SecPerClus)) {
+                            play_state_g=locate_cluster_2;
+                        }
+                        else {
+                            play_state_g=load_buf_2;
+                        }
+                    }
+                else // if index2_g==0
+                {
+                    play_state_g=send_data_2;
+                }
+                buffer_flag=1;
+            } // end of if(index1_g>511)
+                DR_input=Read_Pin(PC,DATA_REQ);
+        } // end of while loop
+        // Checks for empty buffer 2 when DATA_REQ goes inactive
+            DR_input=Read_Pin(PC,DATA_REQ);
+            if((DR_input==1)&&(play_state_g==send_data_1)) {
+                if(index2_g>511) {
+                    if(num_sectors_g==(Drive_p->SecPerClus)) {
+                        play_state_g=locate_cluster_2;
+                    }
+                    else {
+                        play_state_g=load_buf_2;
+                    }
+                }
+                else {
+                    play_state_g= data_idle_1;
+                }
+            }   
+            break;
+        }
+    }
+}
+   
+
+
+
+
