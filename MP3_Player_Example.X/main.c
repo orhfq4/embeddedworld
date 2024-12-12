@@ -43,8 +43,8 @@
 #include "STA013_Config.h"
 #include "Play_Song.h"
 #include <avr/interrupt.h>
-#include "timer2.h"
 #include <avr/sleep.h>
+#include "seos.h"
 
 const char SD_Header[28] PROGMEM = {"SD Initialization Program\n\r\0"};
 const char LSI_Prompt[16] PROGMEM = {"Enter block #: "};
@@ -54,10 +54,17 @@ const char Stnd_Cap[19] PROGMEM = {"Standard Capacity\0"};
 
 #define DATA_REQ (1<<6)
 #define MP3_timeout_ms (12)
-uint8_t buffer1_g[512];
-uint8_t buffer2_g[512];
-uint16_t time_g; // global variable used in Interrupt
 
+
+// Declare Global Externs to be used in the ISR
+uint16_t time_g; // global variable used in Interrupt
+uint32_t sector_g;
+uint32_t num_sectors_g;
+uint32_t cluster_g;
+uint32_t index1_g;
+uint32_t index2_g;
+uint8_t buffer1_g[512]; // cuz we got no mem to declare 2 more
+uint8_t buffer2_g[512];
 
 int main(void)
 {
@@ -128,25 +135,25 @@ int main(void)
     /*************** Simple Embedded OS Initialization***********************/
     // Enable pull-up resistor on DATA_REQ pin
      //Pull_Up_Enable(PC, DATA_REQ);
-    GPIO_input_set_pullup(sta013_data_req, PU_ENABLED);    
+    GPIO_input_set_pullup(&sta013_data_req, PU_ENABLED);    
    
     // Initialize input on DATA_REQ pin
     //Input_Init(PC, DATA_REQ);
-    GPIO_input_ctor(sta013_data_req, PC, DATA_REQ, PU_ENABLED);
+    GPIO_input_ctor(&sta013_data_req, PC, DATA_REQ, PU_ENABLED);
     
     // Initialize global variables
-    // uint32_t cluster_g = begin_cluster; //I think we are supposed to use drive->FirstRootDirSec to return back to root directory after implementing ISR
-    uint32_t sector_g = drive->FirstRootDirSec; // Same as curr_dir in while loop
-    uint32_t num_sectors_g = 0; // similar to sector_offset
+    // cluster_g = begin_cluster; //I think we are supposed to use drive->FirstRootDirSec to return back to root directory after implementing ISR
+    sector_g = drive->FirstRootDirSec; // Same as curr_dir in while loop
+    num_sectors_g = 0; // similar to sector_offset
 
     // Read the first two sectors into the global buffers
     read_sector((sector_g + num_sectors_g), drive->BytesPerSec, buffer1_g);
     num_sectors_g++;
-    uint32_t index1_g = 0;
+    index1_g = 0;
     read_sector((sector_g + num_sectors_g), drive->BytesPerSec, buffer2_g);
     num_sectors_g++;
     
-    uint32_t index2_g = 0;
+    index2_g = 0;
 
     // Initialize the state variable
     play_state_g=Data_Send_1;

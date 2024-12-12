@@ -31,7 +31,7 @@ typedef enum {
 } PLAYBACK_STATE_t;
 
 // Declare the state variable
-PLAYBACK_STATE_t play_state_g;
+extern PLAYBACK_STATE_t play_state_g;
 
 typedef struct
 {
