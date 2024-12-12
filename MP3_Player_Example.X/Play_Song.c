@@ -109,6 +109,16 @@ void play_song(uint32_t Start_Cluster)
           }
       }
    }while(buf_flag1==1);
+   
+   if (sector_offset >= drive->SecPerClus /*128*/)  // Assuming a cluster has 128 sectors
+        {
+            currentCluster = find_next_clus(currentCluster, buffer1_g);
+
+            // Reset the sector offset for the next cluster
+            sector = first_sector(currentCluster);
+            sector_offset = 0;
+        }
+   
    do
    {
 	   temp8=GPIO_input_get_value(&sta013_data_req);
@@ -163,14 +173,7 @@ void play_song(uint32_t Start_Cluster)
       // After completing the sectors, check if we need to move to the next cluster
       if (sector_offset >= drive->SecPerClus /*128*/)  // Assuming a cluster has 128 sectors
         {
-            currentCluster = find_next_clus(currentCluster, buffer1_g);
-            /*
-            if (currentCluster == 0x0FFFFFFF)
-            {
-                // EOF reached, stop playing
-                break;
-            }
-             */
+            currentCluster = find_next_clus(currentCluster, buffer2_g);
 
             // Reset the sector offset for the next cluster
             sector = first_sector(currentCluster);
