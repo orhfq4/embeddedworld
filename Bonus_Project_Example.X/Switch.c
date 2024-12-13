@@ -25,11 +25,11 @@ sw_state_t switch_read(sw_inst_t * me) {
 
 //*************************************** Need to fix sw_ctor function
 
-void sw_ctor(input_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, sw_state_t _state, sw_polarity_t _polarity) {
+void sw_ctor(sw_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, sw_state_t _state, sw_polarity_t _polarity) {
     // Initialize the base GPIO input struct
-    GPIO_input_ctor(&me, _port_addr, _pin_mask, _polarity == ACTIVE_HIGH ? PU_DISABLED : PU_ENABLED);
+    GPIO_input_ctor(me, _port_addr, _pin_mask, _polarity == ACTIVE_HIGH ? PU_DISABLED : PU_ENABLED);
 
     // Set the switch-specific properties
-    &me->sw_state_t = _state;
-    &me->sw_polarity_t = _polarity;
+    me->switch_state = _state;
+    me->switch_polarity = _polarity;
 }

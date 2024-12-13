@@ -25,7 +25,7 @@ typedef enum {LED_OFF_SM, LED_ON_SM, FLASH_ON_SM, FLASH_OFF_SM} led_state_t;
 //After 25 - 50 ms, if the switch is still released, move to NOT_PRESSSED.
 typedef enum {NOT_PRESSED_SM, DEBOUNCE_P, PRESSED_SM, P_ACTION, HELD, HELD_HOLD, DEBOUNCE_R} sw_state_t;
 
-uint16_t time_g;
+extern uint16_t time_g;
 led_state_t led_state1;
 sw_state_t sw_state1;
 led_state_t led_state2;

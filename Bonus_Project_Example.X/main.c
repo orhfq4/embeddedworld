@@ -28,6 +28,8 @@
 #include <avr/interrupt.h>
 #include "LEDS.h"
 #include "LEDS_CMSIS_IN.h"
+#include "timer2.h"
+#include "Switch.h"
 #define INTERVAL (10)
 //initializing state machine and variables
 
@@ -37,7 +39,7 @@
 //Intended that the user will press and hold the switch for one second, and the LED will start flashing
 //When the switch is released when it done being held, the LED will continue to flash.
 //Pressing the switch will cause the LED to move from FLASH mode back to the ON or OFF state.
-typedef enum {LED_OFF_SM, LED_ON_SM, FLASH_ON_SM, FLASH_OFF_SM} led_state_t;
+typedef enum {LED_OFF_SM, LED_ON_SM, FLASH_ON_SM, FLASH_OFF_SM} led_state_c_t;
 
 //When the switch is detected as pressed, move to debounce_p.
 //after 50 - 75 ms, if the switch is still pressed, move to PRESSED.
@@ -49,23 +51,23 @@ typedef enum {LED_OFF_SM, LED_ON_SM, FLASH_ON_SM, FLASH_OFF_SM} led_state_t;
 //The LED state machine can change the state to HELD_HOLD to prevent multiple actions based on HELD.
 //Once the switch is released, then move to the DEBOUNCE_R state.
 //After 25 - 50 ms, if the switch is still released, move to NOT_PRESSSED.
-typedef enum {NOT_PRESSED_SM, DEBOUNCE_P, PRESSED_SM, P_ACTION, HELD, HELD_HOLD, DEBOUNCE_R} sw_state_t;
+typedef enum {NOT_PRESSED_SM, DEBOUNCE_P, PRESSED_SM, P_ACTION, HELD, HELD_HOLD, DEBOUNCE_R} sw_state_b_t;
 
 uint16_t time_g; //global variables used in ISR
 
 int main(void)
 {
     time_g = 0;
-    Timer2_Interrupt_Init(INTERVAL)
+    Timer2_Init(INTERVAL);
     sei();
-    led_state_t led_state1;
-    sw_state_t sw_state1;
-    led_state_t led_state2;
-    sw_state_t sw_state2;
-    led_state_t led_state3;
-    sw_state_t sw_state3;
-    sw_state_t sw_temp;
-    led_state_t led_temp;
+    led_state_c_t led_state1;
+    sw_state_b_t sw_state1;
+    led_state_c_t led_state2;
+    sw_state_b_t sw_state2;
+    led_state_c_t led_state3;
+    sw_state_b_t sw_state3;
+    sw_state_b_t sw_temp;
+    led_state_c_t led_temp;
     uint16_t timer_count;
     // initialize PB3 as an output set to '1' (LED1)
     LED_ctor(&led1, LED1_PORT, LED1_PIN, LED_OFF, ACTIVE_LOW);
@@ -136,12 +138,12 @@ int main(void)
             case DEBOUNCE_P:
             {
                 //wait
-                _delay_(50);
+                _delay_ms(50);
                 //recheck
                 sw_temp=sw_get_value(&sw1);
                 //move to pressed if actually pressed, otherwise, send back to not pressed.
-                if(sw_temp->_state==SW_PRESSED){
-                    sw_state1 = PRESSED_SM:
+                if(sw_temp==SW_PRESSED){
+                    sw_state1 = PRESSED_SM;
                 }
                 else{
                     sw_state1 = NOT_PRESSED_SM;
@@ -153,9 +155,9 @@ int main(void)
                 //ISR do while loop to count the time the switch is pressed
                 time_g = 0;
                 do{
-                    time_g+=INTERVAL
-                }while(sw_temp->_state == SW_PRESSED || time_g < 100);
-                if(sw_temp->_state== SW_NOT_PRESSED){
+                    time_g+=INTERVAL;
+                } while(sw_temp == SW_PRESSED || time_g < 100);
+                if(sw_temp== SW_NOT_PRESSED){
                     sw_state1 = P_ACTION;
                 }
                 if(time_g>=100){
@@ -180,7 +182,7 @@ int main(void)
             }
             case HELD_HOLD:
             {
-                //checsk to see if the switch is not pressed.
+                //check to see if the switch is not pressed.
                 sw_temp = sw_get_value(&sw1);
                 if(sw_temp==SW_NOT_PRESSED){
                     sw_state1 = DEBOUNCE_R;
@@ -190,12 +192,12 @@ int main(void)
             case DEBOUNCE_R:
             {
                 //wait
-                _delay_(50);
+                _delay_ms(50);
                 //re-check
                 sw_temp=sw_get_value(&sw1);
-                //if actuall released, move back to not pressed, otherwise go back to pressed.
-                if(sw_temp->_state==SW_NOT_PRESSED){
-                    sw_state1 = NOT_PRESSED_SM:
+                //if actually released, move back to not pressed, otherwise go back to pressed.
+                if(sw_temp==SW_NOT_PRESSED){
+                    sw_state1 = NOT_PRESSED_SM;
                 }
                 else{
                     sw_state1 = PRESSED_SM;
@@ -241,12 +243,12 @@ int main(void)
             case DEBOUNCE_P:
             {
                 //wait
-                _delay_(50);
+                _delay_ms(50);
                 //recheck
                 sw_temp=sw_get_value(&sw2);
                 //move to pressed if actually pressed, otherwise, send back to not pressed.
-                if(sw_temp->_state==SW_PRESSED){
-                    sw_state2 = PRESSED_SM:
+                if(sw_temp==SW_PRESSED){
+                    sw_state2 = PRESSED_SM;
                 }
                 else{
                     sw_state2 = NOT_PRESSED_SM;
@@ -258,9 +260,9 @@ int main(void)
                 //ISR do while loop to count the time the switch is pressed
                 time_g = 0;
                 do{
-                    time_g+=INTERVAL
-                }while(sw_temp->_state == SW_PRESSED || time_g < 100);
-                if(sw_temp->_state== SW_NOT_PRESSED){
+                    time_g+=INTERVAL;
+                }while(sw_temp == SW_PRESSED || time_g < 100);
+                if(sw_temp== SW_NOT_PRESSED){
                     sw_state2 = P_ACTION;
                 }
                 if(time_g>=100){
@@ -295,12 +297,12 @@ int main(void)
             case DEBOUNCE_R:
             {
                 //wait
-                _delay_(50);
+                _delay_ms(50);
                 //re-check
                 sw_temp=sw_get_value(&sw2);
-                //if actuall released, move back to not pressed, otherwise go back to pressed.
-                if(sw_temp->_state==SW_NOT_PRESSED){
-                    sw_state2 = NOT_PRESSED_SM:
+                //if actually released, move back to not pressed, otherwise go back to pressed.
+                if(sw_temp==SW_NOT_PRESSED){
+                    sw_state2 = NOT_PRESSED_SM;
                 }
                 else{
                     sw_state2 = PRESSED_SM;
@@ -346,12 +348,12 @@ int main(void)
             case DEBOUNCE_P:
             {
                 //wait
-                _delay_(50);
+                _delay_ms(50);
                 //recheck
                 sw_temp=sw_get_value(&sw3);
                 //move to pressed if actually pressed, otherwise, send back to not pressed.
-                if(sw_temp->_state==SW_PRESSED){
-                    sw_state3 = PRESSED_SM:
+                if(sw_temp==SW_PRESSED){
+                    sw_state3 = PRESSED_SM;
                 }
                 else{
                     sw_state3 = NOT_PRESSED_SM;
@@ -363,9 +365,9 @@ int main(void)
                 //ISR do while loop to count the time the switch is pressed
                 time_g = 0;
                 do{
-                    time_g+=INTERVAL
-                }while(sw_temp->_state == SW_PRESSED || time_g < 100);
-                if(sw_temp->_state== SW_NOT_PRESSED){
+                    time_g+=INTERVAL;
+                }while(sw_temp == SW_PRESSED || time_g < 100);
+                if(sw_temp== SW_NOT_PRESSED){
                     sw_state3 = P_ACTION;
                 }
                 if(time_g>=100){
@@ -390,7 +392,7 @@ int main(void)
             }
             case HELD_HOLD:
             {
-                //checsk to see if the switch is not pressed.
+                //check to see if the switch is not pressed.
                 sw_temp = sw_get_value(&sw3);
                 if(sw_temp==SW_NOT_PRESSED){
                     sw_state3 = DEBOUNCE_R;
@@ -400,12 +402,12 @@ int main(void)
             case DEBOUNCE_R:
             {
                 //wait
-                _delay_(50);
+                _delay_ms(50);
                 //re-check
                 sw_temp=sw_get_value(&sw3);
-                //if actuall released, move back to not pressed, otherwise go back to pressed.
-                if(sw_temp->_state==SW_NOT_PRESSED){
-                    sw_state3 = NOT_PRESSED_SM:
+                //if actually released, move back to not pressed, otherwise go back to pressed.
+                if(sw_temp==SW_NOT_PRESSED){
+                    sw_state3 = NOT_PRESSED_SM;
                 }
                 else{
                     sw_state3 = PRESSED_SM;

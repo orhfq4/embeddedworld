@@ -20,7 +20,7 @@ typedef struct {
     sw_state_t switch_state;
 } sw_inst_t;
 
-void sw_ctor(input_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, sw_state_t _state, sw_polarity_t _polarity);
+void sw_ctor(sw_inst_t * const me, volatile GPIO_t * _port_addr, uint8_t _pin_mask, sw_state_t _state, sw_polarity_t _polarity);
 
 sw_state_t sw_get_value(sw_inst_t * const me);
 

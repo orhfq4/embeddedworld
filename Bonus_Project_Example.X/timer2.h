@@ -12,7 +12,7 @@
 
 //*** Define timer initialization 
 
-uint8_t Timer2_Init(uint8_t interval_ms)
+uint8_t Timer2_Init(uint8_t interval_ms);
 
 #ifdef	__cplusplus
 extern "C" {
